@@ -138,11 +138,9 @@ class _WeightChartWidgetModernState extends State<WeightChartWidgetModern>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildModernHeader(context, colorScheme, isDark),
-                  SizedBox(height: 32.h),
                   _buildChart(context, colorScheme, isDark),
                   if (widget.weightData.isNotEmpty) ...[
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 16.h),
                     _buildProgressIndicators(colorScheme, isDark),
                   ],
                 ],

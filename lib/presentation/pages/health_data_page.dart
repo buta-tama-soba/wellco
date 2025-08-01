@@ -382,7 +382,7 @@ class HealthDataPage extends HookConsumerWidget {
           
           // 体重推移グラフ
           SizedBox(
-            height: 300.h,
+            height: 280.h,
             child: _buildWeightChartSection(ref),
           ),
         ],
