@@ -47,14 +47,10 @@ class HealthDataPage extends HookConsumerWidget {
 
                 // 体重・体脂肪率カード
                 personalData.when(
-                  data: (data) => _buildWeightCard(data),
+                  data: (data) => _buildWeightCard(data, ref),
                   loading: () => _buildLoadingCard(),
                   error: (error, stack) => _buildErrorCard('健康データの取得に失敗しました'),
                 ),
-                SizedBox(height: AppConstants.paddingM.h),
-
-                // 体重グラフカード
-                _buildWeightChartSection(ref),
                 SizedBox(height: AppConstants.paddingM.h),
 
                 // 今日の活動カード
@@ -332,7 +328,7 @@ class HealthDataPage extends HookConsumerWidget {
     );
   }
 
-  Widget _buildWeightCard(PersonalDataTableData? data) {
+  Widget _buildWeightCard(PersonalDataTableData? data, WidgetRef ref) {
     return Container(
       padding: EdgeInsets.all(AppConstants.paddingM.w),
       decoration: BoxDecoration(
@@ -384,33 +380,10 @@ class HealthDataPage extends HookConsumerWidget {
           
           SizedBox(height: AppConstants.paddingM.h),
           
-          // 簡易グラフエリア
-          Container(
-            height: 80.h,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppColors.background,
-              borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
-            ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.show_chart_rounded,
-                    color: AppColors.textSecondary,
-                    size: 32.w,
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    '推移グラフ（準備中）',
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          // 体重推移グラフ
+          SizedBox(
+            height: 300.h,
+            child: _buildWeightChartSection(ref),
           ),
         ],
       ),
