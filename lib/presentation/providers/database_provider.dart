@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'health_provider.dart';
 
 // 一時的にダミーのデータベースクラスとテーブルデータクラスを作成
 class AppDatabase {
@@ -28,9 +29,21 @@ class MealTableData {
 }
 
 class PersonalDataTableData {
-  const PersonalDataTableData();
-  int? get steps => null;
-  double? get activeEnergy => null;
+  final int? steps;
+  final double? activeEnergy;
+  final double? weight;
+  final double? bodyFatPercentage;
+  final int? exerciseTime;
+  final double? sleepHours;
+
+  const PersonalDataTableData({
+    this.steps,
+    this.activeEnergy,
+    this.weight,
+    this.bodyFatPercentage,
+    this.exerciseTime,
+    this.sleepHours,
+  });
 }
 
 class RecipeTableData {
@@ -68,10 +81,25 @@ final todayMealsProvider = FutureProvider<List<MealTableData>>((ref) async {
   return await database.getMealsByDate(DateTime.now());
 });
 
-// 今日のパーソナルデータプロバイダー
+// 今日のパーソナルデータプロバイダー（HealthKit統合）
 final todayPersonalDataProvider = FutureProvider<PersonalDataTableData?>((ref) async {
-  final database = ref.watch(databaseProvider);
-  return await database.getPersonalDataByDate(DateTime.now());
+  // HealthKitからデータを取得
+  try {
+    final healthSummary = await ref.read(healthDataSummaryProvider.future);
+    
+    return PersonalDataTableData(
+      steps: healthSummary.todaySteps,
+      activeEnergy: healthSummary.todayActiveEnergy,
+      weight: healthSummary.weight,
+      bodyFatPercentage: healthSummary.bodyFatPercentage,
+      exerciseTime: healthSummary.todayExerciseTime,
+      sleepHours: healthSummary.lastNightSleepHours,
+    );
+  } catch (e) {
+    print('HealthKit データ取得エラー: $e');
+    // エラー時はnullを返す（ダミーデータは返さない）
+    return null;
+  }
 });
 
 // 体重履歴プロバイダー

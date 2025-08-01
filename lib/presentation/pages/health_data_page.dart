@@ -6,43 +6,72 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/themes/app_colors.dart';
 import '../../core/themes/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
+import '../providers/database_provider.dart';
+import '../providers/health_provider.dart';
 
 class HealthDataPage extends HookConsumerWidget {
   const HealthDataPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final personalData = ref.watch(todayPersonalDataProvider);
+    final healthPermission = ref.watch(healthPermissionProvider);
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(AppConstants.paddingM.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ヘッダー
-              _buildHeader(context),
-              SizedBox(height: AppConstants.paddingL.h),
+        child: RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(todayPersonalDataProvider);
+            ref.invalidate(healthPermissionProvider);
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.all(AppConstants.paddingM.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ヘッダー
+                _buildHeader(context, ref),
+                SizedBox(height: AppConstants.paddingL.h),
 
-              // 体重・体脂肪率カード
-              _buildWeightCard(),
-              SizedBox(height: AppConstants.paddingM.h),
+                // 権限確認カード
+                healthPermission.when(
+                  data: (hasPermission) => hasPermission
+                      ? const SizedBox.shrink()
+                      : _buildPermissionCard(context, ref),
+                  loading: () => _buildLoadingCard(),
+                  error: (error, stack) => _buildErrorCard('権限確認に失敗しました'),
+                ),
 
-              // 今日の活動カード
-              _buildActivityCard(),
-              SizedBox(height: AppConstants.paddingM.h),
+                // 体重・体脂肪率カード
+                personalData.when(
+                  data: (data) => _buildWeightCard(data),
+                  loading: () => _buildLoadingCard(),
+                  error: (error, stack) => _buildErrorCard('健康データの取得に失敗しました'),
+                ),
+                SizedBox(height: AppConstants.paddingM.h),
 
-              // 手動入力ボタン
-              _buildManualInputButton(context),
-              SizedBox(height: AppConstants.paddingL.h),
-            ],
+                // 今日の活動カード
+                personalData.when(
+                  data: (data) => _buildActivityCard(data),
+                  loading: () => _buildLoadingCard(),
+                  error: (error, stack) => _buildErrorCard('活動データの取得に失敗しました'),
+                ),
+                SizedBox(height: AppConstants.paddingM.h),
+
+                // 手動入力ボタン
+                _buildManualInputButton(context),
+                SizedBox(height: AppConstants.paddingL.h),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, WidgetRef ref) {
     return Row(
       children: [
         Text(
@@ -52,8 +81,14 @@ class HealthDataPage extends HookConsumerWidget {
         const Spacer(),
         IconButton(
           onPressed: () {
+            // データを再取得
+            ref.invalidate(todayPersonalDataProvider);
+            ref.invalidate(healthPermissionProvider);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('HealthKit同期機能は準備中です')),
+              SnackBar(
+                content: const Text('HealthKitデータを更新しました'),
+                backgroundColor: AppColors.primary,
+              ),
             );
           },
           icon: Icon(
@@ -66,7 +101,122 @@ class HealthDataPage extends HookConsumerWidget {
     );
   }
 
-  Widget _buildWeightCard() {
+  Widget _buildPermissionCard(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: EdgeInsets.all(AppConstants.paddingM.w),
+      margin: EdgeInsets.only(bottom: AppConstants.paddingM.h),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+        border: Border.all(color: AppColors.warning.withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.health_and_safety_rounded,
+            color: AppColors.warning,
+            size: 32.w,
+          ),
+          SizedBox(height: AppConstants.paddingS.h),
+          Text(
+            'HealthKit連携が必要です',
+            style: AppTextStyles.headline3.copyWith(color: AppColors.warning),
+          ),
+          SizedBox(height: AppConstants.paddingS.h),
+          Text(
+            'より正確な健康データを取得するため、HealthKitへのアクセスを許可してください',
+            style: AppTextStyles.body2.copyWith(color: AppColors.textSecondary),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppConstants.paddingM.h),
+          ElevatedButton(
+            onPressed: () async {
+              print('HealthKit接続ボタンがタップされました'); // デバッグログ追加
+              try {
+                final healthService = ref.read(healthServiceProvider);
+                print('HealthServiceを取得しました'); // デバッグログ追加
+                
+                final granted = await healthService.requestPermissions();
+                print('権限リクエスト結果: $granted'); // デバッグログ追加
+                
+                if (granted) {
+                  ref.invalidate(healthPermissionProvider);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('HealthKit連携が完了しました'),
+                      backgroundColor: AppColors.success,
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('HealthKit権限が拒否されました'),
+                      backgroundColor: AppColors.error,
+                    ),
+                  );
+                }
+              } catch (e) {
+                print('HealthKit接続エラー: $e'); // デバッグログ追加
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('エラーが発生しました: $e'),
+                    backgroundColor: AppColors.error,
+                  ),
+                );
+              }
+            },
+            child: const Text('HealthKitに接続'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingCard() {
+    return Container(
+      height: 120.h,
+      margin: EdgeInsets.only(bottom: AppConstants.paddingM.h),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+      ),
+      child: Center(
+        child: CircularProgressIndicator(
+          color: AppColors.primary,
+          strokeWidth: 2.w,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorCard(String message) {
+    return Container(
+      padding: EdgeInsets.all(AppConstants.paddingM.w),
+      margin: EdgeInsets.only(bottom: AppConstants.paddingM.h),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+        border: Border.all(color: AppColors.error.withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.error_outline_rounded,
+            color: AppColors.error,
+            size: 32.w,
+          ),
+          SizedBox(height: AppConstants.paddingS.h),
+          Text(
+            message,
+            style: AppTextStyles.body2.copyWith(color: AppColors.error),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWeightCard(PersonalDataTableData? data) {
     return Container(
       padding: EdgeInsets.all(AppConstants.paddingM.w),
       decoration: BoxDecoration(
@@ -94,11 +244,11 @@ class HealthDataPage extends HookConsumerWidget {
               // 体重
               Expanded(
                 child: _buildMetricItem(
-                  value: '68.5',
+                  value: data?.weight?.toStringAsFixed(1) ?? '--',
                   unit: 'kg',
-                  change: '↓0.3kg',
-                  changeColor: AppColors.success,
-                  subtitle: '昨日から',
+                  change: data?.weight != null ? 'HealthKit連携' : 'データなし',
+                  changeColor: data?.weight != null ? AppColors.success : AppColors.textSecondary,
+                  subtitle: '最新データ',
                 ),
               ),
               SizedBox(width: AppConstants.paddingM.w),
@@ -106,11 +256,11 @@ class HealthDataPage extends HookConsumerWidget {
               // 体脂肪率
               Expanded(
                 child: _buildMetricItem(
-                  value: '22.3',
+                  value: data?.bodyFatPercentage?.toStringAsFixed(1) ?? '--',
                   unit: '%',
-                  change: '↑0.1%',
-                  changeColor: AppColors.warning,
-                  subtitle: '昨日から',
+                  change: data?.bodyFatPercentage != null ? 'HealthKit連携' : 'データなし',
+                  changeColor: data?.bodyFatPercentage != null ? AppColors.success : AppColors.textSecondary,
+                  subtitle: '最新データ',
                 ),
               ),
             ],
@@ -151,7 +301,7 @@ class HealthDataPage extends HookConsumerWidget {
     );
   }
 
-  Widget _buildActivityCard() {
+  Widget _buildActivityCard(PersonalDataTableData? data) {
     return Container(
       padding: EdgeInsets.all(AppConstants.paddingM.w),
       decoration: BoxDecoration(
@@ -178,7 +328,7 @@ class HealthDataPage extends HookConsumerWidget {
           _buildActivityMetric(
             icon: Icons.directions_walk_rounded,
             label: '歩数',
-            value: '8,234',
+            value: data?.steps?.toString() ?? '--',
             unit: '歩',
             color: AppColors.primary,
           ),
@@ -187,7 +337,7 @@ class HealthDataPage extends HookConsumerWidget {
           _buildActivityMetric(
             icon: Icons.local_fire_department_rounded,
             label: '消費カロリー',
-            value: '285',
+            value: data?.activeEnergy?.toInt().toString() ?? '--',
             unit: 'kcal',
             color: AppColors.secondary,
           ),
@@ -196,7 +346,7 @@ class HealthDataPage extends HookConsumerWidget {
           _buildActivityMetric(
             icon: Icons.fitness_center_rounded,
             label: '運動時間',
-            value: '45',
+            value: data?.exerciseTime?.toString() ?? '--',
             unit: '分',
             color: AppColors.accent,
           ),
@@ -205,7 +355,7 @@ class HealthDataPage extends HookConsumerWidget {
           _buildActivityMetric(
             icon: Icons.bedtime_rounded,
             label: '睡眠時間',
-            value: '7.5',
+            value: data?.sleepHours?.toStringAsFixed(1) ?? '--',
             unit: '時間',
             color: AppColors.info,
           ),

@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSHealthShareUsageDescription</key>
+	<string>ウェルコがあなたの健康データ（体重、歩数、睡眠など）を読み取って、パーソナライズされた健康アドバイスを提供します</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>ウェルコがあなたの健康データを記録して、継続的な健康管理をサポートします</string>
 </dict>
 </plist>
