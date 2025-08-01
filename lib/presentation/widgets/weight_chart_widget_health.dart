@@ -121,7 +121,7 @@ class _WeightChartWidgetHealthState extends State<WeightChartWidgetHealth>
       animation: _chartAnimation,
       builder: (context, child) {
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 8.h),
+          padding: EdgeInsets.only(left: 0.w, right: 16.w, top: 8.h, bottom: 0.h),
           child: LineChart(
             _buildLineChartData(isDark),
             duration: const Duration(milliseconds: 0),
