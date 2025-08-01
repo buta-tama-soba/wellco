@@ -95,29 +95,11 @@ class _WeightChartWidgetHealthState extends State<WeightChartWidgetHealth>
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
-        borderRadius: BorderRadius.circular(20.r),
-        boxShadow: [
-          BoxShadow(
-            color: isDark 
-              ? Colors.black.withOpacity(0.3)
-              : Colors.grey.withOpacity(0.08),
-            blurRadius: 24.r,
-            offset: Offset(0, 8.h),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: EdgeInsets.zero, // パディングを削除してカード幅いっぱいに
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildChart(context, isDark),
-          ],
-        ),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildChart(context, isDark),
+      ],
     );
   }
 
@@ -139,7 +121,7 @@ class _WeightChartWidgetHealthState extends State<WeightChartWidgetHealth>
       animation: _chartAnimation,
       builder: (context, child) {
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+          padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 8.h),
           child: LineChart(
             _buildLineChartData(isDark),
             duration: const Duration(milliseconds: 0),
