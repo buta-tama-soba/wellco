@@ -81,7 +81,7 @@ final todayMealsProvider = FutureProvider<List<MealTableData>>((ref) async {
   return await database.getMealsByDate(DateTime.now());
 });
 
-// 今日のパーソナルデータプロバイダー（HealthKit統合）
+// 選択された日付のパーソナルデータプロバイダー（HealthKit統合）
 final todayPersonalDataProvider = FutureProvider<PersonalDataTableData?>((ref) async {
   // HealthKitからデータを取得
   try {

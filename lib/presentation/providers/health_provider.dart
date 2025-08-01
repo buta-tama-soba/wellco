@@ -6,6 +6,12 @@ final healthServiceProvider = Provider<HealthService>((ref) {
   return HealthService();
 });
 
+// 選択された日付のプロバイダー（初期値は今日）
+final selectedDateProvider = StateProvider<DateTime>((ref) {
+  final now = DateTime.now();
+  return DateTime(now.year, now.month, now.day);
+});
+
 // HealthKit権限状態のプロバイダー
 final healthPermissionProvider = FutureProvider<bool>((ref) async {
   final healthService = ref.read(healthServiceProvider);
@@ -84,24 +90,38 @@ final healthKitAvailabilityProvider = FutureProvider<bool>((ref) async {
   return await healthService.isHealthKitAvailable();
 });
 
-// 全体的な健康データを統合したプロバイダー
+// 健康データを統合したプロバイダー（直近24時間のデータ）
 final healthDataSummaryProvider = FutureProvider<HealthDataSummary>((ref) async {
-  final weight = await ref.read(weightProvider.future);
-  final bodyFat = await ref.read(bodyFatProvider.future);
-  final steps = await ref.read(todayStepsProvider.future);
-  final activeEnergy = await ref.read(todayActiveEnergyProvider.future);
-  final exerciseTime = await ref.read(todayExerciseTimeProvider.future);
-  final sleepHours = await ref.read(lastNightSleepProvider.future);
+  final healthService = ref.watch(healthServiceProvider);
+  final selectedDate = ref.watch(selectedDateProvider);
   final hasPermission = await ref.read(healthPermissionProvider.future);
   
+  if (!hasPermission) {
+    return HealthDataSummary(
+      hasHealthKitPermission: false,
+      targetDate: selectedDate,
+    );
+  }
+  
+  // 並行してデータを取得（活動データは直近24時間）
+  final results = await Future.wait([
+    healthService.getLatestWeight(),
+    healthService.getLatestBodyFatPercentage(),
+    healthService.getLast24HoursSteps(),  // 直近24時間
+    healthService.getLast24HoursActiveEnergy(),  // 直近24時間
+    healthService.getLast24HoursExerciseTime(),  // 直近24時間
+    healthService.getLast24HoursSleepHours(),  // 直近24時間
+  ]);
+  
   return HealthDataSummary(
-    weight: weight,
-    bodyFatPercentage: bodyFat,
-    todaySteps: steps,
-    todayActiveEnergy: activeEnergy,
-    todayExerciseTime: exerciseTime,
-    lastNightSleepHours: sleepHours,
+    weight: results[0] as double?,
+    bodyFatPercentage: results[1] as double?,
+    todaySteps: results[2] as int?,
+    todayActiveEnergy: results[3] as double?,
+    todayExerciseTime: results[4] as int?,
+    lastNightSleepHours: results[5] as double?,
     hasHealthKitPermission: hasPermission,
+    targetDate: selectedDate,
   );
 });
 
@@ -114,6 +134,7 @@ class HealthDataSummary {
   final int? todayExerciseTime;
   final double? lastNightSleepHours;
   final bool hasHealthKitPermission;
+  final DateTime targetDate;
 
   const HealthDataSummary({
     this.weight,
@@ -123,12 +144,14 @@ class HealthDataSummary {
     this.todayExerciseTime,
     this.lastNightSleepHours,
     required this.hasHealthKitPermission,
+    required this.targetDate,
   });
 
   // デバッグ用
   @override
   String toString() {
     return 'HealthDataSummary('
+        'targetDate: $targetDate, '
         'weight: $weight, '
         'bodyFat: $bodyFatPercentage, '
         'steps: $todaySteps, '

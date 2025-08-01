@@ -72,33 +72,144 @@ class HealthDataPage extends HookConsumerWidget {
   }
 
   Widget _buildHeader(BuildContext context, WidgetRef ref) {
-    return Row(
+    final selectedDate = ref.watch(selectedDateProvider);
+    final isToday = _isToday(selectedDate);
+    
+    return Column(
       children: [
-        Text(
-          '身体・活動',
-          style: AppTextStyles.headline2,
-        ),
-        const Spacer(),
-        IconButton(
-          onPressed: () {
-            // データを再取得
-            ref.invalidate(todayPersonalDataProvider);
-            ref.invalidate(healthPermissionProvider);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('HealthKitデータを更新しました'),
-                backgroundColor: AppColors.primary,
+        Row(
+          children: [
+            Text(
+              '身体・活動',
+              style: AppTextStyles.headline2,
+            ),
+            const Spacer(),
+            IconButton(
+              onPressed: () {
+                // データを再取得
+                ref.invalidate(todayPersonalDataProvider);
+                ref.invalidate(healthPermissionProvider);
+                ref.invalidate(healthDataSummaryProvider);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('HealthKitデータを更新しました'),
+                    backgroundColor: AppColors.primary,
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.refresh_rounded,
+                color: AppColors.primary,
+                size: 24.w,
               ),
-            );
-          },
-          icon: Icon(
-            Icons.refresh_rounded,
-            color: AppColors.primary,
-            size: 24.w,
-          ),
+            ),
+          ],
         ),
+        // 日付選択バーは非表示（機能は残す）
+        // SizedBox(height: AppConstants.paddingM.h),
+        // _buildDateSelector(context, ref, selectedDate, isToday),
       ],
     );
+  }
+
+  Widget _buildDateSelector(BuildContext context, WidgetRef ref, DateTime selectedDate, bool isToday) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppConstants.paddingM.w,
+        vertical: AppConstants.paddingS.h,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
+        border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+      ),
+      child: Row(
+        children: [
+          // 前日ボタン
+          IconButton(
+            onPressed: () {
+              final previousDay = selectedDate.subtract(const Duration(days: 1));
+              ref.read(selectedDateProvider.notifier).state = previousDay;
+            },
+            icon: Icon(
+              Icons.chevron_left_rounded,
+              color: AppColors.primary,
+              size: 24.w,
+            ),
+          ),
+          
+          // 日付表示
+          Expanded(
+            child: GestureDetector(
+              onTap: () async {
+                final date = await showDatePicker(
+                  context: context,
+                  initialDate: selectedDate,
+                  firstDate: DateTime.now().subtract(const Duration(days: 365)),
+                  lastDate: DateTime.now(),
+                  locale: const Locale('ja', 'JP'),
+                );
+                if (date != null) {
+                  ref.read(selectedDateProvider.notifier).state = date;
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 8.h),
+                child: Column(
+                  children: [
+                    Text(
+                      isToday ? '今日' : _formatDate(selectedDate),
+                      style: AppTextStyles.headline3.copyWith(
+                        color: AppColors.primary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    if (!isToday)
+                      Text(
+                        _formatDateWithWeekday(selectedDate),
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          
+          // 翌日ボタン（今日より前の場合のみ表示）
+          IconButton(
+            onPressed: _isToday(selectedDate.add(const Duration(days: 1))) ? null : () {
+              final nextDay = selectedDate.add(const Duration(days: 1));
+              ref.read(selectedDateProvider.notifier).state = nextDay;
+            },
+            icon: Icon(
+              Icons.chevron_right_rounded,
+              color: _isToday(selectedDate.add(const Duration(days: 1))) 
+                  ? AppColors.textSecondary.withOpacity(0.3)
+                  : AppColors.primary,
+              size: 24.w,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _isToday(DateTime date) {
+    final now = DateTime.now();
+    return date.year == now.year && date.month == now.month && date.day == now.day;
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.month}月${date.day}日';
+  }
+
+  String _formatDateWithWeekday(DateTime date) {
+    const weekdays = ['月', '火', '水', '木', '金', '土', '日'];
+    final weekday = weekdays[date.weekday - 1];
+    return '${date.year}年${date.month}月${date.day}日（$weekday）';
   }
 
   Widget _buildPermissionCard(BuildContext context, WidgetRef ref) {
@@ -319,7 +430,7 @@ class HealthDataPage extends HookConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '今日の活動',
+            '直近24時間の活動',
             style: AppTextStyles.headline3,
           ),
           SizedBox(height: AppConstants.paddingM.h),
