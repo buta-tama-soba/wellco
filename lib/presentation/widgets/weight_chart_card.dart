@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/health_provider.dart';
-import 'weight_chart_widget.dart';
+import 'weight_chart_widget_enhanced.dart';
 
 class WeightChartCard extends ConsumerWidget {
   const WeightChartCard({
@@ -17,17 +17,17 @@ class WeightChartCard extends ConsumerWidget {
     final weightHistoryAsync = ref.watch(weightHistoryProvider);
 
     return weightHistoryAsync.when(
-      data: (weightData) => WeightChartWidget(
+      data: (weightData) => WeightChartWidgetEnhanced(
         weightData: weightData,
         onRefresh: () {
           ref.invalidate(weightHistoryProvider);
         },
       ),
-      loading: () => WeightChartWidget(
+      loading: () => WeightChartWidgetEnhanced(
         weightData: const [],
         isLoading: true,
       ),
-      error: (error, stack) => WeightChartWidget(
+      error: (error, stack) => WeightChartWidgetEnhanced(
         weightData: const [],
         errorMessage: error.toString(),
         onRefresh: () {
