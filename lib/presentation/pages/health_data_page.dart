@@ -8,7 +8,7 @@ import '../../core/themes/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
 import '../providers/database_provider.dart' hide weightHistoryProvider;
 import '../providers/health_provider.dart';
-import '../widgets/weight_chart_widget_modern.dart';
+import '../widgets/weight_chart_widget_health.dart';
 
 class HealthDataPage extends HookConsumerWidget {
   const HealthDataPage({super.key});
@@ -552,17 +552,17 @@ class HealthDataPage extends HookConsumerWidget {
     final weightHistoryAsync = ref.watch(weightHistoryProvider);
 
     return weightHistoryAsync.when(
-      data: (weightData) => WeightChartWidgetModern(
+      data: (weightData) => WeightChartWidgetHealth(
         weightData: weightData,
         onRefresh: () {
           ref.invalidate(weightHistoryProvider);
         },
       ),
-      loading: () => WeightChartWidgetModern(
+      loading: () => WeightChartWidgetHealth(
         weightData: const [],
         isLoading: true,
       ),
-      error: (error, stack) => WeightChartWidgetModern(
+      error: (error, stack) => WeightChartWidgetHealth(
         weightData: const [],
         errorMessage: error.toString(),
         onRefresh: () {
