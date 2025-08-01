@@ -111,7 +111,7 @@ class _WeightChartWidgetHomeState extends State<WeightChartWidgetHome>
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.only(left: 0.w, right: 16.w, top: 20.h, bottom: 20.h),
+        padding: EdgeInsets.only(left: 0.w, right: 16.w, top: 20.h, bottom: 5.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
