@@ -37,7 +37,7 @@ class HomePage extends HookConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ヘッダー
-                _buildHeader(context),
+                _buildHeader(context, ref),
                 SizedBox(height: AppConstants.paddingL.h),
 
                 // 今日の栄養バランス
@@ -84,9 +84,9 @@ class HomePage extends HookConsumerWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, WidgetRef ref) {
     final now = DateTime.now();
-    final greeting = _getTimeBasedGreeting();
+    final greeting = _getTimeBasedGreeting(ref);
     final dateText = '${now.month}月${now.day}日';
 
     return Column(
@@ -131,14 +131,14 @@ class HomePage extends HookConsumerWidget {
     );
   }
 
-  String _getTimeBasedGreeting() {
+  String _getTimeBasedGreeting(WidgetRef ref) {
     final hour = DateTime.now().hour;
     final todayNutritionData = ref.read(todayNutritionProvider).valueOrNull;
     final todayPersonalData = ref.read(todayPersonalDataProvider).valueOrNull;
     
     // 記録状況を確認
-    final hasNutritionRecord = todayNutritionData != null && todayNutritionData.calories > 0;
-    final hasActivityRecord = todayPersonalData != null && todayPersonalData.steps > 0;
+    final hasNutritionRecord = todayNutritionData != null && todayNutritionData['calories'] != null && todayNutritionData['calories']! > 0;
+    final hasActivityRecord = todayPersonalData != null && (todayPersonalData.steps ?? 0) > 0;
     
     if (hour < 6) {
       return hasNutritionRecord || hasActivityRecord ? 'お疲れ様でした' : 'ゆっくり休んでくださいね';
