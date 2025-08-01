@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/themes/app_colors.dart';
 import '../../core/themes/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
-import '../providers/database_provider.dart';
+import '../providers/database_provider.dart' hide weightHistoryProvider;
 import '../providers/health_provider.dart';
 import '../widgets/weight_chart_widget.dart';
 
