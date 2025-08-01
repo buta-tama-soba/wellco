@@ -8,6 +8,7 @@ import '../../core/themes/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
 import '../providers/database_provider.dart';
 import '../providers/health_provider.dart';
+import '../widgets/weight_chart_widget.dart';
 
 class HealthDataPage extends HookConsumerWidget {
   const HealthDataPage({super.key});
@@ -50,6 +51,10 @@ class HealthDataPage extends HookConsumerWidget {
                   loading: () => _buildLoadingCard(),
                   error: (error, stack) => _buildErrorCard('健康データの取得に失敗しました'),
                 ),
+                SizedBox(height: AppConstants.paddingM.h),
+
+                // 体重グラフカード
+                _buildWeightChartSection(ref),
                 SizedBox(height: AppConstants.paddingM.h),
 
                 // 今日の活動カード
@@ -567,6 +572,30 @@ class HealthDataPage extends HookConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildWeightChartSection(WidgetRef ref) {
+    final weightHistoryAsync = ref.watch(weightHistoryProvider);
+
+    return weightHistoryAsync.when(
+      data: (weightData) => WeightChartWidget(
+        weightData: weightData,
+        onRefresh: () {
+          ref.invalidate(weightHistoryProvider);
+        },
+      ),
+      loading: () => WeightChartWidget(
+        weightData: const [],
+        isLoading: true,
+      ),
+      error: (error, stack) => WeightChartWidget(
+        weightData: const [],
+        errorMessage: error.toString(),
+        onRefresh: () {
+          ref.invalidate(weightHistoryProvider);
+        },
+      ),
     );
   }
 

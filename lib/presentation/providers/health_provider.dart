@@ -90,6 +90,17 @@ final healthKitAvailabilityProvider = FutureProvider<bool>((ref) async {
   return await healthService.isHealthKitAvailable();
 });
 
+// 体重履歴プロバイダー
+final weightHistoryProvider = FutureProvider<List<WeightData>>((ref) async {
+  final healthService = ref.read(healthServiceProvider);
+  
+  // 権限チェック
+  final hasPermission = await ref.read(healthPermissionProvider.future);
+  if (!hasPermission) return [];
+  
+  return await healthService.getWeightHistory();
+});
+
 // 健康データを統合したプロバイダー（直近24時間のデータ）
 final healthDataSummaryProvider = FutureProvider<HealthDataSummary>((ref) async {
   final healthService = ref.watch(healthServiceProvider);
