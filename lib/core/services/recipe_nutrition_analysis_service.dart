@@ -4,10 +4,12 @@ import '../../data/datasources/app_database.dart';
 import 'ingredient_extraction_service.dart';
 import 'food_composition_data_service.dart';
 import 'food_dictionary_service.dart';
+import 'serving_size_extractor_service.dart';
 
 /// レシピ栄養分析サービス
 class RecipeNutritionAnalysisService {
   final IngredientExtractionService _extractor = IngredientExtractionService();
+  final ServingSizeExtractorService _servingSizeExtractor = ServingSizeExtractorService();
   final FoodCompositionDataService _foodService;
   final FoodDictionaryService _dictionaryService;
   
@@ -43,20 +45,31 @@ class RecipeNutritionAnalysisService {
       ));
     }
     
-    // 3. 栄養計算
-    final nutrition = _calculateNutrition(matchResults);
+    // 3. 人数抽出
+    final servingSizeInfo = _servingSizeExtractor.extractServingSize(recipeText);
+    print('デバッグ: 抽出された人数 = ${servingSizeInfo.servings}人分 (信頼度: ${servingSizeInfo.confidence})');
     
-    // 4. PFCバランス
-    final pfcBalance = _calculatePFCBalance(nutrition);
+    // 4. 栄養計算（レシピ全体）
+    final totalNutrition = _calculateNutrition(matchResults);
+    
+    // 5. 1人前に変換
+    final perServingNutrition = _convertToPerServing(totalNutrition, servingSizeInfo.servings);
+    final perServingIngredients = _convertIngredientsToPerServing(ingredients, servingSizeInfo.servings);
+    
+    // 6. PFCバランス（1人前）
+    final pfcBalance = _calculatePFCBalance(perServingNutrition);
     
     return RecipeNutritionResult(
       ingredients: ingredients,
+      perServingIngredients: perServingIngredients,
       matchResults: matchResults,
-      nutrition: nutrition,
+      nutrition: totalNutrition,
+      perServingNutrition: perServingNutrition,
       pfcBalance: pfcBalance,
       extractionStats: stats,
       ingredientsJson: _ingredientsToJson(ingredients),
       rawText: recipeText,
+      servingSizeInfo: servingSizeInfo,
     );
   }
 
@@ -100,6 +113,36 @@ class RecipeNutritionAnalysisService {
       fiber: totalFiber,
       vitaminC: totalVitaminC,
     );
+  }
+  
+  /// 栄養情報を1人前に変換
+  RecipeNutrition _convertToPerServing(RecipeNutrition total, double servings) {
+    return RecipeNutrition(
+      energy: total.energy / servings,
+      protein: total.protein / servings,
+      fat: total.fat / servings,
+      carbohydrate: total.carbohydrate / servings,
+      salt: total.salt / servings,
+      fiber: total.fiber / servings,
+      vitaminC: total.vitaminC / servings,
+    );
+  }
+  
+  /// 材料リストを1人前に変換
+  List<Ingredient> _convertIngredientsToPerServing(List<Ingredient> ingredients, double servings) {
+    return ingredients.map((ingredient) {
+      final perServingAmount = ingredient.amount != null 
+          ? ingredient.amount! / servings 
+          : null;
+      
+      return Ingredient(
+        name: ingredient.name,
+        amount: perServingAmount,
+        unit: ingredient.unit,
+        originalText: ingredient.originalText,
+        confidence: ingredient.confidence,
+      );
+    }).toList();
   }
 
   /// PFCバランス計算
@@ -381,21 +424,27 @@ class RecipeNutritionAnalysisService {
 /// レシピ栄養分析結果
 class RecipeNutritionResult {
   final List<Ingredient> ingredients;
+  final List<Ingredient> perServingIngredients;
   final List<IngredientMatchResult> matchResults;
   final RecipeNutrition nutrition;
+  final RecipeNutrition perServingNutrition;
   final PFCBalance pfcBalance;
   final Map<String, dynamic> extractionStats;
   final String ingredientsJson;
   final String rawText;
+  final ServingSizeInfo servingSizeInfo;
 
   RecipeNutritionResult({
     required this.ingredients,
+    required this.perServingIngredients,
     required this.matchResults,
     required this.nutrition,
+    required this.perServingNutrition,
     required this.pfcBalance,
     required this.extractionStats,
     required this.ingredientsJson,
     required this.rawText,
+    required this.servingSizeInfo,
   });
 }
 
