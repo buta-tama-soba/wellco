@@ -1,5 +1,5 @@
 import 'package:health/health.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'dart:math' as math;
 
 class HealthService {
   static final HealthService _instance = HealthService._internal();
@@ -80,7 +80,10 @@ class HealthService {
         endTime: now,
       );
 
-      if (data.isEmpty) return null;
+      if (data.isEmpty) {
+        print('体重データが見つかりません');
+        return null;
+      }
 
       // 日付順でソート（最新が先頭）
       data.sort((a, b) => b.dateFrom.compareTo(a.dateFrom));
@@ -115,7 +118,10 @@ class HealthService {
         endTime: now,
       );
 
-      if (data.isEmpty) return null;
+      if (data.isEmpty) {
+        print('体脂肪率データが見つかりません');
+        return null;
+      }
 
       data.sort((a, b) => b.dateFrom.compareTo(a.dateFrom));
       final latestBodyFat = data.first.value as NumericHealthValue;
@@ -598,6 +604,49 @@ class HealthService {
     }
   }
 
+  /// 過去3ヶ月の体重履歴を取得
+  Future<List<WeightData>> getWeightHistory() async {
+    try {
+      final now = DateTime.now();
+      final threeMonthsAgo = now.subtract(const Duration(days: 90));
+      
+      print('体重履歴取得開始: ${threeMonthsAgo} から ${now}');
+
+      List<HealthDataPoint> data = await _health.getHealthDataFromTypes(
+        types: [HealthDataType.WEIGHT],
+        startTime: threeMonthsAgo,
+        endTime: now,
+      );
+
+      print('体重履歴データ取得: ${data.length}件');
+      if (data.isEmpty) {
+        print('体重履歴データが見つかりません');
+        return [];
+      }
+
+      // 日付順でソート（古い順）
+      data.sort((a, b) => a.dateFrom.compareTo(b.dateFrom));
+
+      // WeightDataに変換
+      List<WeightData> weightHistory = [];
+      for (final point in data) {
+        final weight = point.value as NumericHealthValue;
+        weightHistory.add(WeightData(
+          date: point.dateFrom,
+          weight: weight.numericValue.toDouble(),
+          measurementError: 0.1, // 体重計の一般的な誤差
+        ));
+      }
+
+      print('体重履歴変換完了: ${weightHistory.length}件');
+      return weightHistory;
+    } catch (e) {
+      print('体重履歴取得エラー: $e');
+      return [];
+    }
+  }
+
+
   /// HealthKitが利用可能かチェック
   Future<bool> isHealthKitAvailable() async {
     try {
@@ -606,5 +655,23 @@ class HealthService {
     } catch (e) {
       return false;
     }
+  }
+}
+
+/// 体重データクラス
+class WeightData {
+  final DateTime date;
+  final double weight;
+  final double? measurementError;
+
+  const WeightData({
+    required this.date,
+    required this.weight,
+    this.measurementError,
+  });
+
+  @override
+  String toString() {
+    return 'WeightData(date: $date, weight: ${weight}kg, error: $measurementError)';
   }
 }

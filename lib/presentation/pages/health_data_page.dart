@@ -6,8 +6,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/themes/app_colors.dart';
 import '../../core/themes/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
-import '../providers/database_provider.dart';
+import '../providers/database_provider.dart' hide weightHistoryProvider;
 import '../providers/health_provider.dart';
+import '../widgets/weight_chart_widget_health.dart';
 
 class HealthDataPage extends HookConsumerWidget {
   const HealthDataPage({super.key});
@@ -46,7 +47,7 @@ class HealthDataPage extends HookConsumerWidget {
 
                 // 体重・体脂肪率カード
                 personalData.when(
-                  data: (data) => _buildWeightCard(data),
+                  data: (data) => _buildWeightCard(data, ref),
                   loading: () => _buildLoadingCard(),
                   error: (error, stack) => _buildErrorCard('健康データの取得に失敗しました'),
                 ),
@@ -327,7 +328,7 @@ class HealthDataPage extends HookConsumerWidget {
     );
   }
 
-  Widget _buildWeightCard(PersonalDataTableData? data) {
+  Widget _buildWeightCard(PersonalDataTableData? data, WidgetRef ref) {
     return Container(
       padding: EdgeInsets.all(AppConstants.paddingM.w),
       decoration: BoxDecoration(
@@ -379,34 +380,8 @@ class HealthDataPage extends HookConsumerWidget {
           
           SizedBox(height: AppConstants.paddingM.h),
           
-          // 簡易グラフエリア
-          Container(
-            height: 80.h,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppColors.background,
-              borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
-            ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.show_chart_rounded,
-                    color: AppColors.textSecondary,
-                    size: 32.w,
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    '推移グラフ（準備中）',
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // 体重推移グラフ
+          _buildWeightChartSection(ref),
         ],
       ),
     );
@@ -567,6 +542,30 @@ class HealthDataPage extends HookConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildWeightChartSection(WidgetRef ref) {
+    final weightHistoryAsync = ref.watch(weightHistoryProvider);
+
+    return weightHistoryAsync.when(
+      data: (weightData) => WeightChartWidgetHealth(
+        weightData: weightData,
+        onRefresh: () {
+          ref.invalidate(weightHistoryProvider);
+        },
+      ),
+      loading: () => WeightChartWidgetHealth(
+        weightData: const [],
+        isLoading: true,
+      ),
+      error: (error, stack) => WeightChartWidgetHealth(
+        weightData: const [],
+        errorMessage: error.toString(),
+        onRefresh: () {
+          ref.invalidate(weightHistoryProvider);
+        },
+      ),
     );
   }
 
