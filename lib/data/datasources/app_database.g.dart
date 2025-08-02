@@ -596,6 +596,76 @@ class $ExternalRecipeTableTable extends ExternalRecipeTable
   late final GeneratedColumn<String> memo = GeneratedColumn<String>(
       'memo', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _ingredientsJsonMeta =
+      const VerificationMeta('ingredientsJson');
+  @override
+  late final GeneratedColumn<String> ingredientsJson = GeneratedColumn<String>(
+      'ingredients_json', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _ingredientsRawTextMeta =
+      const VerificationMeta('ingredientsRawText');
+  @override
+  late final GeneratedColumn<String> ingredientsRawText =
+      GeneratedColumn<String>('ingredients_raw_text', aliasedName, true,
+          type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _caloriesMeta =
+      const VerificationMeta('calories');
+  @override
+  late final GeneratedColumn<double> calories = GeneratedColumn<double>(
+      'calories', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _proteinMeta =
+      const VerificationMeta('protein');
+  @override
+  late final GeneratedColumn<double> protein = GeneratedColumn<double>(
+      'protein', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _fatMeta = const VerificationMeta('fat');
+  @override
+  late final GeneratedColumn<double> fat = GeneratedColumn<double>(
+      'fat', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _carbohydrateMeta =
+      const VerificationMeta('carbohydrate');
+  @override
+  late final GeneratedColumn<double> carbohydrate = GeneratedColumn<double>(
+      'carbohydrate', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _saltMeta = const VerificationMeta('salt');
+  @override
+  late final GeneratedColumn<double> salt = GeneratedColumn<double>(
+      'salt', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _fiberMeta = const VerificationMeta('fiber');
+  @override
+  late final GeneratedColumn<double> fiber = GeneratedColumn<double>(
+      'fiber', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _vitaminCMeta =
+      const VerificationMeta('vitaminC');
+  @override
+  late final GeneratedColumn<double> vitaminC = GeneratedColumn<double>(
+      'vitamin_c', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _isNutritionAutoExtractedMeta =
+      const VerificationMeta('isNutritionAutoExtracted');
+  @override
+  late final GeneratedColumn<bool> isNutritionAutoExtracted =
+      GeneratedColumn<bool>(
+          'is_nutrition_auto_extracted', aliasedName, false,
+          type: DriftSqlType.bool,
+          requiredDuringInsert: false,
+          defaultConstraints: GeneratedColumn.constraintIsAlways(
+              'CHECK ("is_nutrition_auto_extracted" IN (0, 1))'),
+          defaultValue: const Constant(false));
+  static const VerificationMeta _servingsMeta =
+      const VerificationMeta('servings');
+  @override
+  late final GeneratedColumn<int> servings = GeneratedColumn<int>(
+      'servings', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(1));
   static const VerificationMeta _lastAccessedAtMeta =
       const VerificationMeta('lastAccessedAt');
   @override
@@ -629,6 +699,17 @@ class $ExternalRecipeTableTable extends ExternalRecipeTable
         isFavorite,
         tags,
         memo,
+        ingredientsJson,
+        ingredientsRawText,
+        calories,
+        protein,
+        fat,
+        carbohydrate,
+        salt,
+        fiber,
+        vitaminC,
+        isNutritionAutoExtracted,
+        servings,
         lastAccessedAt,
         createdAt,
         updatedAt
@@ -687,6 +768,59 @@ class $ExternalRecipeTableTable extends ExternalRecipeTable
       context.handle(
           _memoMeta, memo.isAcceptableOrUnknown(data['memo']!, _memoMeta));
     }
+    if (data.containsKey('ingredients_json')) {
+      context.handle(
+          _ingredientsJsonMeta,
+          ingredientsJson.isAcceptableOrUnknown(
+              data['ingredients_json']!, _ingredientsJsonMeta));
+    }
+    if (data.containsKey('ingredients_raw_text')) {
+      context.handle(
+          _ingredientsRawTextMeta,
+          ingredientsRawText.isAcceptableOrUnknown(
+              data['ingredients_raw_text']!, _ingredientsRawTextMeta));
+    }
+    if (data.containsKey('calories')) {
+      context.handle(_caloriesMeta,
+          calories.isAcceptableOrUnknown(data['calories']!, _caloriesMeta));
+    }
+    if (data.containsKey('protein')) {
+      context.handle(_proteinMeta,
+          protein.isAcceptableOrUnknown(data['protein']!, _proteinMeta));
+    }
+    if (data.containsKey('fat')) {
+      context.handle(
+          _fatMeta, fat.isAcceptableOrUnknown(data['fat']!, _fatMeta));
+    }
+    if (data.containsKey('carbohydrate')) {
+      context.handle(
+          _carbohydrateMeta,
+          carbohydrate.isAcceptableOrUnknown(
+              data['carbohydrate']!, _carbohydrateMeta));
+    }
+    if (data.containsKey('salt')) {
+      context.handle(
+          _saltMeta, salt.isAcceptableOrUnknown(data['salt']!, _saltMeta));
+    }
+    if (data.containsKey('fiber')) {
+      context.handle(
+          _fiberMeta, fiber.isAcceptableOrUnknown(data['fiber']!, _fiberMeta));
+    }
+    if (data.containsKey('vitamin_c')) {
+      context.handle(_vitaminCMeta,
+          vitaminC.isAcceptableOrUnknown(data['vitamin_c']!, _vitaminCMeta));
+    }
+    if (data.containsKey('is_nutrition_auto_extracted')) {
+      context.handle(
+          _isNutritionAutoExtractedMeta,
+          isNutritionAutoExtracted.isAcceptableOrUnknown(
+              data['is_nutrition_auto_extracted']!,
+              _isNutritionAutoExtractedMeta));
+    }
+    if (data.containsKey('servings')) {
+      context.handle(_servingsMeta,
+          servings.isAcceptableOrUnknown(data['servings']!, _servingsMeta));
+    }
     if (data.containsKey('last_accessed_at')) {
       context.handle(
           _lastAccessedAtMeta,
@@ -729,6 +863,29 @@ class $ExternalRecipeTableTable extends ExternalRecipeTable
           .read(DriftSqlType.string, data['${effectivePrefix}tags']),
       memo: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}memo']),
+      ingredientsJson: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}ingredients_json']),
+      ingredientsRawText: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}ingredients_raw_text']),
+      calories: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}calories']),
+      protein: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}protein']),
+      fat: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}fat']),
+      carbohydrate: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}carbohydrate']),
+      salt: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}salt']),
+      fiber: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}fiber']),
+      vitaminC: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}vitamin_c']),
+      isNutritionAutoExtracted: attachedDatabase.typeMapping.read(
+          DriftSqlType.bool,
+          data['${effectivePrefix}is_nutrition_auto_extracted'])!,
+      servings: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}servings'])!,
       lastAccessedAt: attachedDatabase.typeMapping.read(
           DriftSqlType.dateTime, data['${effectivePrefix}last_accessed_at']),
       createdAt: attachedDatabase.typeMapping
@@ -773,6 +930,39 @@ class ExternalRecipeTableData extends DataClass
   /// メモ
   final String? memo;
 
+  /// 材料情報（JSON形式）
+  final String? ingredientsJson;
+
+  /// 抽出された材料の生テキスト
+  final String? ingredientsRawText;
+
+  /// 栄養情報（カロリー/1人前）
+  final double? calories;
+
+  /// タンパク質（g/1人前）
+  final double? protein;
+
+  /// 脂質（g/1人前）
+  final double? fat;
+
+  /// 炭水化物（g/1人前）
+  final double? carbohydrate;
+
+  /// 食塩相当量（g/1人前）
+  final double? salt;
+
+  /// 食物繊維（g/1人前）
+  final double? fiber;
+
+  /// ビタミンC（mg/1人前）
+  final double? vitaminC;
+
+  /// 材料・栄養情報が自動推測されたかのフラグ
+  final bool isNutritionAutoExtracted;
+
+  /// 人数（栄養計算の基準）
+  final int servings;
+
   /// 最終アクセス日時
   final DateTime? lastAccessedAt;
 
@@ -791,6 +981,17 @@ class ExternalRecipeTableData extends DataClass
       required this.isFavorite,
       this.tags,
       this.memo,
+      this.ingredientsJson,
+      this.ingredientsRawText,
+      this.calories,
+      this.protein,
+      this.fat,
+      this.carbohydrate,
+      this.salt,
+      this.fiber,
+      this.vitaminC,
+      required this.isNutritionAutoExtracted,
+      required this.servings,
       this.lastAccessedAt,
       required this.createdAt,
       required this.updatedAt});
@@ -816,6 +1017,36 @@ class ExternalRecipeTableData extends DataClass
     if (!nullToAbsent || memo != null) {
       map['memo'] = Variable<String>(memo);
     }
+    if (!nullToAbsent || ingredientsJson != null) {
+      map['ingredients_json'] = Variable<String>(ingredientsJson);
+    }
+    if (!nullToAbsent || ingredientsRawText != null) {
+      map['ingredients_raw_text'] = Variable<String>(ingredientsRawText);
+    }
+    if (!nullToAbsent || calories != null) {
+      map['calories'] = Variable<double>(calories);
+    }
+    if (!nullToAbsent || protein != null) {
+      map['protein'] = Variable<double>(protein);
+    }
+    if (!nullToAbsent || fat != null) {
+      map['fat'] = Variable<double>(fat);
+    }
+    if (!nullToAbsent || carbohydrate != null) {
+      map['carbohydrate'] = Variable<double>(carbohydrate);
+    }
+    if (!nullToAbsent || salt != null) {
+      map['salt'] = Variable<double>(salt);
+    }
+    if (!nullToAbsent || fiber != null) {
+      map['fiber'] = Variable<double>(fiber);
+    }
+    if (!nullToAbsent || vitaminC != null) {
+      map['vitamin_c'] = Variable<double>(vitaminC);
+    }
+    map['is_nutrition_auto_extracted'] =
+        Variable<bool>(isNutritionAutoExtracted);
+    map['servings'] = Variable<int>(servings);
     if (!nullToAbsent || lastAccessedAt != null) {
       map['last_accessed_at'] = Variable<DateTime>(lastAccessedAt);
     }
@@ -841,6 +1072,30 @@ class ExternalRecipeTableData extends DataClass
       isFavorite: Value(isFavorite),
       tags: tags == null && nullToAbsent ? const Value.absent() : Value(tags),
       memo: memo == null && nullToAbsent ? const Value.absent() : Value(memo),
+      ingredientsJson: ingredientsJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ingredientsJson),
+      ingredientsRawText: ingredientsRawText == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ingredientsRawText),
+      calories: calories == null && nullToAbsent
+          ? const Value.absent()
+          : Value(calories),
+      protein: protein == null && nullToAbsent
+          ? const Value.absent()
+          : Value(protein),
+      fat: fat == null && nullToAbsent ? const Value.absent() : Value(fat),
+      carbohydrate: carbohydrate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(carbohydrate),
+      salt: salt == null && nullToAbsent ? const Value.absent() : Value(salt),
+      fiber:
+          fiber == null && nullToAbsent ? const Value.absent() : Value(fiber),
+      vitaminC: vitaminC == null && nullToAbsent
+          ? const Value.absent()
+          : Value(vitaminC),
+      isNutritionAutoExtracted: Value(isNutritionAutoExtracted),
+      servings: Value(servings),
       lastAccessedAt: lastAccessedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(lastAccessedAt),
@@ -862,6 +1117,19 @@ class ExternalRecipeTableData extends DataClass
       isFavorite: serializer.fromJson<bool>(json['isFavorite']),
       tags: serializer.fromJson<String?>(json['tags']),
       memo: serializer.fromJson<String?>(json['memo']),
+      ingredientsJson: serializer.fromJson<String?>(json['ingredientsJson']),
+      ingredientsRawText:
+          serializer.fromJson<String?>(json['ingredientsRawText']),
+      calories: serializer.fromJson<double?>(json['calories']),
+      protein: serializer.fromJson<double?>(json['protein']),
+      fat: serializer.fromJson<double?>(json['fat']),
+      carbohydrate: serializer.fromJson<double?>(json['carbohydrate']),
+      salt: serializer.fromJson<double?>(json['salt']),
+      fiber: serializer.fromJson<double?>(json['fiber']),
+      vitaminC: serializer.fromJson<double?>(json['vitaminC']),
+      isNutritionAutoExtracted:
+          serializer.fromJson<bool>(json['isNutritionAutoExtracted']),
+      servings: serializer.fromJson<int>(json['servings']),
       lastAccessedAt: serializer.fromJson<DateTime?>(json['lastAccessedAt']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
@@ -880,6 +1148,18 @@ class ExternalRecipeTableData extends DataClass
       'isFavorite': serializer.toJson<bool>(isFavorite),
       'tags': serializer.toJson<String?>(tags),
       'memo': serializer.toJson<String?>(memo),
+      'ingredientsJson': serializer.toJson<String?>(ingredientsJson),
+      'ingredientsRawText': serializer.toJson<String?>(ingredientsRawText),
+      'calories': serializer.toJson<double?>(calories),
+      'protein': serializer.toJson<double?>(protein),
+      'fat': serializer.toJson<double?>(fat),
+      'carbohydrate': serializer.toJson<double?>(carbohydrate),
+      'salt': serializer.toJson<double?>(salt),
+      'fiber': serializer.toJson<double?>(fiber),
+      'vitaminC': serializer.toJson<double?>(vitaminC),
+      'isNutritionAutoExtracted':
+          serializer.toJson<bool>(isNutritionAutoExtracted),
+      'servings': serializer.toJson<int>(servings),
       'lastAccessedAt': serializer.toJson<DateTime?>(lastAccessedAt),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
@@ -896,6 +1176,17 @@ class ExternalRecipeTableData extends DataClass
           bool? isFavorite,
           Value<String?> tags = const Value.absent(),
           Value<String?> memo = const Value.absent(),
+          Value<String?> ingredientsJson = const Value.absent(),
+          Value<String?> ingredientsRawText = const Value.absent(),
+          Value<double?> calories = const Value.absent(),
+          Value<double?> protein = const Value.absent(),
+          Value<double?> fat = const Value.absent(),
+          Value<double?> carbohydrate = const Value.absent(),
+          Value<double?> salt = const Value.absent(),
+          Value<double?> fiber = const Value.absent(),
+          Value<double?> vitaminC = const Value.absent(),
+          bool? isNutritionAutoExtracted,
+          int? servings,
           Value<DateTime?> lastAccessedAt = const Value.absent(),
           DateTime? createdAt,
           DateTime? updatedAt}) =>
@@ -909,6 +1200,23 @@ class ExternalRecipeTableData extends DataClass
         isFavorite: isFavorite ?? this.isFavorite,
         tags: tags.present ? tags.value : this.tags,
         memo: memo.present ? memo.value : this.memo,
+        ingredientsJson: ingredientsJson.present
+            ? ingredientsJson.value
+            : this.ingredientsJson,
+        ingredientsRawText: ingredientsRawText.present
+            ? ingredientsRawText.value
+            : this.ingredientsRawText,
+        calories: calories.present ? calories.value : this.calories,
+        protein: protein.present ? protein.value : this.protein,
+        fat: fat.present ? fat.value : this.fat,
+        carbohydrate:
+            carbohydrate.present ? carbohydrate.value : this.carbohydrate,
+        salt: salt.present ? salt.value : this.salt,
+        fiber: fiber.present ? fiber.value : this.fiber,
+        vitaminC: vitaminC.present ? vitaminC.value : this.vitaminC,
+        isNutritionAutoExtracted:
+            isNutritionAutoExtracted ?? this.isNutritionAutoExtracted,
+        servings: servings ?? this.servings,
         lastAccessedAt:
             lastAccessedAt.present ? lastAccessedAt.value : this.lastAccessedAt,
         createdAt: createdAt ?? this.createdAt,
@@ -927,6 +1235,25 @@ class ExternalRecipeTableData extends DataClass
           data.isFavorite.present ? data.isFavorite.value : this.isFavorite,
       tags: data.tags.present ? data.tags.value : this.tags,
       memo: data.memo.present ? data.memo.value : this.memo,
+      ingredientsJson: data.ingredientsJson.present
+          ? data.ingredientsJson.value
+          : this.ingredientsJson,
+      ingredientsRawText: data.ingredientsRawText.present
+          ? data.ingredientsRawText.value
+          : this.ingredientsRawText,
+      calories: data.calories.present ? data.calories.value : this.calories,
+      protein: data.protein.present ? data.protein.value : this.protein,
+      fat: data.fat.present ? data.fat.value : this.fat,
+      carbohydrate: data.carbohydrate.present
+          ? data.carbohydrate.value
+          : this.carbohydrate,
+      salt: data.salt.present ? data.salt.value : this.salt,
+      fiber: data.fiber.present ? data.fiber.value : this.fiber,
+      vitaminC: data.vitaminC.present ? data.vitaminC.value : this.vitaminC,
+      isNutritionAutoExtracted: data.isNutritionAutoExtracted.present
+          ? data.isNutritionAutoExtracted.value
+          : this.isNutritionAutoExtracted,
+      servings: data.servings.present ? data.servings.value : this.servings,
       lastAccessedAt: data.lastAccessedAt.present
           ? data.lastAccessedAt.value
           : this.lastAccessedAt,
@@ -947,6 +1274,17 @@ class ExternalRecipeTableData extends DataClass
           ..write('isFavorite: $isFavorite, ')
           ..write('tags: $tags, ')
           ..write('memo: $memo, ')
+          ..write('ingredientsJson: $ingredientsJson, ')
+          ..write('ingredientsRawText: $ingredientsRawText, ')
+          ..write('calories: $calories, ')
+          ..write('protein: $protein, ')
+          ..write('fat: $fat, ')
+          ..write('carbohydrate: $carbohydrate, ')
+          ..write('salt: $salt, ')
+          ..write('fiber: $fiber, ')
+          ..write('vitaminC: $vitaminC, ')
+          ..write('isNutritionAutoExtracted: $isNutritionAutoExtracted, ')
+          ..write('servings: $servings, ')
           ..write('lastAccessedAt: $lastAccessedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -955,8 +1293,31 @@ class ExternalRecipeTableData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(id, url, title, description, imageUrl,
-      siteName, isFavorite, tags, memo, lastAccessedAt, createdAt, updatedAt);
+  int get hashCode => Object.hashAll([
+        id,
+        url,
+        title,
+        description,
+        imageUrl,
+        siteName,
+        isFavorite,
+        tags,
+        memo,
+        ingredientsJson,
+        ingredientsRawText,
+        calories,
+        protein,
+        fat,
+        carbohydrate,
+        salt,
+        fiber,
+        vitaminC,
+        isNutritionAutoExtracted,
+        servings,
+        lastAccessedAt,
+        createdAt,
+        updatedAt
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -970,6 +1331,17 @@ class ExternalRecipeTableData extends DataClass
           other.isFavorite == this.isFavorite &&
           other.tags == this.tags &&
           other.memo == this.memo &&
+          other.ingredientsJson == this.ingredientsJson &&
+          other.ingredientsRawText == this.ingredientsRawText &&
+          other.calories == this.calories &&
+          other.protein == this.protein &&
+          other.fat == this.fat &&
+          other.carbohydrate == this.carbohydrate &&
+          other.salt == this.salt &&
+          other.fiber == this.fiber &&
+          other.vitaminC == this.vitaminC &&
+          other.isNutritionAutoExtracted == this.isNutritionAutoExtracted &&
+          other.servings == this.servings &&
           other.lastAccessedAt == this.lastAccessedAt &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
@@ -986,6 +1358,17 @@ class ExternalRecipeTableCompanion
   final Value<bool> isFavorite;
   final Value<String?> tags;
   final Value<String?> memo;
+  final Value<String?> ingredientsJson;
+  final Value<String?> ingredientsRawText;
+  final Value<double?> calories;
+  final Value<double?> protein;
+  final Value<double?> fat;
+  final Value<double?> carbohydrate;
+  final Value<double?> salt;
+  final Value<double?> fiber;
+  final Value<double?> vitaminC;
+  final Value<bool> isNutritionAutoExtracted;
+  final Value<int> servings;
   final Value<DateTime?> lastAccessedAt;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
@@ -999,6 +1382,17 @@ class ExternalRecipeTableCompanion
     this.isFavorite = const Value.absent(),
     this.tags = const Value.absent(),
     this.memo = const Value.absent(),
+    this.ingredientsJson = const Value.absent(),
+    this.ingredientsRawText = const Value.absent(),
+    this.calories = const Value.absent(),
+    this.protein = const Value.absent(),
+    this.fat = const Value.absent(),
+    this.carbohydrate = const Value.absent(),
+    this.salt = const Value.absent(),
+    this.fiber = const Value.absent(),
+    this.vitaminC = const Value.absent(),
+    this.isNutritionAutoExtracted = const Value.absent(),
+    this.servings = const Value.absent(),
     this.lastAccessedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -1013,6 +1407,17 @@ class ExternalRecipeTableCompanion
     this.isFavorite = const Value.absent(),
     this.tags = const Value.absent(),
     this.memo = const Value.absent(),
+    this.ingredientsJson = const Value.absent(),
+    this.ingredientsRawText = const Value.absent(),
+    this.calories = const Value.absent(),
+    this.protein = const Value.absent(),
+    this.fat = const Value.absent(),
+    this.carbohydrate = const Value.absent(),
+    this.salt = const Value.absent(),
+    this.fiber = const Value.absent(),
+    this.vitaminC = const Value.absent(),
+    this.isNutritionAutoExtracted = const Value.absent(),
+    this.servings = const Value.absent(),
     this.lastAccessedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -1028,6 +1433,17 @@ class ExternalRecipeTableCompanion
     Expression<bool>? isFavorite,
     Expression<String>? tags,
     Expression<String>? memo,
+    Expression<String>? ingredientsJson,
+    Expression<String>? ingredientsRawText,
+    Expression<double>? calories,
+    Expression<double>? protein,
+    Expression<double>? fat,
+    Expression<double>? carbohydrate,
+    Expression<double>? salt,
+    Expression<double>? fiber,
+    Expression<double>? vitaminC,
+    Expression<bool>? isNutritionAutoExtracted,
+    Expression<int>? servings,
     Expression<DateTime>? lastAccessedAt,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
@@ -1042,6 +1458,19 @@ class ExternalRecipeTableCompanion
       if (isFavorite != null) 'is_favorite': isFavorite,
       if (tags != null) 'tags': tags,
       if (memo != null) 'memo': memo,
+      if (ingredientsJson != null) 'ingredients_json': ingredientsJson,
+      if (ingredientsRawText != null)
+        'ingredients_raw_text': ingredientsRawText,
+      if (calories != null) 'calories': calories,
+      if (protein != null) 'protein': protein,
+      if (fat != null) 'fat': fat,
+      if (carbohydrate != null) 'carbohydrate': carbohydrate,
+      if (salt != null) 'salt': salt,
+      if (fiber != null) 'fiber': fiber,
+      if (vitaminC != null) 'vitamin_c': vitaminC,
+      if (isNutritionAutoExtracted != null)
+        'is_nutrition_auto_extracted': isNutritionAutoExtracted,
+      if (servings != null) 'servings': servings,
       if (lastAccessedAt != null) 'last_accessed_at': lastAccessedAt,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -1058,6 +1487,17 @@ class ExternalRecipeTableCompanion
       Value<bool>? isFavorite,
       Value<String?>? tags,
       Value<String?>? memo,
+      Value<String?>? ingredientsJson,
+      Value<String?>? ingredientsRawText,
+      Value<double?>? calories,
+      Value<double?>? protein,
+      Value<double?>? fat,
+      Value<double?>? carbohydrate,
+      Value<double?>? salt,
+      Value<double?>? fiber,
+      Value<double?>? vitaminC,
+      Value<bool>? isNutritionAutoExtracted,
+      Value<int>? servings,
       Value<DateTime?>? lastAccessedAt,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt}) {
@@ -1071,6 +1511,18 @@ class ExternalRecipeTableCompanion
       isFavorite: isFavorite ?? this.isFavorite,
       tags: tags ?? this.tags,
       memo: memo ?? this.memo,
+      ingredientsJson: ingredientsJson ?? this.ingredientsJson,
+      ingredientsRawText: ingredientsRawText ?? this.ingredientsRawText,
+      calories: calories ?? this.calories,
+      protein: protein ?? this.protein,
+      fat: fat ?? this.fat,
+      carbohydrate: carbohydrate ?? this.carbohydrate,
+      salt: salt ?? this.salt,
+      fiber: fiber ?? this.fiber,
+      vitaminC: vitaminC ?? this.vitaminC,
+      isNutritionAutoExtracted:
+          isNutritionAutoExtracted ?? this.isNutritionAutoExtracted,
+      servings: servings ?? this.servings,
       lastAccessedAt: lastAccessedAt ?? this.lastAccessedAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -1107,6 +1559,40 @@ class ExternalRecipeTableCompanion
     if (memo.present) {
       map['memo'] = Variable<String>(memo.value);
     }
+    if (ingredientsJson.present) {
+      map['ingredients_json'] = Variable<String>(ingredientsJson.value);
+    }
+    if (ingredientsRawText.present) {
+      map['ingredients_raw_text'] = Variable<String>(ingredientsRawText.value);
+    }
+    if (calories.present) {
+      map['calories'] = Variable<double>(calories.value);
+    }
+    if (protein.present) {
+      map['protein'] = Variable<double>(protein.value);
+    }
+    if (fat.present) {
+      map['fat'] = Variable<double>(fat.value);
+    }
+    if (carbohydrate.present) {
+      map['carbohydrate'] = Variable<double>(carbohydrate.value);
+    }
+    if (salt.present) {
+      map['salt'] = Variable<double>(salt.value);
+    }
+    if (fiber.present) {
+      map['fiber'] = Variable<double>(fiber.value);
+    }
+    if (vitaminC.present) {
+      map['vitamin_c'] = Variable<double>(vitaminC.value);
+    }
+    if (isNutritionAutoExtracted.present) {
+      map['is_nutrition_auto_extracted'] =
+          Variable<bool>(isNutritionAutoExtracted.value);
+    }
+    if (servings.present) {
+      map['servings'] = Variable<int>(servings.value);
+    }
     if (lastAccessedAt.present) {
       map['last_accessed_at'] = Variable<DateTime>(lastAccessedAt.value);
     }
@@ -1131,6 +1617,17 @@ class ExternalRecipeTableCompanion
           ..write('isFavorite: $isFavorite, ')
           ..write('tags: $tags, ')
           ..write('memo: $memo, ')
+          ..write('ingredientsJson: $ingredientsJson, ')
+          ..write('ingredientsRawText: $ingredientsRawText, ')
+          ..write('calories: $calories, ')
+          ..write('protein: $protein, ')
+          ..write('fat: $fat, ')
+          ..write('carbohydrate: $carbohydrate, ')
+          ..write('salt: $salt, ')
+          ..write('fiber: $fiber, ')
+          ..write('vitaminC: $vitaminC, ')
+          ..write('isNutritionAutoExtracted: $isNutritionAutoExtracted, ')
+          ..write('servings: $servings, ')
           ..write('lastAccessedAt: $lastAccessedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -3716,6 +4213,1501 @@ class RecipeTableCompanion extends UpdateCompanion<RecipeTableData> {
   }
 }
 
+class $JapaneseFoodCompositionTableTable extends JapaneseFoodCompositionTable
+    with
+        TableInfo<$JapaneseFoodCompositionTableTable,
+            JapaneseFoodCompositionTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $JapaneseFoodCompositionTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _groupIdMeta =
+      const VerificationMeta('groupId');
+  @override
+  late final GeneratedColumn<int> groupId = GeneratedColumn<int>(
+      'group_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _foodIdMeta = const VerificationMeta('foodId');
+  @override
+  late final GeneratedColumn<int> foodId = GeneratedColumn<int>(
+      'food_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  static const VerificationMeta _indexIdMeta =
+      const VerificationMeta('indexId');
+  @override
+  late final GeneratedColumn<int> indexId = GeneratedColumn<int>(
+      'index_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _foodNameMeta =
+      const VerificationMeta('foodName');
+  @override
+  late final GeneratedColumn<String> foodName = GeneratedColumn<String>(
+      'food_name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _refuseMeta = const VerificationMeta('refuse');
+  @override
+  late final GeneratedColumn<double> refuse = GeneratedColumn<double>(
+      'refuse', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0.0));
+  static const VerificationMeta _enercMeta = const VerificationMeta('enerc');
+  @override
+  late final GeneratedColumn<double> enerc = GeneratedColumn<double>(
+      'enerc', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _enercKcalMeta =
+      const VerificationMeta('enercKcal');
+  @override
+  late final GeneratedColumn<double> enercKcal = GeneratedColumn<double>(
+      'enerc_kcal', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _waterMeta = const VerificationMeta('water');
+  @override
+  late final GeneratedColumn<double> water = GeneratedColumn<double>(
+      'water', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _protcaaMeta =
+      const VerificationMeta('protcaa');
+  @override
+  late final GeneratedColumn<double> protcaa = GeneratedColumn<double>(
+      'protcaa', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _protMeta = const VerificationMeta('prot');
+  @override
+  late final GeneratedColumn<double> prot = GeneratedColumn<double>(
+      'prot', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _fatnleaMeta =
+      const VerificationMeta('fatnlea');
+  @override
+  late final GeneratedColumn<double> fatnlea = GeneratedColumn<double>(
+      'fatnlea', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _choleMeta = const VerificationMeta('chole');
+  @override
+  late final GeneratedColumn<double> chole = GeneratedColumn<double>(
+      'chole', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _fatMeta = const VerificationMeta('fat');
+  @override
+  late final GeneratedColumn<double> fat = GeneratedColumn<double>(
+      'fat', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _choavlmMeta =
+      const VerificationMeta('choavlm');
+  @override
+  late final GeneratedColumn<double> choavlm = GeneratedColumn<double>(
+      'choavlm', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _choavlMeta = const VerificationMeta('choavl');
+  @override
+  late final GeneratedColumn<double> choavl = GeneratedColumn<double>(
+      'choavl', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _choavldfMeta =
+      const VerificationMeta('choavldf');
+  @override
+  late final GeneratedColumn<double> choavldf = GeneratedColumn<double>(
+      'choavldf', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _fibMeta = const VerificationMeta('fib');
+  @override
+  late final GeneratedColumn<double> fib = GeneratedColumn<double>(
+      'fib', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _polylMeta = const VerificationMeta('polyl');
+  @override
+  late final GeneratedColumn<double> polyl = GeneratedColumn<double>(
+      'polyl', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _chocdfMeta = const VerificationMeta('chocdf');
+  @override
+  late final GeneratedColumn<double> chocdf = GeneratedColumn<double>(
+      'chocdf', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _oaMeta = const VerificationMeta('oa');
+  @override
+  late final GeneratedColumn<double> oa = GeneratedColumn<double>(
+      'oa', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _ashMeta = const VerificationMeta('ash');
+  @override
+  late final GeneratedColumn<double> ash = GeneratedColumn<double>(
+      'ash', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _naMeta = const VerificationMeta('na');
+  @override
+  late final GeneratedColumn<double> na = GeneratedColumn<double>(
+      'na', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _kMeta = const VerificationMeta('k');
+  @override
+  late final GeneratedColumn<double> k = GeneratedColumn<double>(
+      'k', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _caMeta = const VerificationMeta('ca');
+  @override
+  late final GeneratedColumn<double> ca = GeneratedColumn<double>(
+      'ca', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _mgMeta = const VerificationMeta('mg');
+  @override
+  late final GeneratedColumn<double> mg = GeneratedColumn<double>(
+      'mg', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _pMeta = const VerificationMeta('p');
+  @override
+  late final GeneratedColumn<double> p = GeneratedColumn<double>(
+      'p', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _feMeta = const VerificationMeta('fe');
+  @override
+  late final GeneratedColumn<double> fe = GeneratedColumn<double>(
+      'fe', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _znMeta = const VerificationMeta('zn');
+  @override
+  late final GeneratedColumn<double> zn = GeneratedColumn<double>(
+      'zn', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _cuMeta = const VerificationMeta('cu');
+  @override
+  late final GeneratedColumn<double> cu = GeneratedColumn<double>(
+      'cu', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _mnMeta = const VerificationMeta('mn');
+  @override
+  late final GeneratedColumn<double> mn = GeneratedColumn<double>(
+      'mn', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _iodineMeta = const VerificationMeta('iodine');
+  @override
+  late final GeneratedColumn<double> iodine = GeneratedColumn<double>(
+      'iodine', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _seMeta = const VerificationMeta('se');
+  @override
+  late final GeneratedColumn<double> se = GeneratedColumn<double>(
+      'se', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _crMeta = const VerificationMeta('cr');
+  @override
+  late final GeneratedColumn<double> cr = GeneratedColumn<double>(
+      'cr', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _moMeta = const VerificationMeta('mo');
+  @override
+  late final GeneratedColumn<double> mo = GeneratedColumn<double>(
+      'mo', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _retolMeta = const VerificationMeta('retol');
+  @override
+  late final GeneratedColumn<double> retol = GeneratedColumn<double>(
+      'retol', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _cartaMeta = const VerificationMeta('carta');
+  @override
+  late final GeneratedColumn<double> carta = GeneratedColumn<double>(
+      'carta', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _cartbMeta = const VerificationMeta('cartb');
+  @override
+  late final GeneratedColumn<double> cartb = GeneratedColumn<double>(
+      'cartb', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _crypxbMeta = const VerificationMeta('crypxb');
+  @override
+  late final GeneratedColumn<double> crypxb = GeneratedColumn<double>(
+      'crypxb', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _cartbeqMeta =
+      const VerificationMeta('cartbeq');
+  @override
+  late final GeneratedColumn<double> cartbeq = GeneratedColumn<double>(
+      'cartbeq', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _vitaRaeMeta =
+      const VerificationMeta('vitaRae');
+  @override
+  late final GeneratedColumn<double> vitaRae = GeneratedColumn<double>(
+      'vita_rae', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _vitDMeta = const VerificationMeta('vitD');
+  @override
+  late final GeneratedColumn<double> vitD = GeneratedColumn<double>(
+      'vit_d', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _tocphAMeta = const VerificationMeta('tocphA');
+  @override
+  late final GeneratedColumn<double> tocphA = GeneratedColumn<double>(
+      'tocph_a', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _tocphBMeta = const VerificationMeta('tocphB');
+  @override
+  late final GeneratedColumn<double> tocphB = GeneratedColumn<double>(
+      'tocph_b', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _tocphGMeta = const VerificationMeta('tocphG');
+  @override
+  late final GeneratedColumn<double> tocphG = GeneratedColumn<double>(
+      'tocph_g', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _tocphDMeta = const VerificationMeta('tocphD');
+  @override
+  late final GeneratedColumn<double> tocphD = GeneratedColumn<double>(
+      'tocph_d', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _vitKMeta = const VerificationMeta('vitK');
+  @override
+  late final GeneratedColumn<double> vitK = GeneratedColumn<double>(
+      'vit_k', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _thiaMeta = const VerificationMeta('thia');
+  @override
+  late final GeneratedColumn<double> thia = GeneratedColumn<double>(
+      'thia', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _ribfMeta = const VerificationMeta('ribf');
+  @override
+  late final GeneratedColumn<double> ribf = GeneratedColumn<double>(
+      'ribf', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _niaMeta = const VerificationMeta('nia');
+  @override
+  late final GeneratedColumn<double> nia = GeneratedColumn<double>(
+      'nia', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _neMeta = const VerificationMeta('ne');
+  @override
+  late final GeneratedColumn<double> ne = GeneratedColumn<double>(
+      'ne', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _vitB6AMeta = const VerificationMeta('vitB6A');
+  @override
+  late final GeneratedColumn<double> vitB6A = GeneratedColumn<double>(
+      'vit_b6_a', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _vitB12Meta = const VerificationMeta('vitB12');
+  @override
+  late final GeneratedColumn<double> vitB12 = GeneratedColumn<double>(
+      'vit_b12', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _folMeta = const VerificationMeta('fol');
+  @override
+  late final GeneratedColumn<double> fol = GeneratedColumn<double>(
+      'fol', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _pantacMeta = const VerificationMeta('pantac');
+  @override
+  late final GeneratedColumn<double> pantac = GeneratedColumn<double>(
+      'pantac', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _biotMeta = const VerificationMeta('biot');
+  @override
+  late final GeneratedColumn<double> biot = GeneratedColumn<double>(
+      'biot', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _vitCMeta = const VerificationMeta('vitC');
+  @override
+  late final GeneratedColumn<double> vitC = GeneratedColumn<double>(
+      'vit_c', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _alcMeta = const VerificationMeta('alc');
+  @override
+  late final GeneratedColumn<double> alc = GeneratedColumn<double>(
+      'alc', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _naclEqMeta = const VerificationMeta('naclEq');
+  @override
+  late final GeneratedColumn<double> naclEq = GeneratedColumn<double>(
+      'nacl_eq', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        groupId,
+        foodId,
+        indexId,
+        foodName,
+        refuse,
+        enerc,
+        enercKcal,
+        water,
+        protcaa,
+        prot,
+        fatnlea,
+        chole,
+        fat,
+        choavlm,
+        choavl,
+        choavldf,
+        fib,
+        polyl,
+        chocdf,
+        oa,
+        ash,
+        na,
+        k,
+        ca,
+        mg,
+        p,
+        fe,
+        zn,
+        cu,
+        mn,
+        iodine,
+        se,
+        cr,
+        mo,
+        retol,
+        carta,
+        cartb,
+        crypxb,
+        cartbeq,
+        vitaRae,
+        vitD,
+        tocphA,
+        tocphB,
+        tocphG,
+        tocphD,
+        vitK,
+        thia,
+        ribf,
+        nia,
+        ne,
+        vitB6A,
+        vitB12,
+        fol,
+        pantac,
+        biot,
+        vitC,
+        alc,
+        naclEq,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'japanese_food_composition_table';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<JapaneseFoodCompositionTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('group_id')) {
+      context.handle(_groupIdMeta,
+          groupId.isAcceptableOrUnknown(data['group_id']!, _groupIdMeta));
+    } else if (isInserting) {
+      context.missing(_groupIdMeta);
+    }
+    if (data.containsKey('food_id')) {
+      context.handle(_foodIdMeta,
+          foodId.isAcceptableOrUnknown(data['food_id']!, _foodIdMeta));
+    } else if (isInserting) {
+      context.missing(_foodIdMeta);
+    }
+    if (data.containsKey('index_id')) {
+      context.handle(_indexIdMeta,
+          indexId.isAcceptableOrUnknown(data['index_id']!, _indexIdMeta));
+    } else if (isInserting) {
+      context.missing(_indexIdMeta);
+    }
+    if (data.containsKey('food_name')) {
+      context.handle(_foodNameMeta,
+          foodName.isAcceptableOrUnknown(data['food_name']!, _foodNameMeta));
+    } else if (isInserting) {
+      context.missing(_foodNameMeta);
+    }
+    if (data.containsKey('refuse')) {
+      context.handle(_refuseMeta,
+          refuse.isAcceptableOrUnknown(data['refuse']!, _refuseMeta));
+    }
+    if (data.containsKey('enerc')) {
+      context.handle(
+          _enercMeta, enerc.isAcceptableOrUnknown(data['enerc']!, _enercMeta));
+    }
+    if (data.containsKey('enerc_kcal')) {
+      context.handle(_enercKcalMeta,
+          enercKcal.isAcceptableOrUnknown(data['enerc_kcal']!, _enercKcalMeta));
+    }
+    if (data.containsKey('water')) {
+      context.handle(
+          _waterMeta, water.isAcceptableOrUnknown(data['water']!, _waterMeta));
+    }
+    if (data.containsKey('protcaa')) {
+      context.handle(_protcaaMeta,
+          protcaa.isAcceptableOrUnknown(data['protcaa']!, _protcaaMeta));
+    }
+    if (data.containsKey('prot')) {
+      context.handle(
+          _protMeta, prot.isAcceptableOrUnknown(data['prot']!, _protMeta));
+    }
+    if (data.containsKey('fatnlea')) {
+      context.handle(_fatnleaMeta,
+          fatnlea.isAcceptableOrUnknown(data['fatnlea']!, _fatnleaMeta));
+    }
+    if (data.containsKey('chole')) {
+      context.handle(
+          _choleMeta, chole.isAcceptableOrUnknown(data['chole']!, _choleMeta));
+    }
+    if (data.containsKey('fat')) {
+      context.handle(
+          _fatMeta, fat.isAcceptableOrUnknown(data['fat']!, _fatMeta));
+    }
+    if (data.containsKey('choavlm')) {
+      context.handle(_choavlmMeta,
+          choavlm.isAcceptableOrUnknown(data['choavlm']!, _choavlmMeta));
+    }
+    if (data.containsKey('choavl')) {
+      context.handle(_choavlMeta,
+          choavl.isAcceptableOrUnknown(data['choavl']!, _choavlMeta));
+    }
+    if (data.containsKey('choavldf')) {
+      context.handle(_choavldfMeta,
+          choavldf.isAcceptableOrUnknown(data['choavldf']!, _choavldfMeta));
+    }
+    if (data.containsKey('fib')) {
+      context.handle(
+          _fibMeta, fib.isAcceptableOrUnknown(data['fib']!, _fibMeta));
+    }
+    if (data.containsKey('polyl')) {
+      context.handle(
+          _polylMeta, polyl.isAcceptableOrUnknown(data['polyl']!, _polylMeta));
+    }
+    if (data.containsKey('chocdf')) {
+      context.handle(_chocdfMeta,
+          chocdf.isAcceptableOrUnknown(data['chocdf']!, _chocdfMeta));
+    }
+    if (data.containsKey('oa')) {
+      context.handle(_oaMeta, oa.isAcceptableOrUnknown(data['oa']!, _oaMeta));
+    }
+    if (data.containsKey('ash')) {
+      context.handle(
+          _ashMeta, ash.isAcceptableOrUnknown(data['ash']!, _ashMeta));
+    }
+    if (data.containsKey('na')) {
+      context.handle(_naMeta, na.isAcceptableOrUnknown(data['na']!, _naMeta));
+    }
+    if (data.containsKey('k')) {
+      context.handle(_kMeta, k.isAcceptableOrUnknown(data['k']!, _kMeta));
+    }
+    if (data.containsKey('ca')) {
+      context.handle(_caMeta, ca.isAcceptableOrUnknown(data['ca']!, _caMeta));
+    }
+    if (data.containsKey('mg')) {
+      context.handle(_mgMeta, mg.isAcceptableOrUnknown(data['mg']!, _mgMeta));
+    }
+    if (data.containsKey('p')) {
+      context.handle(_pMeta, p.isAcceptableOrUnknown(data['p']!, _pMeta));
+    }
+    if (data.containsKey('fe')) {
+      context.handle(_feMeta, fe.isAcceptableOrUnknown(data['fe']!, _feMeta));
+    }
+    if (data.containsKey('zn')) {
+      context.handle(_znMeta, zn.isAcceptableOrUnknown(data['zn']!, _znMeta));
+    }
+    if (data.containsKey('cu')) {
+      context.handle(_cuMeta, cu.isAcceptableOrUnknown(data['cu']!, _cuMeta));
+    }
+    if (data.containsKey('mn')) {
+      context.handle(_mnMeta, mn.isAcceptableOrUnknown(data['mn']!, _mnMeta));
+    }
+    if (data.containsKey('iodine')) {
+      context.handle(_iodineMeta,
+          iodine.isAcceptableOrUnknown(data['iodine']!, _iodineMeta));
+    }
+    if (data.containsKey('se')) {
+      context.handle(_seMeta, se.isAcceptableOrUnknown(data['se']!, _seMeta));
+    }
+    if (data.containsKey('cr')) {
+      context.handle(_crMeta, cr.isAcceptableOrUnknown(data['cr']!, _crMeta));
+    }
+    if (data.containsKey('mo')) {
+      context.handle(_moMeta, mo.isAcceptableOrUnknown(data['mo']!, _moMeta));
+    }
+    if (data.containsKey('retol')) {
+      context.handle(
+          _retolMeta, retol.isAcceptableOrUnknown(data['retol']!, _retolMeta));
+    }
+    if (data.containsKey('carta')) {
+      context.handle(
+          _cartaMeta, carta.isAcceptableOrUnknown(data['carta']!, _cartaMeta));
+    }
+    if (data.containsKey('cartb')) {
+      context.handle(
+          _cartbMeta, cartb.isAcceptableOrUnknown(data['cartb']!, _cartbMeta));
+    }
+    if (data.containsKey('crypxb')) {
+      context.handle(_crypxbMeta,
+          crypxb.isAcceptableOrUnknown(data['crypxb']!, _crypxbMeta));
+    }
+    if (data.containsKey('cartbeq')) {
+      context.handle(_cartbeqMeta,
+          cartbeq.isAcceptableOrUnknown(data['cartbeq']!, _cartbeqMeta));
+    }
+    if (data.containsKey('vita_rae')) {
+      context.handle(_vitaRaeMeta,
+          vitaRae.isAcceptableOrUnknown(data['vita_rae']!, _vitaRaeMeta));
+    }
+    if (data.containsKey('vit_d')) {
+      context.handle(
+          _vitDMeta, vitD.isAcceptableOrUnknown(data['vit_d']!, _vitDMeta));
+    }
+    if (data.containsKey('tocph_a')) {
+      context.handle(_tocphAMeta,
+          tocphA.isAcceptableOrUnknown(data['tocph_a']!, _tocphAMeta));
+    }
+    if (data.containsKey('tocph_b')) {
+      context.handle(_tocphBMeta,
+          tocphB.isAcceptableOrUnknown(data['tocph_b']!, _tocphBMeta));
+    }
+    if (data.containsKey('tocph_g')) {
+      context.handle(_tocphGMeta,
+          tocphG.isAcceptableOrUnknown(data['tocph_g']!, _tocphGMeta));
+    }
+    if (data.containsKey('tocph_d')) {
+      context.handle(_tocphDMeta,
+          tocphD.isAcceptableOrUnknown(data['tocph_d']!, _tocphDMeta));
+    }
+    if (data.containsKey('vit_k')) {
+      context.handle(
+          _vitKMeta, vitK.isAcceptableOrUnknown(data['vit_k']!, _vitKMeta));
+    }
+    if (data.containsKey('thia')) {
+      context.handle(
+          _thiaMeta, thia.isAcceptableOrUnknown(data['thia']!, _thiaMeta));
+    }
+    if (data.containsKey('ribf')) {
+      context.handle(
+          _ribfMeta, ribf.isAcceptableOrUnknown(data['ribf']!, _ribfMeta));
+    }
+    if (data.containsKey('nia')) {
+      context.handle(
+          _niaMeta, nia.isAcceptableOrUnknown(data['nia']!, _niaMeta));
+    }
+    if (data.containsKey('ne')) {
+      context.handle(_neMeta, ne.isAcceptableOrUnknown(data['ne']!, _neMeta));
+    }
+    if (data.containsKey('vit_b6_a')) {
+      context.handle(_vitB6AMeta,
+          vitB6A.isAcceptableOrUnknown(data['vit_b6_a']!, _vitB6AMeta));
+    }
+    if (data.containsKey('vit_b12')) {
+      context.handle(_vitB12Meta,
+          vitB12.isAcceptableOrUnknown(data['vit_b12']!, _vitB12Meta));
+    }
+    if (data.containsKey('fol')) {
+      context.handle(
+          _folMeta, fol.isAcceptableOrUnknown(data['fol']!, _folMeta));
+    }
+    if (data.containsKey('pantac')) {
+      context.handle(_pantacMeta,
+          pantac.isAcceptableOrUnknown(data['pantac']!, _pantacMeta));
+    }
+    if (data.containsKey('biot')) {
+      context.handle(
+          _biotMeta, biot.isAcceptableOrUnknown(data['biot']!, _biotMeta));
+    }
+    if (data.containsKey('vit_c')) {
+      context.handle(
+          _vitCMeta, vitC.isAcceptableOrUnknown(data['vit_c']!, _vitCMeta));
+    }
+    if (data.containsKey('alc')) {
+      context.handle(
+          _alcMeta, alc.isAcceptableOrUnknown(data['alc']!, _alcMeta));
+    }
+    if (data.containsKey('nacl_eq')) {
+      context.handle(_naclEqMeta,
+          naclEq.isAcceptableOrUnknown(data['nacl_eq']!, _naclEqMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  JapaneseFoodCompositionTableData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return JapaneseFoodCompositionTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      groupId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}group_id'])!,
+      foodId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}food_id'])!,
+      indexId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}index_id'])!,
+      foodName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}food_name'])!,
+      refuse: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}refuse'])!,
+      enerc: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}enerc']),
+      enercKcal: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}enerc_kcal']),
+      water: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}water']),
+      protcaa: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}protcaa']),
+      prot: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}prot']),
+      fatnlea: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}fatnlea']),
+      chole: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}chole']),
+      fat: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}fat']),
+      choavlm: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}choavlm']),
+      choavl: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}choavl']),
+      choavldf: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}choavldf']),
+      fib: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}fib']),
+      polyl: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}polyl']),
+      chocdf: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}chocdf']),
+      oa: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}oa']),
+      ash: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}ash']),
+      na: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}na']),
+      k: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}k']),
+      ca: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}ca']),
+      mg: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}mg']),
+      p: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}p']),
+      fe: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}fe']),
+      zn: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}zn']),
+      cu: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}cu']),
+      mn: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}mn']),
+      iodine: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}iodine']),
+      se: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}se']),
+      cr: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}cr']),
+      mo: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}mo']),
+      retol: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}retol']),
+      carta: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}carta']),
+      cartb: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}cartb']),
+      crypxb: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}crypxb']),
+      cartbeq: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}cartbeq']),
+      vitaRae: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}vita_rae']),
+      vitD: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}vit_d']),
+      tocphA: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}tocph_a']),
+      tocphB: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}tocph_b']),
+      tocphG: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}tocph_g']),
+      tocphD: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}tocph_d']),
+      vitK: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}vit_k']),
+      thia: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}thia']),
+      ribf: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}ribf']),
+      nia: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}nia']),
+      ne: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}ne']),
+      vitB6A: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}vit_b6_a']),
+      vitB12: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}vit_b12']),
+      fol: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}fol']),
+      pantac: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}pantac']),
+      biot: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}biot']),
+      vitC: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}vit_c']),
+      alc: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}alc']),
+      naclEq: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}nacl_eq']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $JapaneseFoodCompositionTableTable createAlias(String alias) {
+    return $JapaneseFoodCompositionTableTable(attachedDatabase, alias);
+  }
+}
+
+class JapaneseFoodCompositionTableCompanion
+    extends UpdateCompanion<JapaneseFoodCompositionTableData> {
+  final Value<int> id;
+  final Value<int> groupId;
+  final Value<int> foodId;
+  final Value<int> indexId;
+  final Value<String> foodName;
+  final Value<double> refuse;
+  final Value<double?> enerc;
+  final Value<double?> enercKcal;
+  final Value<double?> water;
+  final Value<double?> protcaa;
+  final Value<double?> prot;
+  final Value<double?> fatnlea;
+  final Value<double?> chole;
+  final Value<double?> fat;
+  final Value<double?> choavlm;
+  final Value<double?> choavl;
+  final Value<double?> choavldf;
+  final Value<double?> fib;
+  final Value<double?> polyl;
+  final Value<double?> chocdf;
+  final Value<double?> oa;
+  final Value<double?> ash;
+  final Value<double?> na;
+  final Value<double?> k;
+  final Value<double?> ca;
+  final Value<double?> mg;
+  final Value<double?> p;
+  final Value<double?> fe;
+  final Value<double?> zn;
+  final Value<double?> cu;
+  final Value<double?> mn;
+  final Value<double?> iodine;
+  final Value<double?> se;
+  final Value<double?> cr;
+  final Value<double?> mo;
+  final Value<double?> retol;
+  final Value<double?> carta;
+  final Value<double?> cartb;
+  final Value<double?> crypxb;
+  final Value<double?> cartbeq;
+  final Value<double?> vitaRae;
+  final Value<double?> vitD;
+  final Value<double?> tocphA;
+  final Value<double?> tocphB;
+  final Value<double?> tocphG;
+  final Value<double?> tocphD;
+  final Value<double?> vitK;
+  final Value<double?> thia;
+  final Value<double?> ribf;
+  final Value<double?> nia;
+  final Value<double?> ne;
+  final Value<double?> vitB6A;
+  final Value<double?> vitB12;
+  final Value<double?> fol;
+  final Value<double?> pantac;
+  final Value<double?> biot;
+  final Value<double?> vitC;
+  final Value<double?> alc;
+  final Value<double?> naclEq;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const JapaneseFoodCompositionTableCompanion({
+    this.id = const Value.absent(),
+    this.groupId = const Value.absent(),
+    this.foodId = const Value.absent(),
+    this.indexId = const Value.absent(),
+    this.foodName = const Value.absent(),
+    this.refuse = const Value.absent(),
+    this.enerc = const Value.absent(),
+    this.enercKcal = const Value.absent(),
+    this.water = const Value.absent(),
+    this.protcaa = const Value.absent(),
+    this.prot = const Value.absent(),
+    this.fatnlea = const Value.absent(),
+    this.chole = const Value.absent(),
+    this.fat = const Value.absent(),
+    this.choavlm = const Value.absent(),
+    this.choavl = const Value.absent(),
+    this.choavldf = const Value.absent(),
+    this.fib = const Value.absent(),
+    this.polyl = const Value.absent(),
+    this.chocdf = const Value.absent(),
+    this.oa = const Value.absent(),
+    this.ash = const Value.absent(),
+    this.na = const Value.absent(),
+    this.k = const Value.absent(),
+    this.ca = const Value.absent(),
+    this.mg = const Value.absent(),
+    this.p = const Value.absent(),
+    this.fe = const Value.absent(),
+    this.zn = const Value.absent(),
+    this.cu = const Value.absent(),
+    this.mn = const Value.absent(),
+    this.iodine = const Value.absent(),
+    this.se = const Value.absent(),
+    this.cr = const Value.absent(),
+    this.mo = const Value.absent(),
+    this.retol = const Value.absent(),
+    this.carta = const Value.absent(),
+    this.cartb = const Value.absent(),
+    this.crypxb = const Value.absent(),
+    this.cartbeq = const Value.absent(),
+    this.vitaRae = const Value.absent(),
+    this.vitD = const Value.absent(),
+    this.tocphA = const Value.absent(),
+    this.tocphB = const Value.absent(),
+    this.tocphG = const Value.absent(),
+    this.tocphD = const Value.absent(),
+    this.vitK = const Value.absent(),
+    this.thia = const Value.absent(),
+    this.ribf = const Value.absent(),
+    this.nia = const Value.absent(),
+    this.ne = const Value.absent(),
+    this.vitB6A = const Value.absent(),
+    this.vitB12 = const Value.absent(),
+    this.fol = const Value.absent(),
+    this.pantac = const Value.absent(),
+    this.biot = const Value.absent(),
+    this.vitC = const Value.absent(),
+    this.alc = const Value.absent(),
+    this.naclEq = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  JapaneseFoodCompositionTableCompanion.insert({
+    this.id = const Value.absent(),
+    required int groupId,
+    required int foodId,
+    required int indexId,
+    required String foodName,
+    this.refuse = const Value.absent(),
+    this.enerc = const Value.absent(),
+    this.enercKcal = const Value.absent(),
+    this.water = const Value.absent(),
+    this.protcaa = const Value.absent(),
+    this.prot = const Value.absent(),
+    this.fatnlea = const Value.absent(),
+    this.chole = const Value.absent(),
+    this.fat = const Value.absent(),
+    this.choavlm = const Value.absent(),
+    this.choavl = const Value.absent(),
+    this.choavldf = const Value.absent(),
+    this.fib = const Value.absent(),
+    this.polyl = const Value.absent(),
+    this.chocdf = const Value.absent(),
+    this.oa = const Value.absent(),
+    this.ash = const Value.absent(),
+    this.na = const Value.absent(),
+    this.k = const Value.absent(),
+    this.ca = const Value.absent(),
+    this.mg = const Value.absent(),
+    this.p = const Value.absent(),
+    this.fe = const Value.absent(),
+    this.zn = const Value.absent(),
+    this.cu = const Value.absent(),
+    this.mn = const Value.absent(),
+    this.iodine = const Value.absent(),
+    this.se = const Value.absent(),
+    this.cr = const Value.absent(),
+    this.mo = const Value.absent(),
+    this.retol = const Value.absent(),
+    this.carta = const Value.absent(),
+    this.cartb = const Value.absent(),
+    this.crypxb = const Value.absent(),
+    this.cartbeq = const Value.absent(),
+    this.vitaRae = const Value.absent(),
+    this.vitD = const Value.absent(),
+    this.tocphA = const Value.absent(),
+    this.tocphB = const Value.absent(),
+    this.tocphG = const Value.absent(),
+    this.tocphD = const Value.absent(),
+    this.vitK = const Value.absent(),
+    this.thia = const Value.absent(),
+    this.ribf = const Value.absent(),
+    this.nia = const Value.absent(),
+    this.ne = const Value.absent(),
+    this.vitB6A = const Value.absent(),
+    this.vitB12 = const Value.absent(),
+    this.fol = const Value.absent(),
+    this.pantac = const Value.absent(),
+    this.biot = const Value.absent(),
+    this.vitC = const Value.absent(),
+    this.alc = const Value.absent(),
+    this.naclEq = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  })  : groupId = Value(groupId),
+        foodId = Value(foodId),
+        indexId = Value(indexId),
+        foodName = Value(foodName);
+  static Insertable<JapaneseFoodCompositionTableData> custom({
+    Expression<int>? id,
+    Expression<int>? groupId,
+    Expression<int>? foodId,
+    Expression<int>? indexId,
+    Expression<String>? foodName,
+    Expression<double>? refuse,
+    Expression<double>? enerc,
+    Expression<double>? enercKcal,
+    Expression<double>? water,
+    Expression<double>? protcaa,
+    Expression<double>? prot,
+    Expression<double>? fatnlea,
+    Expression<double>? chole,
+    Expression<double>? fat,
+    Expression<double>? choavlm,
+    Expression<double>? choavl,
+    Expression<double>? choavldf,
+    Expression<double>? fib,
+    Expression<double>? polyl,
+    Expression<double>? chocdf,
+    Expression<double>? oa,
+    Expression<double>? ash,
+    Expression<double>? na,
+    Expression<double>? k,
+    Expression<double>? ca,
+    Expression<double>? mg,
+    Expression<double>? p,
+    Expression<double>? fe,
+    Expression<double>? zn,
+    Expression<double>? cu,
+    Expression<double>? mn,
+    Expression<double>? iodine,
+    Expression<double>? se,
+    Expression<double>? cr,
+    Expression<double>? mo,
+    Expression<double>? retol,
+    Expression<double>? carta,
+    Expression<double>? cartb,
+    Expression<double>? crypxb,
+    Expression<double>? cartbeq,
+    Expression<double>? vitaRae,
+    Expression<double>? vitD,
+    Expression<double>? tocphA,
+    Expression<double>? tocphB,
+    Expression<double>? tocphG,
+    Expression<double>? tocphD,
+    Expression<double>? vitK,
+    Expression<double>? thia,
+    Expression<double>? ribf,
+    Expression<double>? nia,
+    Expression<double>? ne,
+    Expression<double>? vitB6A,
+    Expression<double>? vitB12,
+    Expression<double>? fol,
+    Expression<double>? pantac,
+    Expression<double>? biot,
+    Expression<double>? vitC,
+    Expression<double>? alc,
+    Expression<double>? naclEq,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (groupId != null) 'group_id': groupId,
+      if (foodId != null) 'food_id': foodId,
+      if (indexId != null) 'index_id': indexId,
+      if (foodName != null) 'food_name': foodName,
+      if (refuse != null) 'refuse': refuse,
+      if (enerc != null) 'enerc': enerc,
+      if (enercKcal != null) 'enerc_kcal': enercKcal,
+      if (water != null) 'water': water,
+      if (protcaa != null) 'protcaa': protcaa,
+      if (prot != null) 'prot': prot,
+      if (fatnlea != null) 'fatnlea': fatnlea,
+      if (chole != null) 'chole': chole,
+      if (fat != null) 'fat': fat,
+      if (choavlm != null) 'choavlm': choavlm,
+      if (choavl != null) 'choavl': choavl,
+      if (choavldf != null) 'choavldf': choavldf,
+      if (fib != null) 'fib': fib,
+      if (polyl != null) 'polyl': polyl,
+      if (chocdf != null) 'chocdf': chocdf,
+      if (oa != null) 'oa': oa,
+      if (ash != null) 'ash': ash,
+      if (na != null) 'na': na,
+      if (k != null) 'k': k,
+      if (ca != null) 'ca': ca,
+      if (mg != null) 'mg': mg,
+      if (p != null) 'p': p,
+      if (fe != null) 'fe': fe,
+      if (zn != null) 'zn': zn,
+      if (cu != null) 'cu': cu,
+      if (mn != null) 'mn': mn,
+      if (iodine != null) 'iodine': iodine,
+      if (se != null) 'se': se,
+      if (cr != null) 'cr': cr,
+      if (mo != null) 'mo': mo,
+      if (retol != null) 'retol': retol,
+      if (carta != null) 'carta': carta,
+      if (cartb != null) 'cartb': cartb,
+      if (crypxb != null) 'crypxb': crypxb,
+      if (cartbeq != null) 'cartbeq': cartbeq,
+      if (vitaRae != null) 'vita_rae': vitaRae,
+      if (vitD != null) 'vit_d': vitD,
+      if (tocphA != null) 'tocph_a': tocphA,
+      if (tocphB != null) 'tocph_b': tocphB,
+      if (tocphG != null) 'tocph_g': tocphG,
+      if (tocphD != null) 'tocph_d': tocphD,
+      if (vitK != null) 'vit_k': vitK,
+      if (thia != null) 'thia': thia,
+      if (ribf != null) 'ribf': ribf,
+      if (nia != null) 'nia': nia,
+      if (ne != null) 'ne': ne,
+      if (vitB6A != null) 'vit_b6_a': vitB6A,
+      if (vitB12 != null) 'vit_b12': vitB12,
+      if (fol != null) 'fol': fol,
+      if (pantac != null) 'pantac': pantac,
+      if (biot != null) 'biot': biot,
+      if (vitC != null) 'vit_c': vitC,
+      if (alc != null) 'alc': alc,
+      if (naclEq != null) 'nacl_eq': naclEq,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  JapaneseFoodCompositionTableCompanion copyWith(
+      {Value<int>? id,
+      Value<int>? groupId,
+      Value<int>? foodId,
+      Value<int>? indexId,
+      Value<String>? foodName,
+      Value<double>? refuse,
+      Value<double?>? enerc,
+      Value<double?>? enercKcal,
+      Value<double?>? water,
+      Value<double?>? protcaa,
+      Value<double?>? prot,
+      Value<double?>? fatnlea,
+      Value<double?>? chole,
+      Value<double?>? fat,
+      Value<double?>? choavlm,
+      Value<double?>? choavl,
+      Value<double?>? choavldf,
+      Value<double?>? fib,
+      Value<double?>? polyl,
+      Value<double?>? chocdf,
+      Value<double?>? oa,
+      Value<double?>? ash,
+      Value<double?>? na,
+      Value<double?>? k,
+      Value<double?>? ca,
+      Value<double?>? mg,
+      Value<double?>? p,
+      Value<double?>? fe,
+      Value<double?>? zn,
+      Value<double?>? cu,
+      Value<double?>? mn,
+      Value<double?>? iodine,
+      Value<double?>? se,
+      Value<double?>? cr,
+      Value<double?>? mo,
+      Value<double?>? retol,
+      Value<double?>? carta,
+      Value<double?>? cartb,
+      Value<double?>? crypxb,
+      Value<double?>? cartbeq,
+      Value<double?>? vitaRae,
+      Value<double?>? vitD,
+      Value<double?>? tocphA,
+      Value<double?>? tocphB,
+      Value<double?>? tocphG,
+      Value<double?>? tocphD,
+      Value<double?>? vitK,
+      Value<double?>? thia,
+      Value<double?>? ribf,
+      Value<double?>? nia,
+      Value<double?>? ne,
+      Value<double?>? vitB6A,
+      Value<double?>? vitB12,
+      Value<double?>? fol,
+      Value<double?>? pantac,
+      Value<double?>? biot,
+      Value<double?>? vitC,
+      Value<double?>? alc,
+      Value<double?>? naclEq,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt}) {
+    return JapaneseFoodCompositionTableCompanion(
+      id: id ?? this.id,
+      groupId: groupId ?? this.groupId,
+      foodId: foodId ?? this.foodId,
+      indexId: indexId ?? this.indexId,
+      foodName: foodName ?? this.foodName,
+      refuse: refuse ?? this.refuse,
+      enerc: enerc ?? this.enerc,
+      enercKcal: enercKcal ?? this.enercKcal,
+      water: water ?? this.water,
+      protcaa: protcaa ?? this.protcaa,
+      prot: prot ?? this.prot,
+      fatnlea: fatnlea ?? this.fatnlea,
+      chole: chole ?? this.chole,
+      fat: fat ?? this.fat,
+      choavlm: choavlm ?? this.choavlm,
+      choavl: choavl ?? this.choavl,
+      choavldf: choavldf ?? this.choavldf,
+      fib: fib ?? this.fib,
+      polyl: polyl ?? this.polyl,
+      chocdf: chocdf ?? this.chocdf,
+      oa: oa ?? this.oa,
+      ash: ash ?? this.ash,
+      na: na ?? this.na,
+      k: k ?? this.k,
+      ca: ca ?? this.ca,
+      mg: mg ?? this.mg,
+      p: p ?? this.p,
+      fe: fe ?? this.fe,
+      zn: zn ?? this.zn,
+      cu: cu ?? this.cu,
+      mn: mn ?? this.mn,
+      iodine: iodine ?? this.iodine,
+      se: se ?? this.se,
+      cr: cr ?? this.cr,
+      mo: mo ?? this.mo,
+      retol: retol ?? this.retol,
+      carta: carta ?? this.carta,
+      cartb: cartb ?? this.cartb,
+      crypxb: crypxb ?? this.crypxb,
+      cartbeq: cartbeq ?? this.cartbeq,
+      vitaRae: vitaRae ?? this.vitaRae,
+      vitD: vitD ?? this.vitD,
+      tocphA: tocphA ?? this.tocphA,
+      tocphB: tocphB ?? this.tocphB,
+      tocphG: tocphG ?? this.tocphG,
+      tocphD: tocphD ?? this.tocphD,
+      vitK: vitK ?? this.vitK,
+      thia: thia ?? this.thia,
+      ribf: ribf ?? this.ribf,
+      nia: nia ?? this.nia,
+      ne: ne ?? this.ne,
+      vitB6A: vitB6A ?? this.vitB6A,
+      vitB12: vitB12 ?? this.vitB12,
+      fol: fol ?? this.fol,
+      pantac: pantac ?? this.pantac,
+      biot: biot ?? this.biot,
+      vitC: vitC ?? this.vitC,
+      alc: alc ?? this.alc,
+      naclEq: naclEq ?? this.naclEq,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (groupId.present) {
+      map['group_id'] = Variable<int>(groupId.value);
+    }
+    if (foodId.present) {
+      map['food_id'] = Variable<int>(foodId.value);
+    }
+    if (indexId.present) {
+      map['index_id'] = Variable<int>(indexId.value);
+    }
+    if (foodName.present) {
+      map['food_name'] = Variable<String>(foodName.value);
+    }
+    if (refuse.present) {
+      map['refuse'] = Variable<double>(refuse.value);
+    }
+    if (enerc.present) {
+      map['enerc'] = Variable<double>(enerc.value);
+    }
+    if (enercKcal.present) {
+      map['enerc_kcal'] = Variable<double>(enercKcal.value);
+    }
+    if (water.present) {
+      map['water'] = Variable<double>(water.value);
+    }
+    if (protcaa.present) {
+      map['protcaa'] = Variable<double>(protcaa.value);
+    }
+    if (prot.present) {
+      map['prot'] = Variable<double>(prot.value);
+    }
+    if (fatnlea.present) {
+      map['fatnlea'] = Variable<double>(fatnlea.value);
+    }
+    if (chole.present) {
+      map['chole'] = Variable<double>(chole.value);
+    }
+    if (fat.present) {
+      map['fat'] = Variable<double>(fat.value);
+    }
+    if (choavlm.present) {
+      map['choavlm'] = Variable<double>(choavlm.value);
+    }
+    if (choavl.present) {
+      map['choavl'] = Variable<double>(choavl.value);
+    }
+    if (choavldf.present) {
+      map['choavldf'] = Variable<double>(choavldf.value);
+    }
+    if (fib.present) {
+      map['fib'] = Variable<double>(fib.value);
+    }
+    if (polyl.present) {
+      map['polyl'] = Variable<double>(polyl.value);
+    }
+    if (chocdf.present) {
+      map['chocdf'] = Variable<double>(chocdf.value);
+    }
+    if (oa.present) {
+      map['oa'] = Variable<double>(oa.value);
+    }
+    if (ash.present) {
+      map['ash'] = Variable<double>(ash.value);
+    }
+    if (na.present) {
+      map['na'] = Variable<double>(na.value);
+    }
+    if (k.present) {
+      map['k'] = Variable<double>(k.value);
+    }
+    if (ca.present) {
+      map['ca'] = Variable<double>(ca.value);
+    }
+    if (mg.present) {
+      map['mg'] = Variable<double>(mg.value);
+    }
+    if (p.present) {
+      map['p'] = Variable<double>(p.value);
+    }
+    if (fe.present) {
+      map['fe'] = Variable<double>(fe.value);
+    }
+    if (zn.present) {
+      map['zn'] = Variable<double>(zn.value);
+    }
+    if (cu.present) {
+      map['cu'] = Variable<double>(cu.value);
+    }
+    if (mn.present) {
+      map['mn'] = Variable<double>(mn.value);
+    }
+    if (iodine.present) {
+      map['iodine'] = Variable<double>(iodine.value);
+    }
+    if (se.present) {
+      map['se'] = Variable<double>(se.value);
+    }
+    if (cr.present) {
+      map['cr'] = Variable<double>(cr.value);
+    }
+    if (mo.present) {
+      map['mo'] = Variable<double>(mo.value);
+    }
+    if (retol.present) {
+      map['retol'] = Variable<double>(retol.value);
+    }
+    if (carta.present) {
+      map['carta'] = Variable<double>(carta.value);
+    }
+    if (cartb.present) {
+      map['cartb'] = Variable<double>(cartb.value);
+    }
+    if (crypxb.present) {
+      map['crypxb'] = Variable<double>(crypxb.value);
+    }
+    if (cartbeq.present) {
+      map['cartbeq'] = Variable<double>(cartbeq.value);
+    }
+    if (vitaRae.present) {
+      map['vita_rae'] = Variable<double>(vitaRae.value);
+    }
+    if (vitD.present) {
+      map['vit_d'] = Variable<double>(vitD.value);
+    }
+    if (tocphA.present) {
+      map['tocph_a'] = Variable<double>(tocphA.value);
+    }
+    if (tocphB.present) {
+      map['tocph_b'] = Variable<double>(tocphB.value);
+    }
+    if (tocphG.present) {
+      map['tocph_g'] = Variable<double>(tocphG.value);
+    }
+    if (tocphD.present) {
+      map['tocph_d'] = Variable<double>(tocphD.value);
+    }
+    if (vitK.present) {
+      map['vit_k'] = Variable<double>(vitK.value);
+    }
+    if (thia.present) {
+      map['thia'] = Variable<double>(thia.value);
+    }
+    if (ribf.present) {
+      map['ribf'] = Variable<double>(ribf.value);
+    }
+    if (nia.present) {
+      map['nia'] = Variable<double>(nia.value);
+    }
+    if (ne.present) {
+      map['ne'] = Variable<double>(ne.value);
+    }
+    if (vitB6A.present) {
+      map['vit_b6_a'] = Variable<double>(vitB6A.value);
+    }
+    if (vitB12.present) {
+      map['vit_b12'] = Variable<double>(vitB12.value);
+    }
+    if (fol.present) {
+      map['fol'] = Variable<double>(fol.value);
+    }
+    if (pantac.present) {
+      map['pantac'] = Variable<double>(pantac.value);
+    }
+    if (biot.present) {
+      map['biot'] = Variable<double>(biot.value);
+    }
+    if (vitC.present) {
+      map['vit_c'] = Variable<double>(vitC.value);
+    }
+    if (alc.present) {
+      map['alc'] = Variable<double>(alc.value);
+    }
+    if (naclEq.present) {
+      map['nacl_eq'] = Variable<double>(naclEq.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('JapaneseFoodCompositionTableCompanion(')
+          ..write('id: $id, ')
+          ..write('groupId: $groupId, ')
+          ..write('foodId: $foodId, ')
+          ..write('indexId: $indexId, ')
+          ..write('foodName: $foodName, ')
+          ..write('refuse: $refuse, ')
+          ..write('enerc: $enerc, ')
+          ..write('enercKcal: $enercKcal, ')
+          ..write('water: $water, ')
+          ..write('protcaa: $protcaa, ')
+          ..write('prot: $prot, ')
+          ..write('fatnlea: $fatnlea, ')
+          ..write('chole: $chole, ')
+          ..write('fat: $fat, ')
+          ..write('choavlm: $choavlm, ')
+          ..write('choavl: $choavl, ')
+          ..write('choavldf: $choavldf, ')
+          ..write('fib: $fib, ')
+          ..write('polyl: $polyl, ')
+          ..write('chocdf: $chocdf, ')
+          ..write('oa: $oa, ')
+          ..write('ash: $ash, ')
+          ..write('na: $na, ')
+          ..write('k: $k, ')
+          ..write('ca: $ca, ')
+          ..write('mg: $mg, ')
+          ..write('p: $p, ')
+          ..write('fe: $fe, ')
+          ..write('zn: $zn, ')
+          ..write('cu: $cu, ')
+          ..write('mn: $mn, ')
+          ..write('iodine: $iodine, ')
+          ..write('se: $se, ')
+          ..write('cr: $cr, ')
+          ..write('mo: $mo, ')
+          ..write('retol: $retol, ')
+          ..write('carta: $carta, ')
+          ..write('cartb: $cartb, ')
+          ..write('crypxb: $crypxb, ')
+          ..write('cartbeq: $cartbeq, ')
+          ..write('vitaRae: $vitaRae, ')
+          ..write('vitD: $vitD, ')
+          ..write('tocphA: $tocphA, ')
+          ..write('tocphB: $tocphB, ')
+          ..write('tocphG: $tocphG, ')
+          ..write('tocphD: $tocphD, ')
+          ..write('vitK: $vitK, ')
+          ..write('thia: $thia, ')
+          ..write('ribf: $ribf, ')
+          ..write('nia: $nia, ')
+          ..write('ne: $ne, ')
+          ..write('vitB6A: $vitB6A, ')
+          ..write('vitB12: $vitB12, ')
+          ..write('fol: $fol, ')
+          ..write('pantac: $pantac, ')
+          ..write('biot: $biot, ')
+          ..write('vitC: $vitC, ')
+          ..write('alc: $alc, ')
+          ..write('naclEq: $naclEq, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3727,6 +5719,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $PersonalDataTableTable(this);
   late final $FoodItemTableTable foodItemTable = $FoodItemTableTable(this);
   late final $RecipeTableTable recipeTable = $RecipeTableTable(this);
+  late final $JapaneseFoodCompositionTableTable japaneseFoodCompositionTable =
+      $JapaneseFoodCompositionTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3737,7 +5731,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         mealItemTable,
         personalDataTable,
         foodItemTable,
-        recipeTable
+        recipeTable,
+        japaneseFoodCompositionTable
       ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
@@ -4097,6 +6092,17 @@ typedef $$ExternalRecipeTableTableCreateCompanionBuilder
   Value<bool> isFavorite,
   Value<String?> tags,
   Value<String?> memo,
+  Value<String?> ingredientsJson,
+  Value<String?> ingredientsRawText,
+  Value<double?> calories,
+  Value<double?> protein,
+  Value<double?> fat,
+  Value<double?> carbohydrate,
+  Value<double?> salt,
+  Value<double?> fiber,
+  Value<double?> vitaminC,
+  Value<bool> isNutritionAutoExtracted,
+  Value<int> servings,
   Value<DateTime?> lastAccessedAt,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
@@ -4112,6 +6118,17 @@ typedef $$ExternalRecipeTableTableUpdateCompanionBuilder
   Value<bool> isFavorite,
   Value<String?> tags,
   Value<String?> memo,
+  Value<String?> ingredientsJson,
+  Value<String?> ingredientsRawText,
+  Value<double?> calories,
+  Value<double?> protein,
+  Value<double?> fat,
+  Value<double?> carbohydrate,
+  Value<double?> salt,
+  Value<double?> fiber,
+  Value<double?> vitaminC,
+  Value<bool> isNutritionAutoExtracted,
+  Value<int> servings,
   Value<DateTime?> lastAccessedAt,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
@@ -4174,6 +6191,42 @@ class $$ExternalRecipeTableTableFilterComposer
 
   ColumnFilters<String> get memo => $composableBuilder(
       column: $table.memo, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get ingredientsJson => $composableBuilder(
+      column: $table.ingredientsJson,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get ingredientsRawText => $composableBuilder(
+      column: $table.ingredientsRawText,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get calories => $composableBuilder(
+      column: $table.calories, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get protein => $composableBuilder(
+      column: $table.protein, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get fat => $composableBuilder(
+      column: $table.fat, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get carbohydrate => $composableBuilder(
+      column: $table.carbohydrate, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get salt => $composableBuilder(
+      column: $table.salt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get fiber => $composableBuilder(
+      column: $table.fiber, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get vitaminC => $composableBuilder(
+      column: $table.vitaminC, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isNutritionAutoExtracted => $composableBuilder(
+      column: $table.isNutritionAutoExtracted,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get servings => $composableBuilder(
+      column: $table.servings, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get lastAccessedAt => $composableBuilder(
       column: $table.lastAccessedAt,
@@ -4243,6 +6296,43 @@ class $$ExternalRecipeTableTableOrderingComposer
   ColumnOrderings<String> get memo => $composableBuilder(
       column: $table.memo, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get ingredientsJson => $composableBuilder(
+      column: $table.ingredientsJson,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get ingredientsRawText => $composableBuilder(
+      column: $table.ingredientsRawText,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get calories => $composableBuilder(
+      column: $table.calories, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get protein => $composableBuilder(
+      column: $table.protein, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get fat => $composableBuilder(
+      column: $table.fat, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get carbohydrate => $composableBuilder(
+      column: $table.carbohydrate,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get salt => $composableBuilder(
+      column: $table.salt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get fiber => $composableBuilder(
+      column: $table.fiber, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get vitaminC => $composableBuilder(
+      column: $table.vitaminC, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isNutritionAutoExtracted => $composableBuilder(
+      column: $table.isNutritionAutoExtracted,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get servings => $composableBuilder(
+      column: $table.servings, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<DateTime> get lastAccessedAt => $composableBuilder(
       column: $table.lastAccessedAt,
       builder: (column) => ColumnOrderings(column));
@@ -4289,6 +6379,39 @@ class $$ExternalRecipeTableTableAnnotationComposer
 
   GeneratedColumn<String> get memo =>
       $composableBuilder(column: $table.memo, builder: (column) => column);
+
+  GeneratedColumn<String> get ingredientsJson => $composableBuilder(
+      column: $table.ingredientsJson, builder: (column) => column);
+
+  GeneratedColumn<String> get ingredientsRawText => $composableBuilder(
+      column: $table.ingredientsRawText, builder: (column) => column);
+
+  GeneratedColumn<double> get calories =>
+      $composableBuilder(column: $table.calories, builder: (column) => column);
+
+  GeneratedColumn<double> get protein =>
+      $composableBuilder(column: $table.protein, builder: (column) => column);
+
+  GeneratedColumn<double> get fat =>
+      $composableBuilder(column: $table.fat, builder: (column) => column);
+
+  GeneratedColumn<double> get carbohydrate => $composableBuilder(
+      column: $table.carbohydrate, builder: (column) => column);
+
+  GeneratedColumn<double> get salt =>
+      $composableBuilder(column: $table.salt, builder: (column) => column);
+
+  GeneratedColumn<double> get fiber =>
+      $composableBuilder(column: $table.fiber, builder: (column) => column);
+
+  GeneratedColumn<double> get vitaminC =>
+      $composableBuilder(column: $table.vitaminC, builder: (column) => column);
+
+  GeneratedColumn<bool> get isNutritionAutoExtracted => $composableBuilder(
+      column: $table.isNutritionAutoExtracted, builder: (column) => column);
+
+  GeneratedColumn<int> get servings =>
+      $composableBuilder(column: $table.servings, builder: (column) => column);
 
   GeneratedColumn<DateTime> get lastAccessedAt => $composableBuilder(
       column: $table.lastAccessedAt, builder: (column) => column);
@@ -4356,6 +6479,17 @@ class $$ExternalRecipeTableTableTableManager extends RootTableManager<
             Value<bool> isFavorite = const Value.absent(),
             Value<String?> tags = const Value.absent(),
             Value<String?> memo = const Value.absent(),
+            Value<String?> ingredientsJson = const Value.absent(),
+            Value<String?> ingredientsRawText = const Value.absent(),
+            Value<double?> calories = const Value.absent(),
+            Value<double?> protein = const Value.absent(),
+            Value<double?> fat = const Value.absent(),
+            Value<double?> carbohydrate = const Value.absent(),
+            Value<double?> salt = const Value.absent(),
+            Value<double?> fiber = const Value.absent(),
+            Value<double?> vitaminC = const Value.absent(),
+            Value<bool> isNutritionAutoExtracted = const Value.absent(),
+            Value<int> servings = const Value.absent(),
             Value<DateTime?> lastAccessedAt = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
@@ -4370,6 +6504,17 @@ class $$ExternalRecipeTableTableTableManager extends RootTableManager<
             isFavorite: isFavorite,
             tags: tags,
             memo: memo,
+            ingredientsJson: ingredientsJson,
+            ingredientsRawText: ingredientsRawText,
+            calories: calories,
+            protein: protein,
+            fat: fat,
+            carbohydrate: carbohydrate,
+            salt: salt,
+            fiber: fiber,
+            vitaminC: vitaminC,
+            isNutritionAutoExtracted: isNutritionAutoExtracted,
+            servings: servings,
             lastAccessedAt: lastAccessedAt,
             createdAt: createdAt,
             updatedAt: updatedAt,
@@ -4384,6 +6529,17 @@ class $$ExternalRecipeTableTableTableManager extends RootTableManager<
             Value<bool> isFavorite = const Value.absent(),
             Value<String?> tags = const Value.absent(),
             Value<String?> memo = const Value.absent(),
+            Value<String?> ingredientsJson = const Value.absent(),
+            Value<String?> ingredientsRawText = const Value.absent(),
+            Value<double?> calories = const Value.absent(),
+            Value<double?> protein = const Value.absent(),
+            Value<double?> fat = const Value.absent(),
+            Value<double?> carbohydrate = const Value.absent(),
+            Value<double?> salt = const Value.absent(),
+            Value<double?> fiber = const Value.absent(),
+            Value<double?> vitaminC = const Value.absent(),
+            Value<bool> isNutritionAutoExtracted = const Value.absent(),
+            Value<int> servings = const Value.absent(),
             Value<DateTime?> lastAccessedAt = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
@@ -4398,6 +6554,17 @@ class $$ExternalRecipeTableTableTableManager extends RootTableManager<
             isFavorite: isFavorite,
             tags: tags,
             memo: memo,
+            ingredientsJson: ingredientsJson,
+            ingredientsRawText: ingredientsRawText,
+            calories: calories,
+            protein: protein,
+            fat: fat,
+            carbohydrate: carbohydrate,
+            salt: salt,
+            fiber: fiber,
+            vitaminC: vitaminC,
+            isNutritionAutoExtracted: isNutritionAutoExtracted,
+            servings: servings,
             lastAccessedAt: lastAccessedAt,
             createdAt: createdAt,
             updatedAt: updatedAt,
@@ -5770,6 +7937,1020 @@ typedef $$RecipeTableTableProcessedTableManager = ProcessedTableManager<
     ),
     RecipeTableData,
     PrefetchHooks Function()>;
+typedef $$JapaneseFoodCompositionTableTableCreateCompanionBuilder
+    = JapaneseFoodCompositionTableCompanion Function({
+  Value<int> id,
+  required int groupId,
+  required int foodId,
+  required int indexId,
+  required String foodName,
+  Value<double> refuse,
+  Value<double?> enerc,
+  Value<double?> enercKcal,
+  Value<double?> water,
+  Value<double?> protcaa,
+  Value<double?> prot,
+  Value<double?> fatnlea,
+  Value<double?> chole,
+  Value<double?> fat,
+  Value<double?> choavlm,
+  Value<double?> choavl,
+  Value<double?> choavldf,
+  Value<double?> fib,
+  Value<double?> polyl,
+  Value<double?> chocdf,
+  Value<double?> oa,
+  Value<double?> ash,
+  Value<double?> na,
+  Value<double?> k,
+  Value<double?> ca,
+  Value<double?> mg,
+  Value<double?> p,
+  Value<double?> fe,
+  Value<double?> zn,
+  Value<double?> cu,
+  Value<double?> mn,
+  Value<double?> iodine,
+  Value<double?> se,
+  Value<double?> cr,
+  Value<double?> mo,
+  Value<double?> retol,
+  Value<double?> carta,
+  Value<double?> cartb,
+  Value<double?> crypxb,
+  Value<double?> cartbeq,
+  Value<double?> vitaRae,
+  Value<double?> vitD,
+  Value<double?> tocphA,
+  Value<double?> tocphB,
+  Value<double?> tocphG,
+  Value<double?> tocphD,
+  Value<double?> vitK,
+  Value<double?> thia,
+  Value<double?> ribf,
+  Value<double?> nia,
+  Value<double?> ne,
+  Value<double?> vitB6A,
+  Value<double?> vitB12,
+  Value<double?> fol,
+  Value<double?> pantac,
+  Value<double?> biot,
+  Value<double?> vitC,
+  Value<double?> alc,
+  Value<double?> naclEq,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+});
+typedef $$JapaneseFoodCompositionTableTableUpdateCompanionBuilder
+    = JapaneseFoodCompositionTableCompanion Function({
+  Value<int> id,
+  Value<int> groupId,
+  Value<int> foodId,
+  Value<int> indexId,
+  Value<String> foodName,
+  Value<double> refuse,
+  Value<double?> enerc,
+  Value<double?> enercKcal,
+  Value<double?> water,
+  Value<double?> protcaa,
+  Value<double?> prot,
+  Value<double?> fatnlea,
+  Value<double?> chole,
+  Value<double?> fat,
+  Value<double?> choavlm,
+  Value<double?> choavl,
+  Value<double?> choavldf,
+  Value<double?> fib,
+  Value<double?> polyl,
+  Value<double?> chocdf,
+  Value<double?> oa,
+  Value<double?> ash,
+  Value<double?> na,
+  Value<double?> k,
+  Value<double?> ca,
+  Value<double?> mg,
+  Value<double?> p,
+  Value<double?> fe,
+  Value<double?> zn,
+  Value<double?> cu,
+  Value<double?> mn,
+  Value<double?> iodine,
+  Value<double?> se,
+  Value<double?> cr,
+  Value<double?> mo,
+  Value<double?> retol,
+  Value<double?> carta,
+  Value<double?> cartb,
+  Value<double?> crypxb,
+  Value<double?> cartbeq,
+  Value<double?> vitaRae,
+  Value<double?> vitD,
+  Value<double?> tocphA,
+  Value<double?> tocphB,
+  Value<double?> tocphG,
+  Value<double?> tocphD,
+  Value<double?> vitK,
+  Value<double?> thia,
+  Value<double?> ribf,
+  Value<double?> nia,
+  Value<double?> ne,
+  Value<double?> vitB6A,
+  Value<double?> vitB12,
+  Value<double?> fol,
+  Value<double?> pantac,
+  Value<double?> biot,
+  Value<double?> vitC,
+  Value<double?> alc,
+  Value<double?> naclEq,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+});
+
+class $$JapaneseFoodCompositionTableTableFilterComposer
+    extends Composer<_$AppDatabase, $JapaneseFoodCompositionTableTable> {
+  $$JapaneseFoodCompositionTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get groupId => $composableBuilder(
+      column: $table.groupId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get foodId => $composableBuilder(
+      column: $table.foodId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get indexId => $composableBuilder(
+      column: $table.indexId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get foodName => $composableBuilder(
+      column: $table.foodName, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get refuse => $composableBuilder(
+      column: $table.refuse, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get enerc => $composableBuilder(
+      column: $table.enerc, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get enercKcal => $composableBuilder(
+      column: $table.enercKcal, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get water => $composableBuilder(
+      column: $table.water, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get protcaa => $composableBuilder(
+      column: $table.protcaa, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get prot => $composableBuilder(
+      column: $table.prot, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get fatnlea => $composableBuilder(
+      column: $table.fatnlea, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get chole => $composableBuilder(
+      column: $table.chole, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get fat => $composableBuilder(
+      column: $table.fat, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get choavlm => $composableBuilder(
+      column: $table.choavlm, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get choavl => $composableBuilder(
+      column: $table.choavl, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get choavldf => $composableBuilder(
+      column: $table.choavldf, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get fib => $composableBuilder(
+      column: $table.fib, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get polyl => $composableBuilder(
+      column: $table.polyl, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get chocdf => $composableBuilder(
+      column: $table.chocdf, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get oa => $composableBuilder(
+      column: $table.oa, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get ash => $composableBuilder(
+      column: $table.ash, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get na => $composableBuilder(
+      column: $table.na, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get k => $composableBuilder(
+      column: $table.k, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get ca => $composableBuilder(
+      column: $table.ca, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get mg => $composableBuilder(
+      column: $table.mg, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get p => $composableBuilder(
+      column: $table.p, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get fe => $composableBuilder(
+      column: $table.fe, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get zn => $composableBuilder(
+      column: $table.zn, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get cu => $composableBuilder(
+      column: $table.cu, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get mn => $composableBuilder(
+      column: $table.mn, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get iodine => $composableBuilder(
+      column: $table.iodine, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get se => $composableBuilder(
+      column: $table.se, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get cr => $composableBuilder(
+      column: $table.cr, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get mo => $composableBuilder(
+      column: $table.mo, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get retol => $composableBuilder(
+      column: $table.retol, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get carta => $composableBuilder(
+      column: $table.carta, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get cartb => $composableBuilder(
+      column: $table.cartb, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get crypxb => $composableBuilder(
+      column: $table.crypxb, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get cartbeq => $composableBuilder(
+      column: $table.cartbeq, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get vitaRae => $composableBuilder(
+      column: $table.vitaRae, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get vitD => $composableBuilder(
+      column: $table.vitD, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get tocphA => $composableBuilder(
+      column: $table.tocphA, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get tocphB => $composableBuilder(
+      column: $table.tocphB, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get tocphG => $composableBuilder(
+      column: $table.tocphG, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get tocphD => $composableBuilder(
+      column: $table.tocphD, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get vitK => $composableBuilder(
+      column: $table.vitK, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get thia => $composableBuilder(
+      column: $table.thia, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get ribf => $composableBuilder(
+      column: $table.ribf, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get nia => $composableBuilder(
+      column: $table.nia, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get ne => $composableBuilder(
+      column: $table.ne, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get vitB6A => $composableBuilder(
+      column: $table.vitB6A, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get vitB12 => $composableBuilder(
+      column: $table.vitB12, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get fol => $composableBuilder(
+      column: $table.fol, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get pantac => $composableBuilder(
+      column: $table.pantac, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get biot => $composableBuilder(
+      column: $table.biot, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get vitC => $composableBuilder(
+      column: $table.vitC, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get alc => $composableBuilder(
+      column: $table.alc, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get naclEq => $composableBuilder(
+      column: $table.naclEq, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$JapaneseFoodCompositionTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $JapaneseFoodCompositionTableTable> {
+  $$JapaneseFoodCompositionTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get groupId => $composableBuilder(
+      column: $table.groupId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get foodId => $composableBuilder(
+      column: $table.foodId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get indexId => $composableBuilder(
+      column: $table.indexId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get foodName => $composableBuilder(
+      column: $table.foodName, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get refuse => $composableBuilder(
+      column: $table.refuse, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get enerc => $composableBuilder(
+      column: $table.enerc, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get enercKcal => $composableBuilder(
+      column: $table.enercKcal, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get water => $composableBuilder(
+      column: $table.water, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get protcaa => $composableBuilder(
+      column: $table.protcaa, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get prot => $composableBuilder(
+      column: $table.prot, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get fatnlea => $composableBuilder(
+      column: $table.fatnlea, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get chole => $composableBuilder(
+      column: $table.chole, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get fat => $composableBuilder(
+      column: $table.fat, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get choavlm => $composableBuilder(
+      column: $table.choavlm, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get choavl => $composableBuilder(
+      column: $table.choavl, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get choavldf => $composableBuilder(
+      column: $table.choavldf, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get fib => $composableBuilder(
+      column: $table.fib, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get polyl => $composableBuilder(
+      column: $table.polyl, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get chocdf => $composableBuilder(
+      column: $table.chocdf, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get oa => $composableBuilder(
+      column: $table.oa, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get ash => $composableBuilder(
+      column: $table.ash, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get na => $composableBuilder(
+      column: $table.na, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get k => $composableBuilder(
+      column: $table.k, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get ca => $composableBuilder(
+      column: $table.ca, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get mg => $composableBuilder(
+      column: $table.mg, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get p => $composableBuilder(
+      column: $table.p, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get fe => $composableBuilder(
+      column: $table.fe, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get zn => $composableBuilder(
+      column: $table.zn, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get cu => $composableBuilder(
+      column: $table.cu, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get mn => $composableBuilder(
+      column: $table.mn, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get iodine => $composableBuilder(
+      column: $table.iodine, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get se => $composableBuilder(
+      column: $table.se, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get cr => $composableBuilder(
+      column: $table.cr, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get mo => $composableBuilder(
+      column: $table.mo, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get retol => $composableBuilder(
+      column: $table.retol, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get carta => $composableBuilder(
+      column: $table.carta, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get cartb => $composableBuilder(
+      column: $table.cartb, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get crypxb => $composableBuilder(
+      column: $table.crypxb, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get cartbeq => $composableBuilder(
+      column: $table.cartbeq, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get vitaRae => $composableBuilder(
+      column: $table.vitaRae, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get vitD => $composableBuilder(
+      column: $table.vitD, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get tocphA => $composableBuilder(
+      column: $table.tocphA, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get tocphB => $composableBuilder(
+      column: $table.tocphB, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get tocphG => $composableBuilder(
+      column: $table.tocphG, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get tocphD => $composableBuilder(
+      column: $table.tocphD, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get vitK => $composableBuilder(
+      column: $table.vitK, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get thia => $composableBuilder(
+      column: $table.thia, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get ribf => $composableBuilder(
+      column: $table.ribf, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get nia => $composableBuilder(
+      column: $table.nia, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get ne => $composableBuilder(
+      column: $table.ne, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get vitB6A => $composableBuilder(
+      column: $table.vitB6A, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get vitB12 => $composableBuilder(
+      column: $table.vitB12, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get fol => $composableBuilder(
+      column: $table.fol, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get pantac => $composableBuilder(
+      column: $table.pantac, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get biot => $composableBuilder(
+      column: $table.biot, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get vitC => $composableBuilder(
+      column: $table.vitC, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get alc => $composableBuilder(
+      column: $table.alc, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get naclEq => $composableBuilder(
+      column: $table.naclEq, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$JapaneseFoodCompositionTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $JapaneseFoodCompositionTableTable> {
+  $$JapaneseFoodCompositionTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get groupId =>
+      $composableBuilder(column: $table.groupId, builder: (column) => column);
+
+  GeneratedColumn<int> get foodId =>
+      $composableBuilder(column: $table.foodId, builder: (column) => column);
+
+  GeneratedColumn<int> get indexId =>
+      $composableBuilder(column: $table.indexId, builder: (column) => column);
+
+  GeneratedColumn<String> get foodName =>
+      $composableBuilder(column: $table.foodName, builder: (column) => column);
+
+  GeneratedColumn<double> get refuse =>
+      $composableBuilder(column: $table.refuse, builder: (column) => column);
+
+  GeneratedColumn<double> get enerc =>
+      $composableBuilder(column: $table.enerc, builder: (column) => column);
+
+  GeneratedColumn<double> get enercKcal =>
+      $composableBuilder(column: $table.enercKcal, builder: (column) => column);
+
+  GeneratedColumn<double> get water =>
+      $composableBuilder(column: $table.water, builder: (column) => column);
+
+  GeneratedColumn<double> get protcaa =>
+      $composableBuilder(column: $table.protcaa, builder: (column) => column);
+
+  GeneratedColumn<double> get prot =>
+      $composableBuilder(column: $table.prot, builder: (column) => column);
+
+  GeneratedColumn<double> get fatnlea =>
+      $composableBuilder(column: $table.fatnlea, builder: (column) => column);
+
+  GeneratedColumn<double> get chole =>
+      $composableBuilder(column: $table.chole, builder: (column) => column);
+
+  GeneratedColumn<double> get fat =>
+      $composableBuilder(column: $table.fat, builder: (column) => column);
+
+  GeneratedColumn<double> get choavlm =>
+      $composableBuilder(column: $table.choavlm, builder: (column) => column);
+
+  GeneratedColumn<double> get choavl =>
+      $composableBuilder(column: $table.choavl, builder: (column) => column);
+
+  GeneratedColumn<double> get choavldf =>
+      $composableBuilder(column: $table.choavldf, builder: (column) => column);
+
+  GeneratedColumn<double> get fib =>
+      $composableBuilder(column: $table.fib, builder: (column) => column);
+
+  GeneratedColumn<double> get polyl =>
+      $composableBuilder(column: $table.polyl, builder: (column) => column);
+
+  GeneratedColumn<double> get chocdf =>
+      $composableBuilder(column: $table.chocdf, builder: (column) => column);
+
+  GeneratedColumn<double> get oa =>
+      $composableBuilder(column: $table.oa, builder: (column) => column);
+
+  GeneratedColumn<double> get ash =>
+      $composableBuilder(column: $table.ash, builder: (column) => column);
+
+  GeneratedColumn<double> get na =>
+      $composableBuilder(column: $table.na, builder: (column) => column);
+
+  GeneratedColumn<double> get k =>
+      $composableBuilder(column: $table.k, builder: (column) => column);
+
+  GeneratedColumn<double> get ca =>
+      $composableBuilder(column: $table.ca, builder: (column) => column);
+
+  GeneratedColumn<double> get mg =>
+      $composableBuilder(column: $table.mg, builder: (column) => column);
+
+  GeneratedColumn<double> get p =>
+      $composableBuilder(column: $table.p, builder: (column) => column);
+
+  GeneratedColumn<double> get fe =>
+      $composableBuilder(column: $table.fe, builder: (column) => column);
+
+  GeneratedColumn<double> get zn =>
+      $composableBuilder(column: $table.zn, builder: (column) => column);
+
+  GeneratedColumn<double> get cu =>
+      $composableBuilder(column: $table.cu, builder: (column) => column);
+
+  GeneratedColumn<double> get mn =>
+      $composableBuilder(column: $table.mn, builder: (column) => column);
+
+  GeneratedColumn<double> get iodine =>
+      $composableBuilder(column: $table.iodine, builder: (column) => column);
+
+  GeneratedColumn<double> get se =>
+      $composableBuilder(column: $table.se, builder: (column) => column);
+
+  GeneratedColumn<double> get cr =>
+      $composableBuilder(column: $table.cr, builder: (column) => column);
+
+  GeneratedColumn<double> get mo =>
+      $composableBuilder(column: $table.mo, builder: (column) => column);
+
+  GeneratedColumn<double> get retol =>
+      $composableBuilder(column: $table.retol, builder: (column) => column);
+
+  GeneratedColumn<double> get carta =>
+      $composableBuilder(column: $table.carta, builder: (column) => column);
+
+  GeneratedColumn<double> get cartb =>
+      $composableBuilder(column: $table.cartb, builder: (column) => column);
+
+  GeneratedColumn<double> get crypxb =>
+      $composableBuilder(column: $table.crypxb, builder: (column) => column);
+
+  GeneratedColumn<double> get cartbeq =>
+      $composableBuilder(column: $table.cartbeq, builder: (column) => column);
+
+  GeneratedColumn<double> get vitaRae =>
+      $composableBuilder(column: $table.vitaRae, builder: (column) => column);
+
+  GeneratedColumn<double> get vitD =>
+      $composableBuilder(column: $table.vitD, builder: (column) => column);
+
+  GeneratedColumn<double> get tocphA =>
+      $composableBuilder(column: $table.tocphA, builder: (column) => column);
+
+  GeneratedColumn<double> get tocphB =>
+      $composableBuilder(column: $table.tocphB, builder: (column) => column);
+
+  GeneratedColumn<double> get tocphG =>
+      $composableBuilder(column: $table.tocphG, builder: (column) => column);
+
+  GeneratedColumn<double> get tocphD =>
+      $composableBuilder(column: $table.tocphD, builder: (column) => column);
+
+  GeneratedColumn<double> get vitK =>
+      $composableBuilder(column: $table.vitK, builder: (column) => column);
+
+  GeneratedColumn<double> get thia =>
+      $composableBuilder(column: $table.thia, builder: (column) => column);
+
+  GeneratedColumn<double> get ribf =>
+      $composableBuilder(column: $table.ribf, builder: (column) => column);
+
+  GeneratedColumn<double> get nia =>
+      $composableBuilder(column: $table.nia, builder: (column) => column);
+
+  GeneratedColumn<double> get ne =>
+      $composableBuilder(column: $table.ne, builder: (column) => column);
+
+  GeneratedColumn<double> get vitB6A =>
+      $composableBuilder(column: $table.vitB6A, builder: (column) => column);
+
+  GeneratedColumn<double> get vitB12 =>
+      $composableBuilder(column: $table.vitB12, builder: (column) => column);
+
+  GeneratedColumn<double> get fol =>
+      $composableBuilder(column: $table.fol, builder: (column) => column);
+
+  GeneratedColumn<double> get pantac =>
+      $composableBuilder(column: $table.pantac, builder: (column) => column);
+
+  GeneratedColumn<double> get biot =>
+      $composableBuilder(column: $table.biot, builder: (column) => column);
+
+  GeneratedColumn<double> get vitC =>
+      $composableBuilder(column: $table.vitC, builder: (column) => column);
+
+  GeneratedColumn<double> get alc =>
+      $composableBuilder(column: $table.alc, builder: (column) => column);
+
+  GeneratedColumn<double> get naclEq =>
+      $composableBuilder(column: $table.naclEq, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$JapaneseFoodCompositionTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $JapaneseFoodCompositionTableTable,
+    JapaneseFoodCompositionTableData,
+    $$JapaneseFoodCompositionTableTableFilterComposer,
+    $$JapaneseFoodCompositionTableTableOrderingComposer,
+    $$JapaneseFoodCompositionTableTableAnnotationComposer,
+    $$JapaneseFoodCompositionTableTableCreateCompanionBuilder,
+    $$JapaneseFoodCompositionTableTableUpdateCompanionBuilder,
+    (
+      JapaneseFoodCompositionTableData,
+      BaseReferences<_$AppDatabase, $JapaneseFoodCompositionTableTable,
+          JapaneseFoodCompositionTableData>
+    ),
+    JapaneseFoodCompositionTableData,
+    PrefetchHooks Function()> {
+  $$JapaneseFoodCompositionTableTableTableManager(
+      _$AppDatabase db, $JapaneseFoodCompositionTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$JapaneseFoodCompositionTableTableFilterComposer(
+                  $db: db, $table: table),
+          createOrderingComposer: () =>
+              $$JapaneseFoodCompositionTableTableOrderingComposer(
+                  $db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$JapaneseFoodCompositionTableTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> groupId = const Value.absent(),
+            Value<int> foodId = const Value.absent(),
+            Value<int> indexId = const Value.absent(),
+            Value<String> foodName = const Value.absent(),
+            Value<double> refuse = const Value.absent(),
+            Value<double?> enerc = const Value.absent(),
+            Value<double?> enercKcal = const Value.absent(),
+            Value<double?> water = const Value.absent(),
+            Value<double?> protcaa = const Value.absent(),
+            Value<double?> prot = const Value.absent(),
+            Value<double?> fatnlea = const Value.absent(),
+            Value<double?> chole = const Value.absent(),
+            Value<double?> fat = const Value.absent(),
+            Value<double?> choavlm = const Value.absent(),
+            Value<double?> choavl = const Value.absent(),
+            Value<double?> choavldf = const Value.absent(),
+            Value<double?> fib = const Value.absent(),
+            Value<double?> polyl = const Value.absent(),
+            Value<double?> chocdf = const Value.absent(),
+            Value<double?> oa = const Value.absent(),
+            Value<double?> ash = const Value.absent(),
+            Value<double?> na = const Value.absent(),
+            Value<double?> k = const Value.absent(),
+            Value<double?> ca = const Value.absent(),
+            Value<double?> mg = const Value.absent(),
+            Value<double?> p = const Value.absent(),
+            Value<double?> fe = const Value.absent(),
+            Value<double?> zn = const Value.absent(),
+            Value<double?> cu = const Value.absent(),
+            Value<double?> mn = const Value.absent(),
+            Value<double?> iodine = const Value.absent(),
+            Value<double?> se = const Value.absent(),
+            Value<double?> cr = const Value.absent(),
+            Value<double?> mo = const Value.absent(),
+            Value<double?> retol = const Value.absent(),
+            Value<double?> carta = const Value.absent(),
+            Value<double?> cartb = const Value.absent(),
+            Value<double?> crypxb = const Value.absent(),
+            Value<double?> cartbeq = const Value.absent(),
+            Value<double?> vitaRae = const Value.absent(),
+            Value<double?> vitD = const Value.absent(),
+            Value<double?> tocphA = const Value.absent(),
+            Value<double?> tocphB = const Value.absent(),
+            Value<double?> tocphG = const Value.absent(),
+            Value<double?> tocphD = const Value.absent(),
+            Value<double?> vitK = const Value.absent(),
+            Value<double?> thia = const Value.absent(),
+            Value<double?> ribf = const Value.absent(),
+            Value<double?> nia = const Value.absent(),
+            Value<double?> ne = const Value.absent(),
+            Value<double?> vitB6A = const Value.absent(),
+            Value<double?> vitB12 = const Value.absent(),
+            Value<double?> fol = const Value.absent(),
+            Value<double?> pantac = const Value.absent(),
+            Value<double?> biot = const Value.absent(),
+            Value<double?> vitC = const Value.absent(),
+            Value<double?> alc = const Value.absent(),
+            Value<double?> naclEq = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+          }) =>
+              JapaneseFoodCompositionTableCompanion(
+            id: id,
+            groupId: groupId,
+            foodId: foodId,
+            indexId: indexId,
+            foodName: foodName,
+            refuse: refuse,
+            enerc: enerc,
+            enercKcal: enercKcal,
+            water: water,
+            protcaa: protcaa,
+            prot: prot,
+            fatnlea: fatnlea,
+            chole: chole,
+            fat: fat,
+            choavlm: choavlm,
+            choavl: choavl,
+            choavldf: choavldf,
+            fib: fib,
+            polyl: polyl,
+            chocdf: chocdf,
+            oa: oa,
+            ash: ash,
+            na: na,
+            k: k,
+            ca: ca,
+            mg: mg,
+            p: p,
+            fe: fe,
+            zn: zn,
+            cu: cu,
+            mn: mn,
+            iodine: iodine,
+            se: se,
+            cr: cr,
+            mo: mo,
+            retol: retol,
+            carta: carta,
+            cartb: cartb,
+            crypxb: crypxb,
+            cartbeq: cartbeq,
+            vitaRae: vitaRae,
+            vitD: vitD,
+            tocphA: tocphA,
+            tocphB: tocphB,
+            tocphG: tocphG,
+            tocphD: tocphD,
+            vitK: vitK,
+            thia: thia,
+            ribf: ribf,
+            nia: nia,
+            ne: ne,
+            vitB6A: vitB6A,
+            vitB12: vitB12,
+            fol: fol,
+            pantac: pantac,
+            biot: biot,
+            vitC: vitC,
+            alc: alc,
+            naclEq: naclEq,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required int groupId,
+            required int foodId,
+            required int indexId,
+            required String foodName,
+            Value<double> refuse = const Value.absent(),
+            Value<double?> enerc = const Value.absent(),
+            Value<double?> enercKcal = const Value.absent(),
+            Value<double?> water = const Value.absent(),
+            Value<double?> protcaa = const Value.absent(),
+            Value<double?> prot = const Value.absent(),
+            Value<double?> fatnlea = const Value.absent(),
+            Value<double?> chole = const Value.absent(),
+            Value<double?> fat = const Value.absent(),
+            Value<double?> choavlm = const Value.absent(),
+            Value<double?> choavl = const Value.absent(),
+            Value<double?> choavldf = const Value.absent(),
+            Value<double?> fib = const Value.absent(),
+            Value<double?> polyl = const Value.absent(),
+            Value<double?> chocdf = const Value.absent(),
+            Value<double?> oa = const Value.absent(),
+            Value<double?> ash = const Value.absent(),
+            Value<double?> na = const Value.absent(),
+            Value<double?> k = const Value.absent(),
+            Value<double?> ca = const Value.absent(),
+            Value<double?> mg = const Value.absent(),
+            Value<double?> p = const Value.absent(),
+            Value<double?> fe = const Value.absent(),
+            Value<double?> zn = const Value.absent(),
+            Value<double?> cu = const Value.absent(),
+            Value<double?> mn = const Value.absent(),
+            Value<double?> iodine = const Value.absent(),
+            Value<double?> se = const Value.absent(),
+            Value<double?> cr = const Value.absent(),
+            Value<double?> mo = const Value.absent(),
+            Value<double?> retol = const Value.absent(),
+            Value<double?> carta = const Value.absent(),
+            Value<double?> cartb = const Value.absent(),
+            Value<double?> crypxb = const Value.absent(),
+            Value<double?> cartbeq = const Value.absent(),
+            Value<double?> vitaRae = const Value.absent(),
+            Value<double?> vitD = const Value.absent(),
+            Value<double?> tocphA = const Value.absent(),
+            Value<double?> tocphB = const Value.absent(),
+            Value<double?> tocphG = const Value.absent(),
+            Value<double?> tocphD = const Value.absent(),
+            Value<double?> vitK = const Value.absent(),
+            Value<double?> thia = const Value.absent(),
+            Value<double?> ribf = const Value.absent(),
+            Value<double?> nia = const Value.absent(),
+            Value<double?> ne = const Value.absent(),
+            Value<double?> vitB6A = const Value.absent(),
+            Value<double?> vitB12 = const Value.absent(),
+            Value<double?> fol = const Value.absent(),
+            Value<double?> pantac = const Value.absent(),
+            Value<double?> biot = const Value.absent(),
+            Value<double?> vitC = const Value.absent(),
+            Value<double?> alc = const Value.absent(),
+            Value<double?> naclEq = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+          }) =>
+              JapaneseFoodCompositionTableCompanion.insert(
+            id: id,
+            groupId: groupId,
+            foodId: foodId,
+            indexId: indexId,
+            foodName: foodName,
+            refuse: refuse,
+            enerc: enerc,
+            enercKcal: enercKcal,
+            water: water,
+            protcaa: protcaa,
+            prot: prot,
+            fatnlea: fatnlea,
+            chole: chole,
+            fat: fat,
+            choavlm: choavlm,
+            choavl: choavl,
+            choavldf: choavldf,
+            fib: fib,
+            polyl: polyl,
+            chocdf: chocdf,
+            oa: oa,
+            ash: ash,
+            na: na,
+            k: k,
+            ca: ca,
+            mg: mg,
+            p: p,
+            fe: fe,
+            zn: zn,
+            cu: cu,
+            mn: mn,
+            iodine: iodine,
+            se: se,
+            cr: cr,
+            mo: mo,
+            retol: retol,
+            carta: carta,
+            cartb: cartb,
+            crypxb: crypxb,
+            cartbeq: cartbeq,
+            vitaRae: vitaRae,
+            vitD: vitD,
+            tocphA: tocphA,
+            tocphB: tocphB,
+            tocphG: tocphG,
+            tocphD: tocphD,
+            vitK: vitK,
+            thia: thia,
+            ribf: ribf,
+            nia: nia,
+            ne: ne,
+            vitB6A: vitB6A,
+            vitB12: vitB12,
+            fol: fol,
+            pantac: pantac,
+            biot: biot,
+            vitC: vitC,
+            alc: alc,
+            naclEq: naclEq,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$JapaneseFoodCompositionTableTableProcessedTableManager
+    = ProcessedTableManager<
+        _$AppDatabase,
+        $JapaneseFoodCompositionTableTable,
+        JapaneseFoodCompositionTableData,
+        $$JapaneseFoodCompositionTableTableFilterComposer,
+        $$JapaneseFoodCompositionTableTableOrderingComposer,
+        $$JapaneseFoodCompositionTableTableAnnotationComposer,
+        $$JapaneseFoodCompositionTableTableCreateCompanionBuilder,
+        $$JapaneseFoodCompositionTableTableUpdateCompanionBuilder,
+        (
+          JapaneseFoodCompositionTableData,
+          BaseReferences<_$AppDatabase, $JapaneseFoodCompositionTableTable,
+              JapaneseFoodCompositionTableData>
+        ),
+        JapaneseFoodCompositionTableData,
+        PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5786,4 +8967,8 @@ class $AppDatabaseManager {
       $$FoodItemTableTableTableManager(_db, _db.foodItemTable);
   $$RecipeTableTableTableManager get recipeTable =>
       $$RecipeTableTableTableManager(_db, _db.recipeTable);
+  $$JapaneseFoodCompositionTableTableTableManager
+      get japaneseFoodCompositionTable =>
+          $$JapaneseFoodCompositionTableTableTableManager(
+              _db, _db.japaneseFoodCompositionTable);
 }

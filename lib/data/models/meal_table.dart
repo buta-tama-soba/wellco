@@ -101,6 +101,39 @@ class ExternalRecipeTable extends Table {
   /// メモ
   TextColumn get memo => text().nullable()();
   
+  /// 材料情報（JSON形式）
+  TextColumn get ingredientsJson => text().nullable()();
+  
+  /// 抽出された材料の生テキスト
+  TextColumn get ingredientsRawText => text().nullable()();
+  
+  /// 栄養情報（カロリー/1人前）
+  RealColumn get calories => real().nullable()();
+  
+  /// タンパク質（g/1人前）
+  RealColumn get protein => real().nullable()();
+  
+  /// 脂質（g/1人前）
+  RealColumn get fat => real().nullable()();
+  
+  /// 炭水化物（g/1人前）
+  RealColumn get carbohydrate => real().nullable()();
+  
+  /// 食塩相当量（g/1人前）
+  RealColumn get salt => real().nullable()();
+  
+  /// 食物繊維（g/1人前）
+  RealColumn get fiber => real().nullable()();
+  
+  /// ビタミンC（mg/1人前）
+  RealColumn get vitaminC => real().nullable()();
+  
+  /// 材料・栄養情報が自動推測されたかのフラグ
+  BoolColumn get isNutritionAutoExtracted => boolean().withDefault(const Constant(false))();
+  
+  /// 人数（栄養計算の基準）
+  IntColumn get servings => integer().withDefault(const Constant(1))();
+  
   /// 最終アクセス日時
   DateTimeColumn get lastAccessedAt => dateTime().nullable()();
   
