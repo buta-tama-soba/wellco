@@ -3,14 +3,17 @@ import '../../data/models/japanese_food_composition_table.dart';
 import '../../data/datasources/app_database.dart';
 import 'ingredient_extraction_service.dart';
 import 'food_composition_data_service.dart';
+import 'food_dictionary_service.dart';
 
 /// レシピ栄養分析サービス
 class RecipeNutritionAnalysisService {
   final IngredientExtractionService _extractor = IngredientExtractionService();
   final FoodCompositionDataService _foodService;
+  final FoodDictionaryService _dictionaryService;
   
   RecipeNutritionAnalysisService(AppDatabase database) 
-      : _foodService = FoodCompositionDataService(database);
+      : _foodService = FoodCompositionDataService(database),
+        _dictionaryService = FoodDictionaryService(database);
 
   /// レシピ本文から材料・栄養を分析
   Future<RecipeNutritionResult> analyzeRecipe(String recipeText) async {
@@ -26,14 +29,17 @@ class RecipeNutritionAnalysisService {
     final matchResults = <IngredientMatchResult>[];
     
     for (final ingredient in ingredients) {
-      // 暫定的に簡単な食品マッチングを使用
-      final matchedFood = _findBasicFood(ingredient.name);
-      print('デバッグ: ${ingredient.name} → ${matchedFood?.foodName ?? "マッチなし"}');
+      // 辞書サービスを使用した高度なマッチング
+      final matchedFood = await _dictionaryService.findBestMatch(ingredient.name);
+      
+      // 見つからない場合は基本マッチングにフォールバック
+      final finalMatch = matchedFood ?? _findBasicFood(ingredient.name);
+      print('デバッグ: ${ingredient.name} → ${finalMatch?.foodName ?? "マッチなし"}');
       
       matchResults.add(IngredientMatchResult(
         ingredient: ingredient,
-        matchedFood: matchedFood,
-        confidence: matchedFood != null ? 0.8 : 0.0,
+        matchedFood: finalMatch,
+        confidence: finalMatch != null ? (matchedFood != null ? 0.9 : 0.7) : 0.0,
       ));
     }
     

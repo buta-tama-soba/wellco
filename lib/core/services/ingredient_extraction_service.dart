@@ -47,10 +47,10 @@ class IngredientExtractionService {
     ingredients.addAll(_extractWithPattern5(normalizedText)); // 連続形式用パターン追加
     ingredients.addAll(_extractWithPattern6(normalizedText)); // 日本語レシピ形式
     ingredients.addAll(_extractWithPattern7(normalizedText)); // 行区切り形式
-    ingredients.addAll(_extractWithPattern8(normalizedText)); // 白ごはん.com連続形式
+    ingredients.addAll(_extractWithPattern8(normalizedText)); // 連続形式（材料名直接数量単位）
     ingredients.addAll(_extractWithPattern9(normalizedText)); // 複数選択肢処理
-    ingredients.addAll(_extractWithPattern10(normalizedText)); // 味の素パーク「・・・」形式
-    ingredients.addAll(_extractWithPattern11(normalizedText)); // レタスクラブスペース区切り形式
+    ingredients.addAll(_extractWithPattern10(normalizedText)); // 「・・・」区切り形式
+    ingredients.addAll(_extractWithPattern11(normalizedText)); // スペース区切り形式
     ingredients.addAll(_extractWithPattern12(normalizedText)); // 記号系パターン対応
     ingredients.addAll(_extractWithPattern13(normalizedText)); // 柔軟な材料セクション抽出
     
@@ -323,11 +323,11 @@ class IngredientExtractionService {
     return ingredients;
   }
 
-  /// パターン8: 白ごはん.com連続形式 - 材料名直接数量単位
+  /// パターン8: 連続形式 - 材料名直接数量単位
   List<Ingredient> _extractWithPattern8(String text) {
     final ingredients = <Ingredient>[];
     
-    // 白ごはん.comでよく使われる連続パターン
+    // 日本のレシピサイトでよく使われる連続パターン
     // 例: "牛肉（すき焼き用）400～500ｇ", "玉ねぎ1/2個", "椎茸7～8枚"
     final patterns = [
       // パターン8-1: 材料名（詳細）数量～数量単位
@@ -474,11 +474,11 @@ class IngredientExtractionService {
     return ingredients;
   }
 
-  /// パターン10: 味の素パーク「・・・」区切り形式
+  /// パターン10: 「・・・」区切り形式
   List<Ingredient> _extractWithPattern10(String text) {
     final ingredients = <Ingredient>[];
     
-    // 味の素パーク特有の「・・・」区切りパターン
+    // 日本のレシピサイトで使われる「・・・」区切りパターン
     final patterns = [
       // パターン10-1: 材料・・・数量単位
       RegExp(r'([あ-んア-ンー一-龯a-zA-Z]+(?:\([^)]*\))?[あ-んア-ンー一-龯a-zA-Z]*)\s*・・・\s*([0-9]+(?:\.[0-9]+)?(?:/[0-9]+)?(?:[～〜~][0-9]+(?:\.[0-9]+)?(?:/[0-9]+)?)?)\s*(ｇ|g|グラム|ｋｇ|kg|キロ|ｍｌ|ml|ミリリットル|Ｌ|L|リットル|個|コ|本|枚|束|片|玉|房|丁|袋|缶|杯|大さじ|小さじ|カップ)', multiLine: true),
@@ -539,7 +539,7 @@ class IngredientExtractionService {
     return ingredients;
   }
   
-  /// 商品名の正規化（味の素パーク対応）
+  /// 商品名の正規化
   String _normalizeProductName(String productName) {
     // 商品名から一般的な食材名への変換
     final productMapping = {
@@ -566,11 +566,11 @@ class IngredientExtractionService {
     return productName;
   }
 
-  /// パターン11: レタスクラブスペース区切り形式
+  /// パターン11: スペース区切り形式
   List<Ingredient> _extractWithPattern11(String text) {
     final ingredients = <Ingredient>[];
     
-    // レタスクラブ特有のスペース区切りパターン
+    // 日本のレシピサイトで使われるスペース区切りパターン
     final patterns = [
       // パターン11-1: 材料名 サイズ数量(詳細重量)
       RegExp(r'([あ-んア-ンー一-龯a-zA-Z]+)\s+(小|中|大|特大)?([0-9]+)\s*(枚|個|本|玉|房|丁|袋|パック|杯|缶)\s*(?:\(約([0-9]+(?:\.[0-9]+)?)([ｇ|g|ml]*)\))?', multiLine: true),
