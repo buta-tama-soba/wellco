@@ -7,6 +7,7 @@ import '../../core/themes/app_colors.dart';
 import '../../core/themes/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/services/ogp_fetcher_service.dart';
+import '../providers/database_provider.dart';
 import 'recipe_viewer_page.dart';
 
 /// レシピURL登録ページ
@@ -302,12 +303,25 @@ class _RecipeUrlRegisterPageState extends ConsumerState<RecipeUrlRegisterPage> {
   }
 
   Widget _buildSaveButton() {
+    final saveState = ref.watch(recipeRegistrationProvider);
+    
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
-        onPressed: _ogpData != null ? _saveRecipe : null,
-        icon: Icon(Icons.save, size: 20.w),
-        label: const Text('レシピを保存'),
+        onPressed: (_ogpData != null && !saveState.isLoading) ? _saveRecipe : null,
+        icon: saveState.isLoading 
+          ? SizedBox(
+              width: 20.w,
+              height: 20.w,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.w,
+                valueColor: const AlwaysStoppedAnimation(Colors.white),
+              ),
+            )
+          : Icon(Icons.save, size: 20.w),
+        label: saveState.isLoading 
+          ? const Text('保存中...')
+          : const Text('レシピを保存'),
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 16.h),
         ),
@@ -342,18 +356,48 @@ class _RecipeUrlRegisterPageState extends ConsumerState<RecipeUrlRegisterPage> {
   Future<void> _saveRecipe() async {
     if (_ogpData == null) return;
     
-    // TODO: データベースに保存する処理を実装
+    // データベースに保存
+    final recipeNotifier = ref.read(recipeRegistrationProvider.notifier);
     
-    // 成功メッセージを表示
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('レシピを保存しました'),
-        backgroundColor: AppColors.success,
-      ),
+    await recipeNotifier.saveExternalRecipe(
+      url: _urlController.text,
+      title: _ogpData!.title ?? 'タイトルなし',
+      description: _ogpData!.description,
+      imageUrl: _ogpData!.imageUrl,
+      siteName: _ogpData!.siteName,
+      tags: _tagsController.text.isNotEmpty ? _tagsController.text : null,
+      memo: _memoController.text.isNotEmpty ? _memoController.text : null,
     );
     
-    // 画面を閉じる
-    Navigator.pop(context);
+    // 保存状態を監視
+    final saveState = ref.read(recipeRegistrationProvider);
+    
+    saveState.when(
+      data: (_) {
+        // 成功メッセージを表示
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('レシピを保存しました'),
+            backgroundColor: AppColors.success,
+          ),
+        );
+        
+        // 画面を閉じる
+        Navigator.pop(context);
+      },
+      loading: () {
+        // ローディング中は何もしない（UIで表示）
+      },
+      error: (error, _) {
+        // エラーメッセージを表示
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('保存に失敗しました: $error'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      },
+    );
   }
 
   @override
