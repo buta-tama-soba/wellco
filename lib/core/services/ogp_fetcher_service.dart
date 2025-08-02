@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart';
+import 'dart:convert';
 
 /// OGP（Open Graph Protocol）データ
 class OgpData {
@@ -46,15 +47,40 @@ class OgpFetcherService {
         throw Exception('HTTPSまたはHTTPのURLのみ対応しています');
       }
 
-      // HTMLを取得
-      final response = await http.get(uri).timeout(_timeout);
+      // HTMLを取得（UTF-8ヘッダーを明示的に設定）
+      final response = await http.get(
+        uri, 
+        headers: {
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Charset': 'UTF-8',
+          'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
+        },
+      ).timeout(_timeout);
       
       if (response.statusCode != 200) {
         throw Exception('ページの取得に失敗しました (${response.statusCode})');
       }
 
+      // レスポンスの文字エンコーディングを確認・修正
+      String htmlContent;
+      try {
+        // Content-Typeヘッダーからcharsetを取得
+        final contentType = response.headers['content-type'];
+        if (contentType != null && contentType.contains('charset=')) {
+          // Content-Typeで指定されたcharsetを使用
+          htmlContent = response.body;
+        } else {
+          // charsetが指定されていない場合、UTF-8として扱う
+          final bytes = response.bodyBytes;
+          htmlContent = utf8.decode(bytes, allowMalformed: true);
+        }
+      } catch (e) {
+        // エンコーディングエラーの場合、元のbodyを使用
+        htmlContent = response.body;
+      }
+
       // HTMLをパース
-      final document = html_parser.parse(response.body);
+      final document = html_parser.parse(htmlContent);
       
       // OGPメタタグを取得
       final ogpData = _extractOgpData(document, url);

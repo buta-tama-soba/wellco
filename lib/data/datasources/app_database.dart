@@ -111,6 +111,50 @@ class AppDatabase extends _$AppDatabase {
       ..where((tbl) => tbl.url.equals(url)))
       .getSingleOrNull();
   }
+
+  /// お気に入り状態を切り替え
+  Future<bool> toggleFavoriteRecipe(int recipeId) async {
+    final recipe = await (select(externalRecipeTable)
+      ..where((tbl) => tbl.id.equals(recipeId)))
+      .getSingleOrNull();
+    
+    if (recipe == null) return false;
+    
+    final newFavoriteStatus = !recipe.isFavorite;
+    
+    await (update(externalRecipeTable)
+      ..where((tbl) => tbl.id.equals(recipeId)))
+      .write(ExternalRecipeTableCompanion(
+        isFavorite: Value(newFavoriteStatus),
+        updatedAt: Value(DateTime.now()),
+      ));
+    
+    return newFavoriteStatus;
+  }
+
+  /// 外部レシピを更新
+  Future<void> updateExternalRecipe({
+    required int recipeId,
+    required String title,
+    String? tags,
+    String? memo,
+  }) async {
+    await (update(externalRecipeTable)
+      ..where((tbl) => tbl.id.equals(recipeId)))
+      .write(ExternalRecipeTableCompanion(
+        title: Value(title),
+        tags: tags != null ? Value(tags) : const Value.absent(),
+        memo: memo != null ? Value(memo) : const Value.absent(),
+        updatedAt: Value(DateTime.now()),
+      ));
+  }
+
+  /// 外部レシピを削除
+  Future<void> deleteExternalRecipe(int recipeId) async {
+    await (delete(externalRecipeTable)
+      ..where((tbl) => tbl.id.equals(recipeId)))
+      .go();
+  }
 }
 
 /// データベース接続を開く

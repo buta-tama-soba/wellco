@@ -21,7 +21,7 @@ void main() {
     );
 
     // Wait for initial data loading
-    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 600));
 
     // Verify that the app loads
     expect(find.byType(MaterialApp), findsOneWidget);

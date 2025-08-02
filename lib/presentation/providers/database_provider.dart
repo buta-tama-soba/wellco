@@ -143,4 +143,65 @@ class RecipeRegistrationNotifier extends StateNotifier<AsyncValue<void>> {
       state = AsyncValue.error(e, stackTrace);
     }
   }
+
+  /// お気に入り状態を切り替え
+  Future<void> toggleFavorite(int recipeId) async {
+    try {
+      await _database.toggleFavoriteRecipe(recipeId);
+      
+      // レシピリストを更新
+      _ref.invalidate(favoriteRecipesProvider);
+      _ref.invalidate(recentRecipesProvider);
+      
+    } catch (e, stackTrace) {
+      // エラーが発生してもUIには反映させず、ログだけ出力
+      print('お気に入り切り替えエラー: $e');
+    }
+  }
+
+  /// 外部レシピを更新
+  Future<void> updateExternalRecipe({
+    required int recipeId,
+    required String title,  
+    String? tags,
+    String? memo,
+  }) async {
+    state = const AsyncValue.loading();
+    
+    try {
+      await _database.updateExternalRecipe(
+        recipeId: recipeId,
+        title: title,
+        tags: tags?.isNotEmpty == true ? tags : null,
+        memo: memo?.isNotEmpty == true ? memo : null,
+      );
+      
+      state = const AsyncValue.data(null);
+      
+      // レシピリストを更新
+      _ref.invalidate(favoriteRecipesProvider);
+      _ref.invalidate(recentRecipesProvider);
+      
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+    }
+  }
+
+  /// 外部レシピを削除
+  Future<void> deleteExternalRecipe(int recipeId) async {
+    state = const AsyncValue.loading();
+    
+    try {
+      await _database.deleteExternalRecipe(recipeId);
+      
+      state = const AsyncValue.data(null);
+      
+      // レシピリストを更新
+      _ref.invalidate(favoriteRecipesProvider);
+      _ref.invalidate(recentRecipesProvider);
+      
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+    }
+  }
 }

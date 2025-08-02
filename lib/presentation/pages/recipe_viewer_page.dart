@@ -94,17 +94,28 @@ class _RecipeViewerPageState extends ConsumerState<RecipeViewerPage> {
     return InAppWebView(
       initialUrlRequest: URLRequest(
         url: WebUri(widget.url),
+        headers: {
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8',
+          'Accept-Encoding': 'gzip, deflate, br',
+          'Referer': 'https://park.ajinomoto.co.jp/',
+          'Sec-Fetch-Site': 'same-origin',
+          'Sec-Fetch-Mode': 'navigate',
+          'Sec-Fetch-User': '?1',
+          'Sec-Fetch-Dest': 'document',
+        },
       ),
       initialSettings: InAppWebViewSettings(
         // セキュリティ設定
         javaScriptEnabled: true,
         domStorageEnabled: true,
+        thirdPartyCookiesEnabled: true,
         
         // HTTPSのみ許可
         mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
         
-        // ユーザーエージェント設定
-        userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
+        // ユーザーエージェント設定（よりリアルなブラウザに見せる）
+        userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
         
         // その他の設定
         supportZoom: true,
@@ -143,12 +154,17 @@ class _RecipeViewerPageState extends ConsumerState<RecipeViewerPage> {
         }
       },
       onReceivedError: (controller, request, error) {
+        print('WebView Error: ${error.type} - ${error.description}');
+        print('Error URL: ${request.url}');
         setState(() {
           _isLoading = false;
           _errorMessage = 'ページの読み込みに失敗しました: ${error.description}';
         });
       },
       onReceivedHttpError: (controller, request, response) {
+        print('WebView HTTP Error: ${response.statusCode}');
+        print('Error URL: ${request.url}');
+        print('Response headers: ${response.headers}');
         setState(() {
           _isLoading = false;
           _errorMessage = 'ページが見つかりません (${response.statusCode})';
