@@ -1,54 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:drift/drift.dart';
+import '../../data/datasources/app_database.dart';
 import 'health_provider.dart';
-
-// 一時的にダミーのデータベースクラスとテーブルデータクラスを作成
-class AppDatabase {
-  void close() {}
-  Future<Map<String, double>> getTodayNutrition() async {
-    return {
-      'calories': 0.0,
-      'protein': 0.0,
-      'fat': 0.0,
-      'carbs': 0.0,
-    };
-  }
-  Future<List<FoodItemTableData>> getAllFoodItems() async => [];
-  Future<List<FoodItemTableData>> getExpiringSoon(int days) async => [];
-  Future<List<MealTableData>> getMealsByDate(DateTime date) async => [];
-  Future<PersonalDataTableData?> getPersonalDataByDate(DateTime date) async => null;
-  Future<List<double>> getWeightHistory(int days) async => [];
-  Future<List<RecipeTableData>> getFavoriteRecipes() async => [];
-}
-
-class FoodItemTableData {
-  const FoodItemTableData();
-}
-
-class MealTableData {
-  const MealTableData();
-}
-
-class PersonalDataTableData {
-  final int? steps;
-  final double? activeEnergy;
-  final double? weight;
-  final double? bodyFatPercentage;
-  final int? exerciseTime;
-  final double? sleepHours;
-
-  const PersonalDataTableData({
-    this.steps,
-    this.activeEnergy,
-    this.weight,
-    this.bodyFatPercentage,
-    this.exerciseTime,
-    this.sleepHours,
-  });
-}
-
-class RecipeTableData {
-  const RecipeTableData();
-}
 
 // データベースインスタンスのプロバイダー
 final databaseProvider = Provider<AppDatabase>((ref) {
@@ -61,18 +14,6 @@ final databaseProvider = Provider<AppDatabase>((ref) {
 final todayNutritionProvider = FutureProvider<Map<String, double>>((ref) async {
   final database = ref.watch(databaseProvider);
   return await database.getTodayNutrition();
-});
-
-// 食品一覧プロバイダー
-final foodItemsProvider = FutureProvider<List<FoodItemTableData>>((ref) async {
-  final database = ref.watch(databaseProvider);
-  return await database.getAllFoodItems();
-});
-
-// 期限切れ間近の食品プロバイダー
-final expiringSoonProvider = FutureProvider<List<FoodItemTableData>>((ref) async {
-  final database = ref.watch(databaseProvider);
-  return await database.getExpiringSoon(7); // 7日以内
 });
 
 // 今日の食事プロバイダー
@@ -88,12 +29,16 @@ final todayPersonalDataProvider = FutureProvider<PersonalDataTableData?>((ref) a
     final healthSummary = await ref.read(healthDataSummaryProvider.future);
     
     return PersonalDataTableData(
+      dataSource: 'HealthKit',
+      recordedDate: DateTime.now(),
       steps: healthSummary.todaySteps,
       activeEnergy: healthSummary.todayActiveEnergy,
       weight: healthSummary.weight,
       bodyFatPercentage: healthSummary.bodyFatPercentage,
       exerciseTime: healthSummary.todayExerciseTime,
       sleepHours: healthSummary.lastNightSleepHours,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
     );
   } catch (e) {
     print('HealthKit データ取得エラー: $e');
@@ -102,14 +47,161 @@ final todayPersonalDataProvider = FutureProvider<PersonalDataTableData?>((ref) a
   }
 });
 
-// 体重履歴プロバイダー
-final weightHistoryProvider = FutureProvider<List<double>>((ref) async {
-  final database = ref.watch(databaseProvider);
-  return await database.getWeightHistory(90); // 90日分
-});
-
 // お気に入りレシピプロバイダー
-final favoriteRecipesProvider = FutureProvider<List<RecipeTableData>>((ref) async {
+final favoriteRecipesProvider = FutureProvider<List<ExternalRecipeTableData>>((ref) async {
   final database = ref.watch(databaseProvider);
   return await database.getFavoriteRecipes();
 });
+
+// 最近のレシピプロバイダー
+final recentRecipesProvider = FutureProvider<List<ExternalRecipeTableData>>((ref) async {
+  final database = ref.watch(databaseProvider);
+  return await database.getRecentRecipes(limit: 10);
+});
+
+// 体重履歴プロバイダー（一時的なダミーデータ）
+final weightHistoryProvider = FutureProvider<List<WeightData>>((ref) async {
+  // 一時的なダミーデータを返す
+  await Future.delayed(const Duration(milliseconds: 500));
+  
+  final now = DateTime.now();
+  return List.generate(30, (index) {
+    final date = now.subtract(Duration(days: 29 - index));
+    final baseWeight = 70.0;
+    final variation = (index % 7 - 3) * 0.3; // 週次変動
+    final trend = -index * 0.05; // 減少トレンド
+    
+    return WeightData(
+      date: date,
+      weight: baseWeight + variation + trend,
+    );
+  });
+});
+
+// 体重データクラス
+class WeightData {
+  final DateTime date;
+  final double weight;
+
+  const WeightData({
+    required this.date,
+    required this.weight,
+  });
+}
+
+// レシピ保存プロバイダー（状態管理付き）
+final recipeRegistrationProvider = StateNotifierProvider<RecipeRegistrationNotifier, AsyncValue<void>>((ref) {
+  return RecipeRegistrationNotifier(ref.read(databaseProvider), ref);
+});
+
+/// レシピ登録の状態管理
+class RecipeRegistrationNotifier extends StateNotifier<AsyncValue<void>> {
+  final AppDatabase _database;
+  final StateNotifierProviderRef<RecipeRegistrationNotifier, AsyncValue<void>> _ref;
+
+  RecipeRegistrationNotifier(this._database, this._ref) : super(const AsyncValue.data(null));
+
+  /// 外部レシピを保存
+  Future<void> saveExternalRecipe({
+    required String url,
+    required String title,
+    String? description,
+    String? imageUrl,
+    String? siteName,
+    String? tags,
+    String? memo,
+  }) async {
+    state = const AsyncValue.loading();
+    
+    try {
+      // 既存のレシピをチェック
+      final existingRecipe = await _database.getRecipeByUrl(url);
+      if (existingRecipe != null) {
+        throw Exception('このレシピは既に登録されています');
+      }
+      
+      // 新しいレシピを保存
+      await _database.insertExternalRecipe(
+        ExternalRecipeTableCompanion.insert(
+          url: url,
+          title: title,
+          description: description != null ? Value(description) : const Value.absent(),
+          imageUrl: imageUrl != null ? Value(imageUrl) : const Value.absent(),
+          siteName: siteName != null ? Value(siteName) : const Value.absent(),
+          tags: tags != null ? Value(tags) : const Value.absent(),
+          memo: memo != null ? Value(memo) : const Value.absent(),
+        ),
+      );
+      
+      state = const AsyncValue.data(null);
+      
+      // お気に入りレシピプロバイダーを更新
+      _ref.invalidate(favoriteRecipesProvider);
+      _ref.invalidate(recentRecipesProvider);
+      
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+    }
+  }
+
+  /// お気に入り状態を切り替え
+  Future<void> toggleFavorite(int recipeId) async {
+    try {
+      await _database.toggleFavoriteRecipe(recipeId);
+      
+      // レシピリストを更新
+      _ref.invalidate(favoriteRecipesProvider);
+      _ref.invalidate(recentRecipesProvider);
+      
+    } catch (e, stackTrace) {
+      // エラーが発生してもUIには反映させず、ログだけ出力
+      print('お気に入り切り替えエラー: $e');
+    }
+  }
+
+  /// 外部レシピを更新
+  Future<void> updateExternalRecipe({
+    required int recipeId,
+    required String title,  
+    String? tags,
+    String? memo,
+  }) async {
+    state = const AsyncValue.loading();
+    
+    try {
+      await _database.updateExternalRecipe(
+        recipeId: recipeId,
+        title: title,
+        tags: tags?.isNotEmpty == true ? tags : null,
+        memo: memo?.isNotEmpty == true ? memo : null,
+      );
+      
+      state = const AsyncValue.data(null);
+      
+      // レシピリストを更新
+      _ref.invalidate(favoriteRecipesProvider);
+      _ref.invalidate(recentRecipesProvider);
+      
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+    }
+  }
+
+  /// 外部レシピを削除
+  Future<void> deleteExternalRecipe(int recipeId) async {
+    state = const AsyncValue.loading();
+    
+    try {
+      await _database.deleteExternalRecipe(recipeId);
+      
+      state = const AsyncValue.data(null);
+      
+      // レシピリストを更新
+      _ref.invalidate(favoriteRecipesProvider);
+      _ref.invalidate(recentRecipesProvider);
+      
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+    }
+  }
+}

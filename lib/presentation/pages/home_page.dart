@@ -19,7 +19,6 @@ class HomePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final todayNutrition = ref.watch(todayNutritionProvider);
     final todayPersonalData = ref.watch(todayPersonalDataProvider);
-    final weightHistory = ref.watch(weightHistoryProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -52,13 +51,57 @@ class HomePage extends HookConsumerWidget {
                 SizedBox(height: AppConstants.paddingM.h),
 
                 // 体重推移
-                weightHistory.when(
-                  data: (weights) => WeightChartCard(weights: weights),
-                  loading: () => const _LoadingCard(height: 200),
-                  error: (error, stack) => _ErrorCard(
-                    message: '体重データの取得に失敗しました',
-                    onRetry: () => ref.invalidate(weightHistoryProvider),
-                  ),
+                Consumer(
+                  builder: (context, ref, child) {
+                    final weightHistoryAsync = ref.watch(weightHistoryProvider);
+                    
+                    return weightHistoryAsync.when(
+                      data: (weightData) => WeightChartCard(weights: weightData.map((e) => e.weight).toList()),
+                      loading: () => Container(
+                        height: 200.h,
+                        margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+                        ),
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                      error: (error, stack) => Container(
+                        height: 200.h,
+                        margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+                        ),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.error_outline,
+                                color: AppColors.error,
+                                size: 48.w,
+                              ),
+                              SizedBox(height: AppConstants.paddingS.h),
+                              Text(
+                                '体重データの取得に失敗しました',
+                                style: AppTextStyles.body2.copyWith(
+                                  color: AppColors.error,
+                                ),
+                              ),
+                              SizedBox(height: AppConstants.paddingS.h),
+                              TextButton(
+                                onPressed: () => ref.invalidate(weightHistoryProvider),
+                                child: const Text('再試行'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 SizedBox(height: AppConstants.paddingM.h),
 

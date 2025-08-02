@@ -60,6 +60,13 @@ dependencies:
   image_picker: ^1.1.2
   health: ^13.1.1
   permission_handler: ^11.3.1
+  
+  # HTTP & HTML
+  http: ^1.2.0
+  html: ^0.15.4
+  
+  # WebView
+  flutter_inappwebview: ^6.0.0
 
   # UI Components & Animation (2025トレンド)
   cached_network_image: ^3.3.1
