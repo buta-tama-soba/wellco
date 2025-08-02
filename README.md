@@ -24,6 +24,7 @@ Wellness（健康）+ Coach（コーチ）= **Wellco（ウェルコ）**
 ### 食事管理
 - 食品在庫管理
 - レシピ検索・提案
+- 外部レシピURL登録（WebView表示）
 - 食事記録
 - 栄養バランス分析（カロリー、タンパク質、脂質、炭水化物）
 
@@ -45,6 +46,7 @@ Wellness（健康）+ Coach（コーチ）= **Wellco（ウェルコ）**
 - **UI**: ドーパミンデザインカラーパレット
 - **Device Integration**: HealthKit (iOS)
 - **Responsive**: flutter_screenutil
+
 
 ## ライセンス
 

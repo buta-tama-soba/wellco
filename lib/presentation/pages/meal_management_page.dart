@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/themes/app_colors.dart';
 import '../../core/themes/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
+import 'recipe_url_register_page.dart';
 
 class MealManagementPage extends HookConsumerWidget {
   const MealManagementPage({super.key});
@@ -68,6 +69,22 @@ class MealManagementPage extends HookConsumerWidget {
               color: AppColors.primary,
               size: 24.w,
             ),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const RecipeUrlRegisterPage(),
+                ),
+              );
+            },
+            icon: Icon(
+              Icons.add_link,
+              color: AppColors.primary,
+              size: 24.w,
+            ),
+            tooltip: 'レシピURL登録',
           ),
         ],
       ),
