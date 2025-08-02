@@ -43,3 +43,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Generated files
+lib/data/seeds/food_dictionary.json
+
+# Test files
+test_*.dart
