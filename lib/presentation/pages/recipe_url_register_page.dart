@@ -7,6 +7,7 @@ import '../../core/themes/app_colors.dart';
 import '../../core/themes/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/services/ogp_fetcher_service.dart';
+import '../../core/services/recipe_nutrition_analysis_service.dart';
 import '../providers/database_provider.dart';
 import 'recipe_viewer_page.dart';
 
@@ -25,10 +26,22 @@ class _RecipeUrlRegisterPageState extends ConsumerState<RecipeUrlRegisterPage> {
   final _formKey = GlobalKey<FormState>();
   
   final _ogpFetcher = OgpFetcherService();
+  late final RecipeNutritionAnalysisService _nutritionService;
   
   bool _isLoading = false;
   OgpData? _ogpData;
+  RecipeNutritionResult? _nutritionResult;
   String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    // データベースを取得してから栄養分析サービスを初期化
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final database = ref.read(databaseProvider);
+      _nutritionService = RecipeNutritionAnalysisService(database);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +68,12 @@ class _RecipeUrlRegisterPageState extends ConsumerState<RecipeUrlRegisterPage> {
                 // OGPプレビュー
                 if (_ogpData != null) ...[
                   _buildOgpPreview(),
+                  SizedBox(height: AppConstants.paddingL.h),
+                ],
+                
+                // 栄養情報プレビュー
+                if (_nutritionResult != null) ...[
+                  _buildNutritionPreview(),
                   SizedBox(height: AppConstants.paddingL.h),
                 ],
                 
@@ -329,6 +348,146 @@ class _RecipeUrlRegisterPageState extends ConsumerState<RecipeUrlRegisterPage> {
     );
   }
 
+  Widget _buildNutritionPreview() {
+    if (_nutritionResult == null) return const SizedBox.shrink();
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+        border: Border.all(
+          color: AppColors.success.withOpacity(0.3),
+        ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(AppConstants.paddingM.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.auto_awesome,
+                  size: 20.w,
+                  color: AppColors.success,
+                ),
+                SizedBox(width: 8.w),
+                Text(
+                  '栄養情報を自動分析しました',
+                  style: AppTextStyles.headline3.copyWith(
+                    color: AppColors.success,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: AppConstants.paddingM.h),
+            
+            // 抽出された材料
+            if (_nutritionResult!.ingredients.isNotEmpty) ...[
+              Text(
+                '抽出された材料 (${_nutritionResult!.ingredients.length}件)',
+                style: AppTextStyles.body1.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(height: AppConstants.paddingS.h),
+              ...(_nutritionResult!.ingredients.take(5).map((ingredient) => 
+                Padding(
+                  padding: EdgeInsets.only(bottom: 4.h),
+                  child: Text(
+                    '• ${ingredient.name}${ingredient.amount != null ? ' ${ingredient.amount}${ingredient.unit ?? ''}' : ''}',
+                    style: AppTextStyles.body2,
+                  ),
+                )
+              ).toList()),
+              if (_nutritionResult!.ingredients.length > 5)
+                Text(
+                  '...他${_nutritionResult!.ingredients.length - 5}件',
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              SizedBox(height: AppConstants.paddingM.h),
+            ],
+            
+            // 栄養情報
+            Container(
+              padding: EdgeInsets.all(AppConstants.paddingS.w),
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildNutritionItem(
+                      'エネルギー',
+                      '${_nutritionResult!.nutrition.energy.toStringAsFixed(0)} kcal',
+                      Icons.local_fire_department,
+                      AppColors.error,
+                    ),
+                  ),
+                  Expanded(
+                    child: _buildNutritionItem(
+                      'タンパク質',
+                      '${_nutritionResult!.nutrition.protein.toStringAsFixed(1)} g',
+                      Icons.fitness_center,
+                      AppColors.primary,
+                    ),
+                  ),
+                  Expanded(
+                    child: _buildNutritionItem(
+                      '脂質',
+                      '${_nutritionResult!.nutrition.fat.toStringAsFixed(1)} g',
+                      Icons.water_drop,
+                      AppColors.warning,
+                    ),
+                  ),
+                  Expanded(
+                    child: _buildNutritionItem(
+                      '炭水化物',
+                      '${_nutritionResult!.nutrition.carbohydrate.toStringAsFixed(1)} g',
+                      Icons.grain,
+                      AppColors.success,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNutritionItem(String label, String value, IconData icon, Color color) {
+    return Column(
+      children: [
+        Icon(
+          icon,
+          size: 20.w,
+          color: color,
+        ),
+        SizedBox(height: 4.h),
+        Text(
+          label,
+          style: AppTextStyles.caption.copyWith(
+            color: AppColors.textSecondary,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 2.h),
+        Text(
+          value,
+          style: AppTextStyles.body2.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
   Future<void> _fetchOgpData() async {
     if (!_formKey.currentState!.validate()) return;
     
@@ -341,8 +500,19 @@ class _RecipeUrlRegisterPageState extends ConsumerState<RecipeUrlRegisterPage> {
     try {
       final ogpData = await _ogpFetcher.fetchOgpData(_urlController.text);
       
+      // OGP取得後、レシピ本文があれば栄養分析を実行
+      RecipeNutritionResult? nutritionResult;
+      if (ogpData.recipeText != null && ogpData.recipeText!.isNotEmpty) {
+        try {
+          nutritionResult = await _nutritionService.analyzeRecipe(ogpData.recipeText!);
+        } catch (e) {
+          print('栄養分析エラー: $e');
+        }
+      }
+      
       setState(() {
         _ogpData = ogpData;
+        _nutritionResult = nutritionResult;
         _isLoading = false;
       });
     } catch (e) {
@@ -359,7 +529,8 @@ class _RecipeUrlRegisterPageState extends ConsumerState<RecipeUrlRegisterPage> {
     // データベースに保存
     final recipeNotifier = ref.read(recipeRegistrationProvider.notifier);
     
-    await recipeNotifier.saveExternalRecipe(
+    // 栄養分析結果を含めて保存
+    await recipeNotifier.saveExternalRecipeWithNutrition(
       url: _urlController.text,
       title: _ogpData!.title ?? 'タイトルなし',
       description: _ogpData!.description,
@@ -367,6 +538,8 @@ class _RecipeUrlRegisterPageState extends ConsumerState<RecipeUrlRegisterPage> {
       siteName: _ogpData!.siteName,
       tags: _tagsController.text.isNotEmpty ? _tagsController.text : null,
       memo: _memoController.text.isNotEmpty ? _memoController.text : null,
+      recipeText: _ogpData!.recipeText,
+      nutritionResult: _nutritionResult, // 栄養分析結果
     );
     
     // 保存状態を監視

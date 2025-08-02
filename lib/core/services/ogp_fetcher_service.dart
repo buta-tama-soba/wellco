@@ -11,6 +11,7 @@ class OgpData {
   final String? siteName;
   final String? url;
   final String? type;
+  final String? recipeText; // レシピ本文（材料抽出用）
 
   const OgpData({
     this.title,
@@ -19,6 +20,7 @@ class OgpData {
     this.siteName,
     this.url,
     this.type,
+    this.recipeText,
   });
 
   bool get hasBasicInfo => title != null && (description != null || imageUrl != null);
@@ -85,8 +87,12 @@ class OgpFetcherService {
       // OGPメタタグを取得
       final ogpData = _extractOgpData(document, url);
       
+      // レシピ本文を抽出
+      final recipeText = _extractRecipeText(document, url);
+      print('デバッグ: 抽出されたレシピ本文の長さ = ${recipeText?.length ?? 0}');
+      
       // OGPデータが不足している場合は通常のメタタグから補完
-      return _complementWithStandardMeta(ogpData, document);
+      return _complementWithStandardMeta(ogpData, document, recipeText);
       
     } on http.ClientException catch (e) {
       throw Exception('ネットワークエラー: ${e.message}');
@@ -141,8 +147,242 @@ class OgpFetcherService {
     );
   }
 
+  /// レシピ本文を抽出（材料情報取得用）
+  String? _extractRecipeText(Document document, String url) {
+    final uri = Uri.parse(url);
+    final host = uri.host.toLowerCase();
+    
+    try {
+      // サイト別の抽出ロジック
+      if (host.contains('park.ajinomoto.co.jp')) {
+        return _extractAjinomotoRecipe(document);
+      } else if (host.contains('www.lettuceclub.net')) {
+        return _extractLettuceClubRecipe(document);
+      } else if (host.contains('www.orangepage.net')) {
+        return _extractOrangePageRecipe(document);
+      } else if (host.contains('www.kyounoryouri.jp')) {
+        return _extractKyounoRyouriRecipe(document);
+      } else {
+        // 汎用的な抽出
+        return _extractGenericRecipe(document);
+      }
+    } catch (e) {
+      // エラー時は汎用的な抽出を試行
+      return _extractGenericRecipe(document);
+    }
+  }
+  
+  /// 味の素パーク用レシピ抽出
+  String? _extractAjinomotoRecipe(Document document) {
+    final buffer = StringBuffer();
+    
+    // より幅広いセレクタで材料を探す
+    final possibleSelectors = [
+      'ul li',  // 汎用的なリスト項目
+      '.material li',
+      '.recipe-material li',
+      '.ingredients li',
+      'h3:contains("材料") + ul li',
+      'h3 + ul li',
+    ];
+    
+    bool foundIngredients = false;
+    for (final selector in possibleSelectors) {
+      final elements = document.querySelectorAll(selector);
+      if (elements.isNotEmpty) {
+        // 材料っぽいテキストが含まれているかチェック
+        final ingredientTexts = elements.map((e) => e.text.trim()).where((text) => 
+          text.isNotEmpty && 
+          (text.contains('g') || text.contains('個') || text.contains('本') || 
+           text.contains('枚') || text.contains('大さじ') || text.contains('小さじ') ||
+           text.contains('ml') || text.contains('L') || text.contains('カップ') ||
+           text.contains('少々') || text.contains('適量') || text.contains('適宜'))
+        ).toList();
+        
+        if (ingredientTexts.length >= 2) { // 2つ以上の材料があれば採用
+          buffer.writeln('【材料】');
+          for (final text in ingredientTexts) {
+            // テキストが途切れていないかチェック
+            String fullText = text;
+            if (text.length > 10 && !text.endsWith('g') && !text.endsWith('個') && 
+                !text.endsWith('本') && !text.endsWith('枚') && !text.endsWith('大さじ') && 
+                !text.endsWith('小さじ') && !text.endsWith('少々') && !text.endsWith('適量')) {
+              // 途切れている可能性があるため、周辺のテキストも確認
+              final parentElement = elements.firstWhere((e) => e.text.trim() == text, 
+                orElse: () => elements.first).parent;
+              if (parentElement != null) {
+                final fullParentText = parentElement.text.trim();
+                if (fullParentText.length > text.length) {
+                  fullText = fullParentText;
+                }
+              }
+            }
+            buffer.writeln(fullText);
+          }
+          foundIngredients = true;
+          break;
+        }
+      }
+    }
+    
+    // セレクタベースで見つからない場合は、テキスト全体から材料らしい部分を抽出
+    if (!foundIngredients) {
+      final bodyText = document.body?.text ?? '';
+      print('デバッグ: セレクタで材料が見つからないため、テキスト全体から抽出を試行');
+      
+      final lines = bodyText.split('\n');
+      bool inMaterialSection = false;
+      
+      for (final line in lines) {
+        final cleanLine = line.trim();
+        if (cleanLine.contains('材料') && (cleanLine.contains('人分') || cleanLine.contains('分量'))) {
+          inMaterialSection = true;
+          buffer.writeln('【材料】');
+          continue;
+        }
+        
+        if (inMaterialSection) {
+          if (cleanLine.contains('作り方') || cleanLine.contains('手順') || cleanLine.contains('調理')) {
+            break;
+          }
+          
+          if (cleanLine.isNotEmpty && 
+              (cleanLine.contains('g') || cleanLine.contains('個') || cleanLine.contains('本') || 
+               cleanLine.contains('枚') || cleanLine.contains('大さじ') || cleanLine.contains('小さじ') ||
+               cleanLine.contains('ml') || cleanLine.contains('L') || cleanLine.contains('カップ') ||
+               cleanLine.contains('少々') || cleanLine.contains('適量') || cleanLine.contains('適宜') ||
+               cleanLine.contains('…') || cleanLine.contains('・'))) {
+            buffer.writeln(cleanLine);
+          }
+        }
+      }
+    }
+    
+    // さらに詳細なHTML構造を調査（味の素パーク固有）
+    if (buffer.toString().trim().isEmpty || buffer.toString().contains('オリーブオ')) {
+      print('デバッグ: 材料抽出が不完全なため、詳細調査を実行');
+      
+      // より具体的なセレクタを試行
+      final specificSelectors = [
+        '.recipe-detail .ingredients li',
+        '.recipe-ingredients .ingredient-item',
+        '[data-ingredient]',
+        '.material-list li',
+        '.ingredient-list li',
+      ];
+      
+      for (final selector in specificSelectors) {
+        final elements = document.querySelectorAll(selector);
+        if (elements.isNotEmpty) {
+          final newBuffer = StringBuffer();
+          newBuffer.writeln('【材料】');
+          
+          for (final element in elements) {
+            final text = element.text.trim();
+            if (text.isNotEmpty && text.length > 2) {
+              newBuffer.writeln(text);
+            }
+          }
+          
+          if (newBuffer.toString().split('\n').length > 3) {
+            return newBuffer.toString();
+          }
+        }
+      }
+    }
+    
+    return buffer.toString().trim().isNotEmpty ? buffer.toString() : null;
+  }
+  
+  /// レタスクラブ用レシピ抽出
+  String? _extractLettuceClubRecipe(Document document) {
+    final buffer = StringBuffer();
+    
+    // 材料
+    final ingredients = document.querySelectorAll('.recipe-material dd, .material dd, .ingredients dd');
+    if (ingredients.isNotEmpty) {
+      buffer.writeln('【材料】');
+      for (final ingredient in ingredients) {
+        final text = ingredient.text.trim();
+        if (text.isNotEmpty) {
+          buffer.writeln(text);
+        }
+      }
+      buffer.writeln();
+    }
+    
+    return buffer.toString().trim().isNotEmpty ? buffer.toString() : null;
+  }
+  
+  /// オレンジページ用レシピ抽出
+  String? _extractOrangePageRecipe(Document document) {
+    final buffer = StringBuffer();
+    
+    // 材料
+    final ingredients = document.querySelectorAll('.recipe-ingredients li, .ingredients li');
+    if (ingredients.isNotEmpty) {
+      buffer.writeln('【材料】');
+      for (final ingredient in ingredients) {
+        final text = ingredient.text.trim();
+        if (text.isNotEmpty) {
+          buffer.writeln(text);
+        }
+      }
+    }
+    
+    return buffer.toString().trim().isNotEmpty ? buffer.toString() : null;
+  }
+  
+  /// みんなのきょうの料理用レシピ抽出
+  String? _extractKyounoRyouriRecipe(Document document) {
+    final buffer = StringBuffer();
+    
+    // 材料
+    final ingredients = document.querySelectorAll('.recipe-material li, .ingredients li');
+    if (ingredients.isNotEmpty) {
+      buffer.writeln('【材料】');
+      for (final ingredient in ingredients) {
+        final text = ingredient.text.trim();
+        if (text.isNotEmpty) {
+          buffer.writeln(text);
+        }
+      }
+    }
+    
+    return buffer.toString().trim().isNotEmpty ? buffer.toString() : null;
+  }
+  
+  /// 汎用的なレシピ抽出
+  String? _extractGenericRecipe(Document document) {
+    final buffer = StringBuffer();
+    
+    // 一般的なCSSセレクタで材料を探す
+    final possibleSelectors = [
+      '.ingredients li', '.ingredient li', '.material li',
+      '.recipe-ingredients li', '.recipe-material li',
+      '.ingredients dd', '.ingredient dd', '.material dd',
+      '.ingredients p', '.ingredient p', '.material p',
+    ];
+    
+    for (final selector in possibleSelectors) {
+      final elements = document.querySelectorAll(selector);
+      if (elements.isNotEmpty) {
+        buffer.writeln('【材料】');
+        for (final element in elements) {
+          final text = element.text.trim();
+          if (text.isNotEmpty && text.length > 2) {
+            buffer.writeln(text);
+          }
+        }
+        break; // 最初に見つかったセレクタのみ使用
+      }
+    }
+    
+    return buffer.toString().trim().isNotEmpty ? buffer.toString() : null;
+  }
+
   /// 通常のメタタグでOGPデータを補完
-  OgpData _complementWithStandardMeta(OgpData ogpData, Document document) {
+  OgpData _complementWithStandardMeta(OgpData ogpData, Document document, String? recipeText) {
     // タイトルの補完
     String? title = ogpData.title;
     if (title == null || title.isEmpty) {
@@ -177,6 +417,7 @@ class OgpFetcherService {
       siteName: siteName,
       url: ogpData.url,
       type: ogpData.type,
+      recipeText: recipeText,
     );
   }
 
