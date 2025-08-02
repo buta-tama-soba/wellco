@@ -1,4 +1,5 @@
 import 'package:health/health.dart';
+import 'dart:math' as math;
 
 class HealthService {
   static final HealthService _instance = HealthService._internal();
@@ -79,7 +80,10 @@ class HealthService {
         endTime: now,
       );
 
-      if (data.isEmpty) return null;
+      if (data.isEmpty) {
+        print('体重データが見つかりません');
+        return null;
+      }
 
       // 日付順でソート（最新が先頭）
       data.sort((a, b) => b.dateFrom.compareTo(a.dateFrom));
@@ -114,7 +118,10 @@ class HealthService {
         endTime: now,
       );
 
-      if (data.isEmpty) return null;
+      if (data.isEmpty) {
+        print('体脂肪率データが見つかりません');
+        return null;
+      }
 
       data.sort((a, b) => b.dateFrom.compareTo(a.dateFrom));
       final latestBodyFat = data.first.value as NumericHealthValue;
@@ -638,6 +645,7 @@ class HealthService {
       return [];
     }
   }
+
 
   /// HealthKitが利用可能かチェック
   Future<bool> isHealthKitAvailable() async {
