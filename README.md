@@ -47,6 +47,13 @@ Wellness（健康）+ Coach（コーチ）= **Wellco（ウェルコ）**
 - **Device Integration**: HealthKit (iOS)
 - **Responsive**: flutter_screenutil
 
+## データソース
+
+### 日本食品成分表データ
+栄養価計算に使用している日本食品成分表データは以下のリポジトリから取得しています：
+- https://github.com/katoharu432/standards-tables-of-food-composition-in-japan/blob/master/data.json
+- 文部科学省「日本食品標準成分表2020年版（八訂）」のデータを利用
+
 
 ## ライセンス
 
