@@ -107,14 +107,14 @@ class _WeightChartWidgetHealthState extends State<WeightChartWidgetHealth>
 
   Widget _buildChart(BuildContext context, bool isDark) {
     return SizedBox(
-      height: 240.h,
-      child: widget.isLoading
-        ? _buildLoadingState(isDark)
-        : widget.errorMessage != null
-          ? _buildErrorState(widget.errorMessage!, isDark)
-          : widget.weightData.isEmpty
-            ? _buildEmptyState(isDark)
-            : _buildChartContent(isDark),
+      height: 180.h,
+        child: widget.isLoading
+          ? _buildLoadingState(isDark)
+          : widget.errorMessage != null
+            ? _buildErrorState(widget.errorMessage!, isDark)
+            : widget.weightData.isEmpty
+              ? _buildEmptyState(isDark)
+              : _buildChartContent(isDark),
     );
   }
 
@@ -122,12 +122,9 @@ class _WeightChartWidgetHealthState extends State<WeightChartWidgetHealth>
     return AnimatedBuilder(
       animation: _chartAnimation,
       builder: (context, child) {
-        return Padding(
-          padding: EdgeInsets.only(left: 0.w, right: 16.w, top: 8.h, bottom: 0.h),
-          child: LineChart(
-            _buildLineChartData(isDark),
-            duration: const Duration(milliseconds: 0),
-          ),
+        return LineChart(
+          _buildLineChartData(isDark),
+          duration: const Duration(milliseconds: 0),
         );
       },
     );
@@ -158,7 +155,7 @@ class _WeightChartWidgetHealthState extends State<WeightChartWidgetHealth>
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            reservedSize: 40.w,
+            reservedSize: 35.w,
             getTitlesWidget: (value, meta) => _buildYAxisLabel(value, meta, isDark),
             interval: 2,
           ),
@@ -296,7 +293,7 @@ class _WeightChartWidgetHealthState extends State<WeightChartWidgetHealth>
 
   Widget _buildYAxisLabel(double value, TitleMeta meta, bool isDark) {
     return Padding(
-      padding: EdgeInsets.only(right: 8.w),
+      padding: EdgeInsets.only(right: 4.w),
       child: Text(
         value.toStringAsFixed(0),
         style: TextStyle(
@@ -323,7 +320,7 @@ class _WeightChartWidgetHealthState extends State<WeightChartWidgetHealth>
 
     final date = widget.weightData[actualIndex].date;
     return Padding(
-      padding: EdgeInsets.only(top: 8.h),
+      padding: EdgeInsets.only(top: 6.h),
       child: Text(
         '${date.month}/${date.day}',
         style: TextStyle(

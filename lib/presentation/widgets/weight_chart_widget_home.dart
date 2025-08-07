@@ -114,11 +114,11 @@ class _WeightChartWidgetHomeState extends State<WeightChartWidgetHome>
       ),
       child: Padding(
         padding: EdgeInsets.only(left: 0.w, right: 16.w, top: 20.h, bottom: 5.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildChart(context, colorScheme, isDark),
-          ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildChart(context, colorScheme, isDark),
+            ],
         ),
       ),
     );
@@ -127,13 +127,13 @@ class _WeightChartWidgetHomeState extends State<WeightChartWidgetHome>
   Widget _buildChart(BuildContext context, ColorScheme colorScheme, bool isDark) {
     return SizedBox(
       height: 180.h,
-      child: widget.isLoading
-        ? _buildLoadingState(isDark)
-        : widget.errorMessage != null
-          ? _buildErrorState(widget.errorMessage!, isDark)
-          : widget.weightData.isEmpty
-            ? _buildEmptyState(isDark)
-            : _buildChartContent(colorScheme, isDark),
+        child: widget.isLoading
+          ? _buildLoadingState(isDark)
+          : widget.errorMessage != null
+            ? _buildErrorState(widget.errorMessage!, isDark)
+            : widget.weightData.isEmpty
+              ? _buildEmptyState(isDark)
+              : _buildChartContent(colorScheme, isDark),
     );
   }
 
