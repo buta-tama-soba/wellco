@@ -527,15 +527,23 @@ class MealManagementPage extends HookConsumerWidget {
           ),
           SizedBox(width: AppConstants.paddingS.w),
           
-          // レシピ（一時的に非表示）
-          // Expanded(
-          //   child: _buildRecipeKanbanColumn(onRecipeListTap),
-          // ),
-          // SizedBox(width: AppConstants.paddingS.w),
+          // レシピ
+          Expanded(
+            child: _buildRecipeKanbanColumn(onRecipeListTap),
+          ),
+          SizedBox(width: AppConstants.paddingS.w),
           
           // 食事記録
           Expanded(
-            child: _buildMealRecordColumn(onRecipeListTap),
+            child: _buildKanbanColumn(
+              title: '食事記録',
+              color: AppColors.accent,
+              items: [
+                _buildMealSlot('朝食'),
+                _buildMealSlot('昼食'),
+                _buildMealSlot('夕食'),
+              ],
+            ),
           ),
         ],
       ),
@@ -606,51 +614,51 @@ class MealManagementPage extends HookConsumerWidget {
     );
   }
 
-  // Widget _buildRecipeItem(String name, String calories, String protein) {
-  //   return Container(
-  //     margin: EdgeInsets.only(bottom: AppConstants.paddingS.h),
-  //     padding: EdgeInsets.all(AppConstants.paddingS.w),
-  //     decoration: BoxDecoration(
-  //       color: AppColors.surface,
-  //       borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
-  //       border: Border.all(color: AppColors.secondary.withOpacity(0.2)),
-  //     ),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Text(
-  //           name,
-  //           style: AppTextStyles.body2.copyWith(fontWeight: FontWeight.w600),
-  //         ),
-  //         Text(
-  //           calories,
-  //           style: AppTextStyles.caption,
-  //         ),
-  //         Text(
-  //           protein,
-  //           style: AppTextStyles.caption.copyWith(color: AppColors.info),
-  //         ),
-  //         SizedBox(height: 4.h),
-  //         Container(
-  //           width: double.infinity,
-  //           padding: EdgeInsets.symmetric(vertical: 4.h),
-  //           decoration: BoxDecoration(
-  //             color: AppColors.secondary,
-  //             borderRadius: BorderRadius.circular(4.r),
-  //           ),
-  //           child: Text(
-  //             '作る',
-  //             style: AppTextStyles.caption.copyWith(
-  //               color: Colors.white,
-  //               fontWeight: FontWeight.w600,
-  //             ),
-  //             textAlign: TextAlign.center,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+  Widget _buildRecipeItem(String name, String calories, String protein) {
+    return Container(
+      margin: EdgeInsets.only(bottom: AppConstants.paddingS.h),
+      padding: EdgeInsets.all(AppConstants.paddingS.w),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+        border: Border.all(color: AppColors.secondary.withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            name,
+            style: AppTextStyles.body2.copyWith(fontWeight: FontWeight.w600),
+          ),
+          Text(
+            calories,
+            style: AppTextStyles.caption,
+          ),
+          Text(
+            protein,
+            style: AppTextStyles.caption.copyWith(color: AppColors.info),
+          ),
+          SizedBox(height: 4.h),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: 4.h),
+            decoration: BoxDecoration(
+              color: AppColors.secondary,
+              borderRadius: BorderRadius.circular(4.r),
+            ),
+            child: Text(
+              '作る',
+              style: AppTextStyles.caption.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildMealSlot(String mealType) {
     return Container(
@@ -691,235 +699,154 @@ class MealManagementPage extends HookConsumerWidget {
     );
   }
 
-  /// 食事記録専用のカンバンカラム（レシピ・食品登録ボタンを含む）
-  Widget _buildMealRecordColumn(VoidCallback onRecipeListTap) {
+  /// レシピ専用のカンバンカラム
+  Widget _buildRecipeKanbanColumn(VoidCallback onListTap) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppConstants.paddingS.w,
-            vertical: 4.h,
-          ),
-          decoration: BoxDecoration(
-            color: AppColors.accent.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
-          ),
-          child: Text(
-            'レシピ・食品登録',
-            style: AppTextStyles.caption.copyWith(
-              color: AppColors.accent,
-              fontWeight: FontWeight.w600,
+        // ヘッダー（タイトル + 一覧ボタン）
+        Row(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppConstants.paddingS.w,
+                vertical: 4.h,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.secondary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+              ),
+              child: Text(
+                'レシピ',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.secondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
-          ),
+            const Spacer(),
+            GestureDetector(
+              onTap: onListTap,
+              child: Container(
+                padding: EdgeInsets.all(4.w),
+                decoration: BoxDecoration(
+                  color: AppColors.secondary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+                ),
+                child: Icon(
+                  Icons.list_rounded,
+                  size: 16.w,
+                  color: AppColors.secondary,
+                ),
+              ),
+            ),
+          ],
         ),
         SizedBox(height: AppConstants.paddingS.h),
+        
+        // レシピアイテム
         Expanded(
-          child: ListView(
-            children: [
-              _buildMealSlot('朝食'),
-              _buildMealSlot('昼食'),
-              _buildMealSlot('夕食'),
-              SizedBox(height: AppConstants.paddingS.h),
-              // レシピ・食品登録ボタン
-              _buildRecipeRegistrationButton(onRecipeListTap),
-            ],
+          child: Consumer(
+            builder: (context, ref, child) {
+              final recentRecipesAsync = ref.watch(recentRecipesProvider);
+              
+              return recentRecipesAsync.when(
+                data: (recipes) {
+                  final displayRecipes = recipes.take(3).toList(); // カンバンでは最大3件
+                  
+                  return ListView(
+                    children: [
+                      // 実際のレシピデータを表示
+                      ...displayRecipes.map((recipe) => _buildKanbanRecipeItem(
+                        context,
+                        recipe: recipe,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RecipeViewerPage(
+                              url: recipe.url,
+                              title: recipe.title,
+                            ),
+                          ),
+                        ),
+                      )),
+                      
+                      // レシピがない場合は追加ボタンを表示
+                      if (displayRecipes.isEmpty)
+                        _buildAddRecipeButton(context),
+                      
+                      // もっと見るボタン（レシピが3件以上ある場合）
+                      if (recipes.length > 3 || displayRecipes.isNotEmpty)
+                        Container(
+                          margin: EdgeInsets.only(top: AppConstants.paddingS.h),
+                          child: GestureDetector(
+                            onTap: onListTap,
+                            child: Container(
+                              padding: EdgeInsets.all(AppConstants.paddingS.w),
+                              decoration: BoxDecoration(
+                                color: AppColors.surface,
+                                borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+                                border: Border.all(
+                                  color: AppColors.secondary.withOpacity(0.3),
+                                  style: BorderStyle.solid,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.more_horiz,
+                                    size: 16.w,
+                                    color: AppColors.secondary,
+                                  ),
+                                  SizedBox(width: 4.w),
+                                  Text(
+                                    displayRecipes.isEmpty ? 'レシピを追加' : 'もっと見る',
+                                    style: AppTextStyles.caption.copyWith(
+                                      color: AppColors.secondary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+                loading: () => const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+                error: (error, stack) => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 32,
+                        color: AppColors.error,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'エラー',
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.error,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ],
     );
   }
-
-  /// レシピ・食品登録ボタン
-  Widget _buildRecipeRegistrationButton(VoidCallback onRecipeListTap) {
-    return Container(
-      margin: EdgeInsets.only(bottom: AppConstants.paddingS.h),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
-          onTap: onRecipeListTap,
-          child: Container(
-            padding: EdgeInsets.all(AppConstants.paddingM.w),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
-              border: Border.all(
-                color: AppColors.secondary.withOpacity(0.3),
-                style: BorderStyle.solid,
-              ),
-            ),
-            child: Column(
-              children: [
-                Icon(
-                  Icons.restaurant_menu,
-                  color: AppColors.secondary,
-                  size: 24.w,
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  '保存済みレシピ',
-                  style: AppTextStyles.caption.copyWith(
-                    color: AppColors.secondary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// レシピ専用のカンバンカラム（一時的に非表示のため未使用）
-  // Widget _buildRecipeKanbanColumn(VoidCallback onListTap) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       // ヘッダー（タイトル + 一覧ボタン）
-  //       Row(
-  //         children: [
-  //           Container(
-  //             padding: EdgeInsets.symmetric(
-  //               horizontal: AppConstants.paddingS.w,
-  //               vertical: 4.h,
-  //             ),
-  //             decoration: BoxDecoration(
-  //               color: AppColors.secondary.withOpacity(0.1),
-  //               borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
-  //             ),
-  //             child: Text(
-  //               'レシピ',
-  //               style: AppTextStyles.caption.copyWith(
-  //                 color: AppColors.secondary,
-  //                 fontWeight: FontWeight.w600,
-  //               ),
-  //             ),
-  //           ),
-  //           const Spacer(),
-  //           GestureDetector(
-  //             onTap: onListTap,
-  //             child: Container(
-  //               padding: EdgeInsets.all(4.w),
-  //               decoration: BoxDecoration(
-  //                 color: AppColors.secondary.withOpacity(0.1),
-  //                 borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
-  //               ),
-  //               child: Icon(
-  //                 Icons.list_rounded,
-  //                 size: 16.w,
-  //                 color: AppColors.secondary,
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //       SizedBox(height: AppConstants.paddingS.h),
-  //       
-  //       // レシピアイテム
-  //       Expanded(
-  //         child: Consumer(
-  //           builder: (context, ref, child) {
-  //             final recentRecipesAsync = ref.watch(recentRecipesProvider);
-  //             
-  //             return recentRecipesAsync.when(
-  //               data: (recipes) {
-  //                 final displayRecipes = recipes.take(3).toList(); // カンバンでは最大3件
-  //                 
-  //                 return ListView(
-  //                   children: [
-  //                     // 実際のレシピデータを表示
-  //                     ...displayRecipes.map((recipe) => _buildKanbanRecipeItem(
-  //                       context,
-  //                       recipe: recipe,
-  //                       onTap: () => Navigator.push(
-  //                         context,
-  //                         MaterialPageRoute(
-  //                           builder: (context) => RecipeViewerPage(
-  //                             url: recipe.url,
-  //                             title: recipe.title,
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     )),
-  //                     
-  //                     // レシピがない場合は追加ボタンを表示
-  //                     if (displayRecipes.isEmpty)
-  //                       _buildAddRecipeButton(context),
-  //                     
-  //                     // もっと見るボタン（レシピが3件以上ある場合）
-  //                     if (recipes.length > 3 || displayRecipes.isNotEmpty)
-  //                       Container(
-  //                         margin: EdgeInsets.only(top: AppConstants.paddingS.h),
-  //                         child: GestureDetector(
-  //                           onTap: onListTap,
-  //                           child: Container(
-  //                             padding: EdgeInsets.all(AppConstants.paddingS.w),
-  //                             decoration: BoxDecoration(
-  //                               color: AppColors.surface,
-  //                               borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
-  //                               border: Border.all(
-  //                                 color: AppColors.secondary.withOpacity(0.3),
-  //                                 style: BorderStyle.solid,
-  //                               ),
-  //                             ),
-  //                             child: Row(
-  //                               mainAxisAlignment: MainAxisAlignment.center,
-  //                               children: [
-  //                                 Icon(
-  //                                   Icons.more_horiz,
-  //                                   size: 16.w,
-  //                                   color: AppColors.secondary,
-  //                                 ),
-  //                                 SizedBox(width: 4.w),
-  //                                 Text(
-  //                                   displayRecipes.isEmpty ? 'レシピを追加' : 'もっと見る',
-  //                                   style: AppTextStyles.caption.copyWith(
-  //                                     color: AppColors.secondary,
-  //                                     fontWeight: FontWeight.w600,
-  //                                   ),
-  //                                 ),
-  //                               ],
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                   ],
-  //                 );
-  //               },
-  //               loading: () => const Center(
-  //                 child: Padding(
-  //                   padding: EdgeInsets.all(16.0),
-  //                   child: CircularProgressIndicator(),
-  //                 ),
-  //               ),
-  //               error: (error, stack) => Center(
-  //                 child: Column(
-  //                   mainAxisAlignment: MainAxisAlignment.center,
-  //                   children: [
-  //                     Icon(
-  //                       Icons.error_outline,
-  //                       size: 32,
-  //                       color: AppColors.error,
-  //                     ),
-  //                     const SizedBox(height: 8),
-  //                     Text(
-  //                       'エラー',
-  //                       style: AppTextStyles.caption.copyWith(
-  //                         color: AppColors.error,
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //             );
-  //           },
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
 
 
   /// フィルタータブ
