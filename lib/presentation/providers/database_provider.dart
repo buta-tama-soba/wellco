@@ -184,7 +184,7 @@ class RecipeRegistrationNotifier extends StateNotifier<AsyncValue<void>> {
     }
   }
 
-  /// 外部レシピを栄養分析結果と一緒に保存
+  /// 外部レシピ・食品を栄養分析結果と一緒に保存
   Future<void> saveExternalRecipeWithNutrition({
     required String url,
     required String title,
@@ -195,6 +195,14 @@ class RecipeRegistrationNotifier extends StateNotifier<AsyncValue<void>> {
     String? memo,
     String? recipeText,
     RecipeNutritionResult? nutritionResult,
+    String itemType = 'recipe',
+    // 食品専用フィールド
+    String? productCode,
+    String? brand,
+    String? size,
+    double? price,
+    String? category,
+    String? nutritionSource,
   }) async {
     state = const AsyncValue.loading();
     
@@ -205,10 +213,11 @@ class RecipeRegistrationNotifier extends StateNotifier<AsyncValue<void>> {
         throw Exception('このレシピは既に登録されています');
       }
       
-      // 新しいレシピを保存
+      // 新しいレシピ・食品を保存
       await _database.insertExternalRecipe(
         ExternalRecipeTableCompanion.insert(
           url: url,
+          itemType: Value(itemType),
           title: title,
           description: description != null ? Value(description) : const Value.absent(),
           imageUrl: imageUrl != null ? Value(imageUrl) : const Value.absent(),
