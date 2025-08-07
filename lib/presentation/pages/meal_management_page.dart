@@ -527,23 +527,15 @@ class MealManagementPage extends HookConsumerWidget {
           // ),
           // SizedBox(width: AppConstants.paddingS.w),
           
-          // レシピ
-          Expanded(
-            child: _buildRecipeKanbanColumn(onRecipeListTap),
-          ),
-          SizedBox(width: AppConstants.paddingS.w),
+          // レシピ（一時的に非表示）
+          // Expanded(
+          //   child: _buildRecipeKanbanColumn(onRecipeListTap),
+          // ),
+          // SizedBox(width: AppConstants.paddingS.w),
           
           // 食事記録
           Expanded(
-            child: _buildKanbanColumn(
-              title: '食事記録',
-              color: AppColors.accent,
-              items: [
-                _buildMealSlot('朝食'),
-                _buildMealSlot('昼食'),
-                _buildMealSlot('夕食'),
-              ],
-            ),
+            child: _buildMealKanbanColumn(onRecipeListTap),
           ),
         ],
       ),
@@ -697,6 +689,82 @@ class MealManagementPage extends HookConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  /// 食事記録専用のカンバンカラム（保存済みレシピボタン付き）
+  Widget _buildMealKanbanColumn(VoidCallback onRecipeListTap) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ヘッダー（タイトル + 保存済みレシピボタン）
+        Row(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppConstants.paddingS.w,
+                vertical: 4.h,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.accent.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+              ),
+              child: Text(
+                '食事記録',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.accent,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const Spacer(),
+            GestureDetector(
+              onTap: onRecipeListTap,
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 8.w,
+                  vertical: 4.h,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.secondary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.restaurant_menu,
+                      size: 14.w,
+                      color: AppColors.secondary,
+                    ),
+                    SizedBox(width: 2.w),
+                    Text(
+                      'レシピ',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.secondary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 10.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: AppConstants.paddingS.h),
+        
+        // 食事記録スロット
+        Expanded(
+          child: ListView(
+            children: [
+              _buildMealSlot('朝食'),
+              _buildMealSlot('昼食'),
+              _buildMealSlot('夕食'),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
