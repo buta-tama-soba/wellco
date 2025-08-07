@@ -407,82 +407,128 @@ class MealManagementPage extends HookConsumerWidget {
   }
 
   Widget _buildNutritionSummary() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
-      padding: EdgeInsets.all(AppConstants.paddingM.w),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8.r,
-            offset: Offset(0, 2.h),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '今日の栄養摂取',
-                style: AppTextStyles.headline3,
-              ),
-              TextButton(
-                onPressed: () {
-                  // TODO: 詳細画面へ
-                },
-                child: Text(
-                  '詳細',
-                  style: AppTextStyles.body2.copyWith(
-                    color: AppColors.primary,
+    return Consumer(
+      builder: (context, ref, child) {
+        final nutritionAsync = ref.watch(todayNutritionProvider);
+        
+        return nutritionAsync.when(
+          data: (nutrition) {
+            const targetCalories = 2000.0;
+            final currentCalories = nutrition['calories'] ?? 0.0;
+            final currentProtein = nutrition['protein'] ?? 0.0;
+            final currentFat = nutrition['fat'] ?? 0.0;
+            final currentCarbs = nutrition['carbs'] ?? 0.0;
+            
+            final caloriesProgress = (currentCalories / targetCalories).clamp(0.0, 1.0);
+            final caloriesPercent = (caloriesProgress * 100).round();
+            
+            return Container(
+              margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
+              padding: EdgeInsets.all(AppConstants.paddingM.w),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8.r,
+                    offset: Offset(0, 2.h),
                   ),
-                ),
+                ],
               ),
-            ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '今日の栄養摂取',
+                        style: AppTextStyles.headline3,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // TODO: 詳細画面へ
+                        },
+                        child: Text(
+                          '詳細',
+                          style: AppTextStyles.body2.copyWith(
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: AppConstants.paddingS.h),
+                  
+                  // カロリープログレスバー
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'カロリー ${currentCalories.toInt()} / ${targetCalories.toInt()} kcal',
+                        style: AppTextStyles.body1,
+                      ),
+                      Text(
+                        '$caloriesPercent%',
+                        style: AppTextStyles.body2.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: AppConstants.paddingS.h),
+                  LinearProgressIndicator(
+                    value: caloriesProgress,
+                    backgroundColor: AppColors.primary.withOpacity(0.2),
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                    minHeight: 6.h,
+                    borderRadius: BorderRadius.circular(3.r),
+                  ),
+                  SizedBox(height: AppConstants.paddingS.h),
+                  
+                  // 3大栄養素
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildMiniNutrient('P', '${currentProtein.toInt()}g', AppColors.info),
+                      _buildMiniNutrient('F', '${currentFat.toInt()}g', AppColors.warning),
+                      _buildMiniNutrient('C', '${currentCarbs.toInt()}g', AppColors.success),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+          loading: () => Container(
+            margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
+            padding: EdgeInsets.all(AppConstants.paddingM.w),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+            ),
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
           ),
-          SizedBox(height: AppConstants.paddingS.h),
-          
-          // カロリープログレスバー
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'カロリー 0 / 2,000 kcal',
-                style: AppTextStyles.body1,
-              ),
-              Text(
-                '0%',
+          error: (error, stack) => Container(
+            margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
+            padding: EdgeInsets.all(AppConstants.paddingM.w),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+            ),
+            child: Center(
+              child: Text(
+                'エラー: 栄養情報を取得できません',
                 style: AppTextStyles.body2.copyWith(
-                  color: AppColors.textSecondary,
+                  color: AppColors.error,
                 ),
               ),
-            ],
+            ),
           ),
-          SizedBox(height: AppConstants.paddingS.h),
-          LinearProgressIndicator(
-            value: 0.0,
-            backgroundColor: AppColors.primary.withOpacity(0.2),
-            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-            minHeight: 6.h,
-            borderRadius: BorderRadius.circular(3.r),
-          ),
-          SizedBox(height: AppConstants.paddingS.h),
-          
-          // 3大栄養素
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildMiniNutrient('P', '0g', AppColors.info),
-              _buildMiniNutrient('F', '0g', AppColors.warning),
-              _buildMiniNutrient('C', '0g', AppColors.success),
-            ],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
