@@ -513,19 +513,19 @@ class MealManagementPage extends HookConsumerWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 在庫管理
-          Expanded(
-            child: _buildKanbanColumn(
-              title: '在庫管理',
-              color: AppColors.primary,
-              items: [
-                _buildStockItem('🥬', '白菜', '1/2個', '3日後'),
-                _buildStockItem('🥚', '卵', '8個', '5日後'),
-                _buildStockItem('🍗', '鶏肉', '300g', '明日'),
-              ],
-            ),
-          ),
-          SizedBox(width: AppConstants.paddingS.w),
+          // 在庫管理（一時的に非表示）
+          // Expanded(
+          //   child: _buildKanbanColumn(
+          //     title: '在庫管理',
+          //     color: AppColors.primary,
+          //     items: [
+          //       _buildStockItem('🥬', '白菜', '1/2個', '3日後'),
+          //       _buildStockItem('🥚', '卵', '8個', '5日後'),
+          //       _buildStockItem('🍗', '鶏肉', '300g', '明日'),
+          //     ],
+          //   ),
+          // ),
+          // SizedBox(width: AppConstants.paddingS.w),
           
           // レシピ
           Expanded(
@@ -585,34 +585,35 @@ class MealManagementPage extends HookConsumerWidget {
     );
   }
 
-  Widget _buildStockItem(String emoji, String name, String quantity, String expiry) {
-    return Container(
-      margin: EdgeInsets.only(bottom: AppConstants.paddingS.h),
-      padding: EdgeInsets.all(AppConstants.paddingS.w),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
-        border: Border.all(color: AppColors.primary.withOpacity(0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '$emoji $name',
-            style: AppTextStyles.body2.copyWith(fontWeight: FontWeight.w600),
-          ),
-          Text(
-            quantity,
-            style: AppTextStyles.caption,
-          ),
-          Text(
-            expiry,
-            style: AppTextStyles.caption.copyWith(color: AppColors.warning),
-          ),
-        ],
-      ),
-    );
-  }
+  // 在庫管理アイテム（一時的に非表示のため未使用）
+  // Widget _buildStockItem(String emoji, String name, String quantity, String expiry) {
+  //   return Container(
+  //     margin: EdgeInsets.only(bottom: AppConstants.paddingS.h),
+  //     padding: EdgeInsets.all(AppConstants.paddingS.w),
+  //     decoration: BoxDecoration(
+  //       color: AppColors.surface,
+  //       borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+  //       border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           '$emoji $name',
+  //           style: AppTextStyles.body2.copyWith(fontWeight: FontWeight.w600),
+  //         ),
+  //         Text(
+  //           quantity,
+  //           style: AppTextStyles.caption,
+  //         ),
+  //         Text(
+  //           expiry,
+  //           style: AppTextStyles.caption.copyWith(color: AppColors.warning),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildRecipeItem(String name, String calories, String protein) {
     return Container(
