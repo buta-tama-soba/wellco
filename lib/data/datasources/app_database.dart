@@ -13,6 +13,19 @@ import '../models/japanese_food_composition_table.dart';
 
 part 'app_database.g.dart';
 
+/// 食事記録とレシピ情報を結合したデータクラス
+class MealWithRecipe {
+  final MealTableData meal;
+  final List<MealItemTableData> items;
+  final ExternalRecipeTableData? recipe; // レシピ情報（任意）
+
+  const MealWithRecipe({
+    required this.meal,
+    required this.items,
+    this.recipe,
+  });
+}
+
 /// アプリケーションデータベース
 @DriftDatabase(tables: [
   MealTable,
@@ -97,6 +110,46 @@ class AppDatabase extends _$AppDatabase {
       .get();
   }
 
+  /// 食事記録とレシピ情報を結合して取得
+  Future<List<MealWithRecipe>> getMealsWithRecipesByDate(DateTime date) async {
+    final startOfDay = DateTime(date.year, date.month, date.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+    
+    // 指定日の食事記録を取得
+    final meals = await (select(mealTable)
+      ..where((tbl) => tbl.recordedAt.isBetweenValues(startOfDay, endOfDay))
+      ..orderBy([(tbl) => OrderingTerm(expression: tbl.recordedAt)]))
+      .get();
+
+    // 各食事記録に対して食事項目とレシピ情報を取得
+    final mealsWithRecipes = <MealWithRecipe>[];
+    for (final meal in meals) {
+      // 食事項目を取得
+      final items = await (select(mealItemTable)
+        ..where((tbl) => tbl.mealId.equals(meal.id)))
+        .get();
+
+      // レシピ情報を取得（最初の食事項目のレシピIDを使用）
+      ExternalRecipeTableData? recipe;
+      if (items.isNotEmpty && items.first.externalRecipeId != null) {
+        final recipeId = items.first.externalRecipeId;
+        if (recipeId != null) {
+          recipe = await (select(externalRecipeTable)
+            ..where((tbl) => tbl.id.equals(recipeId)))
+            .getSingleOrNull();
+        }
+      }
+
+      mealsWithRecipes.add(MealWithRecipe(
+        meal: meal,
+        items: items,
+        recipe: recipe,
+      ));
+    }
+
+    return mealsWithRecipes;
+  }
+
   /// 食事と食事項目を保存
   Future<int> insertMealWithItems(MealTableCompanion meal, List<MealItemTableCompanion> items) async {
     return transaction(() async {
@@ -110,6 +163,17 @@ class AppDatabase extends _$AppDatabase {
       }
       
       return mealId;
+    });
+  }
+
+  /// 食事記録を削除（食事項目も一緒に削除される）
+  Future<void> deleteMeal(int mealId) async {
+    await transaction(() async {
+      // 食事項目を削除（外部キー制約により自動削除されるが明示的に削除）
+      await (delete(mealItemTable)..where((tbl) => tbl.mealId.equals(mealId))).go();
+      
+      // 食事記録を削除
+      await (delete(mealTable)..where((tbl) => tbl.id.equals(mealId))).go();
     });
   }
 

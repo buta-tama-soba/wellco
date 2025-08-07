@@ -767,14 +767,14 @@ class MealManagementPage extends HookConsumerWidget {
   Widget _buildTodayMealsList() {
     return Consumer(
       builder: (context, ref, child) {
-        final todayMealsAsync = ref.watch(todayMealsProvider);
+        final todayMealsAsync = ref.watch(todayMealsWithRecipesProvider);
         
         return todayMealsAsync.when(
-          data: (meals) {
+          data: (mealsWithRecipes) {
             return ListView(
               children: [
                 // 既存の食事記録
-                ...meals.map((meal) => _buildMealRecordItem(meal)),
+                ...mealsWithRecipes.map((mealWithRecipe) => _buildMealRecordItem(context, ref, mealWithRecipe)),
                 
                 // 食事追加ボタン
                 _buildAddMealButton(context),
@@ -812,7 +812,10 @@ class MealManagementPage extends HookConsumerWidget {
   }
 
   /// 食事記録アイテム
-  Widget _buildMealRecordItem(MealTableData meal) {
+  Widget _buildMealRecordItem(BuildContext context, WidgetRef ref, MealWithRecipe mealWithRecipe) {
+    final meal = mealWithRecipe.meal;
+    final recipe = mealWithRecipe.recipe;
+    
     return Container(
       margin: EdgeInsets.only(bottom: AppConstants.paddingS.h),
       padding: EdgeInsets.all(AppConstants.paddingS.w),
@@ -821,72 +824,123 @@ class MealManagementPage extends HookConsumerWidget {
         borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
         border: Border.all(color: AppColors.accent.withOpacity(0.2)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                meal.mealType,
-                style: AppTextStyles.body2.copyWith(fontWeight: FontWeight.w600),
+          // レシピ画像（ある場合のみ表示）
+          if (recipe?.imageUrl != null) ...[
+            Container(
+              width: 50.w,
+              height: 50.w,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
               ),
-              Text(
-                '${meal.recordedAt.hour.toString().padLeft(2, '0')}:${meal.recordedAt.minute.toString().padLeft(2, '0')}',
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.textSecondary,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+                child: CachedNetworkImage(
+                  imageUrl: recipe!.imageUrl!,
+                  width: 50.w,
+                  height: 50.w,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: AppColors.primary.withOpacity(0.1),
+                    child: Icon(
+                      Icons.restaurant,
+                      color: AppColors.primary,
+                      size: 20.w,
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Icon(
+                    Icons.restaurant,
+                    color: AppColors.primary,
+                    size: 20.w,
+                  ),
                 ),
               ),
-            ],
-          ),
-          SizedBox(height: 4.h),
-          
-          // 栄養サマリー
-          Row(
-            children: [
-              Text(
-                '${meal.totalCalories.toInt()} kcal',
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(width: AppConstants.paddingS.w),
-              Text(
-                'P: ${meal.totalProtein.toInt()}g',
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.info,
-                ),
-              ),
-              SizedBox(width: AppConstants.paddingS.w),
-              Text(
-                'F: ${meal.totalFat.toInt()}g',
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.warning,
-                ),
-              ),
-              SizedBox(width: AppConstants.paddingS.w),
-              Text(
-                'C: ${meal.totalCarbs.toInt()}g',
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.success,
-                ),
-              ),
-            ],
-          ),
-          
-          // メモがある場合は表示
-          if (meal.memo != null && meal.memo!.isNotEmpty) ...[
-            SizedBox(height: 4.h),
-            Text(
-              meal.memo!,
-              style: AppTextStyles.caption.copyWith(
-                color: AppColors.textSecondary,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
+            SizedBox(width: AppConstants.paddingM.w),
           ],
+          
+          // 食事情報
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        recipe?.title ?? mealWithRecipe.items.first.foodName,
+                        style: AppTextStyles.body2.copyWith(fontWeight: FontWeight.w600),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Text(
+                      '${meal.recordedAt.hour.toString().padLeft(2, '0')}:${meal.recordedAt.minute.toString().padLeft(2, '0')}',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 4.h),
+                
+                // 栄養サマリー
+                Row(
+                  children: [
+                    Text(
+                      '${meal.totalCalories.toInt()} kcal',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(width: AppConstants.paddingS.w),
+                    Text(
+                      'P: ${meal.totalProtein.toInt()}g',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.info,
+                      ),
+                    ),
+                    SizedBox(width: AppConstants.paddingS.w),
+                    Text(
+                      'F: ${meal.totalFat.toInt()}g',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.warning,
+                      ),
+                    ),
+                    SizedBox(width: AppConstants.paddingS.w),
+                    Text(
+                      'C: ${meal.totalCarbs.toInt()}g',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.success,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          
+          // 削除ボタン
+          SizedBox(width: AppConstants.paddingS.w),
+          GestureDetector(
+            onTap: () => _showDeleteMealDialog(context, ref, meal.id, recipe?.title ?? mealWithRecipe.items.first.foodName),
+            child: Container(
+              padding: EdgeInsets.all(4.w),
+              decoration: BoxDecoration(
+                color: AppColors.error.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(4.r),
+              ),
+              child: Icon(
+                Icons.delete_outline,
+                color: AppColors.error,
+                size: 16.w,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -1475,5 +1529,73 @@ class MealManagementPage extends HookConsumerWidget {
         ),
       ),
     );
+  }
+
+  /// 食事削除の確認ダイアログを表示
+  void _showDeleteMealDialog(BuildContext context, WidgetRef ref, int mealId, String mealName) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+        ),
+        title: Text(
+          '食事記録を削除',
+          style: AppTextStyles.headline3,
+        ),
+        content: Text(
+          '「$mealName」を削除しますか？\nこの操作は取り消せません。',
+          style: AppTextStyles.body2,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'キャンセル',
+              style: AppTextStyles.body2.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _deleteMeal(context, ref, mealId);
+            },
+            child: Text(
+              '削除',
+              style: AppTextStyles.body2.copyWith(
+                color: AppColors.error,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 食事記録を削除
+  Future<void> _deleteMeal(BuildContext context, WidgetRef ref, int mealId) async {
+    try {
+      final mealDeletionNotifier = ref.read(mealDeletionProvider.notifier);
+      await mealDeletionNotifier.deleteMeal(mealId);
+      
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('食事記録を削除しました')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('削除に失敗しました: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
   }
 }

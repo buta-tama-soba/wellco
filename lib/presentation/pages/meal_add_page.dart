@@ -594,6 +594,7 @@ class MealAddPage extends HookConsumerWidget {
       
       // プロバイダーを更新
       ref.invalidate(todayMealsProvider);
+      ref.invalidate(todayMealsWithRecipesProvider);
       ref.invalidate(todayNutritionProvider);
       
       if (context.mounted) {
@@ -656,6 +657,7 @@ class MealAddPage extends HookConsumerWidget {
       
       // プロバイダーを更新
       ref.invalidate(todayMealsProvider);
+      ref.invalidate(todayMealsWithRecipesProvider);
       ref.invalidate(todayNutritionProvider);
       
       if (context.mounted) {
