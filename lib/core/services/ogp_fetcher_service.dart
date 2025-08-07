@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart';
 import 'dart:convert';
+import 'nutrition_extraction_service.dart';
 
 /// OGP（Open Graph Protocol）データ
 class OgpData {
@@ -12,6 +13,7 @@ class OgpData {
   final String? url;
   final String? type;
   final String? recipeText; // レシピ本文（材料抽出用）
+  final NutritionInfo? nutrition; // 直接抽出された栄養情報
 
   const OgpData({
     this.title,
@@ -21,6 +23,7 @@ class OgpData {
     this.url,
     this.type,
     this.recipeText,
+    this.nutrition,
   });
 
   bool get hasBasicInfo => title != null && (description != null || imageUrl != null);
@@ -34,6 +37,7 @@ class OgpData {
 /// OGPメタデータ取得サービス
 class OgpFetcherService {
   static const Duration _timeout = Duration(seconds: 10);
+  final NutritionExtractionService _nutritionExtractor = NutritionExtractionService();
   
   /// URLからOGPメタデータを取得
   Future<OgpData> fetchOgpData(String url) async {
@@ -91,8 +95,12 @@ class OgpFetcherService {
       final recipeText = _extractRecipeText(document, url);
       print('デバッグ: 抽出されたレシピ本文の長さ = ${recipeText?.length ?? 0}');
       
+      // 栄養情報を直接抽出
+      final nutrition = _nutritionExtractor.extractNutritionFromHtml(document);
+      print('デバッグ: 栄養情報の直接抽出結果 = ${nutrition?.toString()}');
+      
       // OGPデータが不足している場合は通常のメタタグから補完
-      return _complementWithStandardMeta(ogpData, document, recipeText);
+      return _complementWithStandardMeta(ogpData, document, recipeText, nutrition);
       
     } on http.ClientException catch (e) {
       throw Exception('ネットワークエラー: ${e.message}');
@@ -382,7 +390,7 @@ class OgpFetcherService {
   }
 
   /// 通常のメタタグでOGPデータを補完
-  OgpData _complementWithStandardMeta(OgpData ogpData, Document document, String? recipeText) {
+  OgpData _complementWithStandardMeta(OgpData ogpData, Document document, String? recipeText, NutritionInfo? nutrition) {
     // タイトルの補完
     String? title = ogpData.title;
     if (title == null || title.isEmpty) {
@@ -418,6 +426,7 @@ class OgpFetcherService {
       url: ogpData.url,
       type: ogpData.type,
       recipeText: recipeText,
+      nutrition: nutrition,
     );
   }
 

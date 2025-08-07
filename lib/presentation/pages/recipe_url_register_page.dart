@@ -372,10 +372,24 @@ class _RecipeUrlRegisterPageState extends ConsumerState<RecipeUrlRegisterPage> {
                   color: AppColors.success,
                 ),
                 SizedBox(width: 8.w),
-                Text(
-                  '栄養情報を自動分析しました',
-                  style: AppTextStyles.headline3.copyWith(
-                    color: AppColors.success,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '栄養情報を自動分析しました',
+                        style: AppTextStyles.headline3.copyWith(
+                          color: AppColors.success,
+                        ),
+                      ),
+                      if (_ogpData?.nutrition != null && _ogpData!.nutrition!.isValid)
+                        Text(
+                          '情報源: ${_ogpData!.nutrition!.source}',
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ],
@@ -501,10 +515,11 @@ class _RecipeUrlRegisterPageState extends ConsumerState<RecipeUrlRegisterPage> {
       final ogpData = await _ogpFetcher.fetchOgpData(_urlController.text);
       
       // OGP取得後、レシピ本文があれば栄養分析を実行
+      // 直接抽出された栄養情報を優先して使用
       RecipeNutritionResult? nutritionResult;
       if (ogpData.recipeText != null && ogpData.recipeText!.isNotEmpty) {
         try {
-          nutritionResult = await _nutritionService.analyzeRecipe(ogpData.recipeText!);
+          nutritionResult = await _nutritionService.analyzeRecipe(ogpData.recipeText!, ogpData.nutrition);
         } catch (e) {
           print('栄養分析エラー: $e');
         }

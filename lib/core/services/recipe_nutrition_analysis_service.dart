@@ -4,6 +4,7 @@ import '../../data/datasources/app_database.dart';
 import 'ingredient_extraction_service.dart';
 import 'food_composition_data_service.dart';
 import 'food_dictionary_service.dart';
+import 'nutrition_extraction_service.dart';
 
 /// レシピ栄養分析サービス
 class RecipeNutritionAnalysisService {
@@ -16,9 +17,11 @@ class RecipeNutritionAnalysisService {
         _dictionaryService = FoodDictionaryService(database);
 
   /// レシピ本文から材料・栄養を分析
-  Future<RecipeNutritionResult> analyzeRecipe(String recipeText) async {
+  /// 直接抽出された栄養情報がある場合は優先して使用
+  Future<RecipeNutritionResult> analyzeRecipe(String recipeText, [NutritionInfo? directNutrition]) async {
     print('デバッグ: RecipeNutritionAnalysisService.analyzeRecipe開始');
     print('デバッグ: レシピ本文 = ${recipeText.substring(0, recipeText.length > 100 ? 100 : recipeText.length)}...');
+    print('デバッグ: 直接抽出された栄養情報 = ${directNutrition?.toString()}');
     
     // 1. 材料抽出
     final ingredients = _extractor.extractIngredients(recipeText);
@@ -43,8 +46,12 @@ class RecipeNutritionAnalysisService {
       ));
     }
     
-    // 3. 栄養計算
-    final nutrition = _calculateNutrition(matchResults);
+    // 3. 栄養計算（直接抽出された栄養情報を優先）
+    final nutrition = directNutrition != null && directNutrition.isValid
+        ? _convertNutritionInfo(directNutrition)
+        : _calculateNutrition(matchResults);
+    
+    print('デバッグ: 使用する栄養情報 = ${directNutrition != null && directNutrition.isValid ? "直接抽出" : "材料計算"}');
     
     // 4. PFCバランス
     final pfcBalance = _calculatePFCBalance(nutrition);
@@ -57,6 +64,19 @@ class RecipeNutritionAnalysisService {
       extractionStats: stats,
       ingredientsJson: _ingredientsToJson(ingredients),
       rawText: recipeText,
+    );
+  }
+  
+  /// NutritionInfoをRecipeNutritionに変換
+  RecipeNutrition _convertNutritionInfo(NutritionInfo nutritionInfo) {
+    return RecipeNutrition(
+      energy: nutritionInfo.calories,
+      protein: nutritionInfo.protein,
+      fat: nutritionInfo.fat,
+      carbohydrate: nutritionInfo.carbs,
+      salt: nutritionInfo.salt,
+      fiber: nutritionInfo.fiber,
+      vitaminC: nutritionInfo.vitaminC,
     );
   }
 
