@@ -92,6 +92,7 @@ class _RecipeEditPageState extends ConsumerState<RecipeEditPage> {
   late TextEditingController _vitaminCController;
   
   List<IngredientItem> _ingredientsList = [];
+  String? _nutritionSource; // 栄養情報の情報源
 
   @override
   void initState() {
@@ -707,9 +708,33 @@ class _RecipeEditPageState extends ConsumerState<RecipeEditPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          '栄養情報（1人前あたり）',
-          style: AppTextStyles.headline3,
+        Row(
+          children: [
+            Text(
+              '栄養情報（1人前あたり）',
+              style: AppTextStyles.headline3,
+            ),
+            if (_nutritionSource != null) ...[
+              Spacer(),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppConstants.paddingS.w,
+                  vertical: 4.h,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+                ),
+                child: Text(
+                  '情報源: $_nutritionSource',
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
         SizedBox(height: AppConstants.paddingS.h),
         
@@ -1251,10 +1276,14 @@ class _RecipeEditPageState extends ConsumerState<RecipeEditPage> {
         final extractionService = IngredientExtractionService();
         final ingredients = extractionService.extractIngredients(ogpData.recipeText!);
         
-        // 栄養分析も実行
+        // 栄養分析も実行（直接抽出された栄養情報を優先）
         final database = ref.read(databaseProvider);
         final nutritionService = RecipeNutritionAnalysisService(database);
-        final result = await nutritionService.analyzeRecipe(ogpData.recipeText!);
+        final result = await nutritionService.analyzeRecipe(ogpData.recipeText!, ogpData.nutrition);
+        
+        // 情報源を記録
+        final hasDirectNutrition = ogpData.nutrition != null && ogpData.nutrition!.isValid;
+        _nutritionSource = hasDirectNutrition ? ogpData.nutrition!.source : '材料分析';
         
         // 材料リストと栄養情報を更新
         setState(() {
@@ -1348,6 +1377,7 @@ class _RecipeEditPageState extends ConsumerState<RecipeEditPage> {
       
       // 栄養情報を入力フィールドに反映
       setState(() {
+        _nutritionSource = '材料分析'; // 手動分析の場合は材料分析
         _caloriesController.text = result.nutrition.energy.toStringAsFixed(0);
         _proteinController.text = result.nutrition.protein.toStringAsFixed(1);
         _fatController.text = result.nutrition.fat.toStringAsFixed(1);

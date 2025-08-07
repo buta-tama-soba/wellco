@@ -80,6 +80,9 @@ class ExternalRecipeTable extends Table {
   /// レシピURL
   TextColumn get url => text().withLength(min: 1, max: 500).unique()();
   
+  /// アイテムタイプ（'recipe' | 'food_product'）
+  TextColumn get itemType => text().withLength(min: 1, max: 20).withDefault(const Constant('recipe'))();
+  
   /// タイトル（OGPから取得）
   TextColumn get title => text().withLength(min: 1, max: 200)();
   
@@ -100,6 +103,28 @@ class ExternalRecipeTable extends Table {
   
   /// メモ
   TextColumn get memo => text().nullable()();
+  
+  /// === 食品商品専用フィールド ===
+  
+  /// 商品コード（JANコード等）
+  TextColumn get productCode => text().nullable()();
+  
+  /// ブランド名
+  TextColumn get brand => text().nullable()();
+  
+  /// 商品サイズ・容量
+  TextColumn get size => text().nullable()();
+  
+  /// 商品価格（円）
+  RealColumn get price => real().nullable()();
+  
+  /// カテゴリ
+  TextColumn get category => text().nullable()();
+  
+  /// 栄養情報の情報源
+  TextColumn get nutritionSource => text().nullable()();
+  
+  /// === 共通フィールド ===
   
   /// 材料情報（JSON形式）
   TextColumn get ingredientsJson => text().nullable()();

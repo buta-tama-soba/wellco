@@ -873,7 +873,7 @@ class MealManagementPage extends HookConsumerWidget {
       child: Row(
         children: [
           // レシピ画像（ある場合のみ表示）
-          if (recipe?.imageUrl != null) ...[
+          if (recipe?.imageUrl != null || recipe != null) ...[
             Container(
               width: 50.w,
               height: 50.w,
@@ -881,27 +881,55 @@ class MealManagementPage extends HookConsumerWidget {
                 color: AppColors.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
-                child: CachedNetworkImage(
-                  imageUrl: recipe!.imageUrl!,
-                  width: 50.w,
-                  height: 50.w,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: AppColors.primary.withOpacity(0.1),
-                    child: Icon(
-                      Icons.restaurant,
-                      color: AppColors.primary,
-                      size: 20.w,
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+                    child: recipe?.imageUrl != null
+                        ? CachedNetworkImage(
+                            imageUrl: recipe!.imageUrl!,
+                            width: 50.w,
+                            height: 50.w,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              color: AppColors.primary.withOpacity(0.1),
+                              child: Icon(
+                                recipe.itemType == 'food_product' ? Icons.shopping_cart : Icons.restaurant,
+                                color: AppColors.primary,
+                                size: 20.w,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Icon(
+                              recipe.itemType == 'food_product' ? Icons.shopping_cart : Icons.restaurant,
+                              color: AppColors.primary,
+                              size: 20.w,
+                            ),
+                          )
+                        : Icon(
+                            recipe?.itemType == 'food_product' ? Icons.shopping_cart : Icons.restaurant,
+                            color: AppColors.primary,
+                            size: 20.w,
+                          ),
+                  ),
+                  // アイテムタイプバッジ
+                  if (recipe?.itemType == 'food_product')
+                    Positioned(
+                      top: 1.w,
+                      right: 1.w,
+                      child: Container(
+                        padding: EdgeInsets.all(1.w),
+                        decoration: BoxDecoration(
+                          color: AppColors.warning,
+                          borderRadius: BorderRadius.circular(3.r),
+                        ),
+                        child: Icon(
+                          Icons.local_grocery_store,
+                          size: 8.w,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                  ),
-                  errorWidget: (context, url, error) => Icon(
-                    Icons.restaurant,
-                    color: AppColors.primary,
-                    size: 20.w,
-                  ),
-                ),
+                ],
               ),
             ),
             SizedBox(width: AppConstants.paddingM.w),
@@ -916,11 +944,36 @@ class MealManagementPage extends HookConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: Text(
-                        recipe?.title ?? mealWithRecipe.items.first.foodName,
-                        style: AppTextStyles.body2.copyWith(fontWeight: FontWeight.w600),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      child: Row(
+                        children: [
+                          // タイプラベル（レシピがある場合のみ）
+                          if (recipe != null) ...[
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+                              decoration: BoxDecoration(
+                                color: recipe.itemType == 'food_product' ? AppColors.warning : AppColors.primary,
+                                borderRadius: BorderRadius.circular(3.r),
+                              ),
+                              child: Text(
+                                recipe.itemType == 'food_product' ? '食品' : 'レシピ',
+                                style: AppTextStyles.caption.copyWith(
+                                  color: Colors.white,
+                                  fontSize: 8.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 4.w),
+                          ],
+                          Expanded(
+                            child: Text(
+                              recipe?.title ?? mealWithRecipe.items.first.foodName,
+                              style: AppTextStyles.body2.copyWith(fontWeight: FontWeight.w600),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Text(
@@ -1297,33 +1350,55 @@ class MealManagementPage extends HookConsumerWidget {
                     color: AppColors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
-                    child: imageUrl != null
-                        ? CachedNetworkImage(
-                            imageUrl: imageUrl,
-                            width: 60.w,
-                            height: 60.w,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => Container(
-                              color: AppColors.primary.withOpacity(0.1),
-                              child: Icon(
-                                Icons.restaurant,
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
+                        child: imageUrl != null
+                            ? CachedNetworkImage(
+                                imageUrl: imageUrl,
+                                width: 60.w,
+                                height: 60.w,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  color: AppColors.primary.withOpacity(0.1),
+                                  child: Icon(
+                                    recipe.itemType == 'food_product' ? Icons.shopping_cart : Icons.restaurant,
+                                    color: AppColors.primary,
+                                    size: 24.w,
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Icon(
+                                  recipe.itemType == 'food_product' ? Icons.shopping_cart : Icons.restaurant,
+                                  color: AppColors.primary,
+                                  size: 24.w,
+                                ),
+                              )
+                            : Icon(
+                                recipe.itemType == 'food_product' ? Icons.shopping_cart : Icons.restaurant,
                                 color: AppColors.primary,
                                 size: 24.w,
                               ),
+                      ),
+                      // アイテムタイプバッジ
+                      if (recipe.itemType == 'food_product')
+                        Positioned(
+                          top: 2.w,
+                          right: 2.w,
+                          child: Container(
+                            padding: EdgeInsets.all(2.w),
+                            decoration: BoxDecoration(
+                              color: AppColors.warning,
+                              borderRadius: BorderRadius.circular(4.r),
                             ),
-                            errorWidget: (context, url, error) => Icon(
-                              Icons.restaurant,
-                              color: AppColors.primary,
-                              size: 24.w,
+                            child: Icon(
+                              Icons.local_grocery_store,
+                              size: 12.w,
+                              color: Colors.white,
                             ),
-                          )
-                        : Icon(
-                            Icons.restaurant,
-                            color: AppColors.primary,
-                            size: 24.w,
                           ),
+                        ),
+                    ],
                   ),
                 ),
                 SizedBox(width: AppConstants.paddingM.w),
@@ -1333,11 +1408,34 @@ class MealManagementPage extends HookConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        title,
-                        style: AppTextStyles.headline3,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      Row(
+                        children: [
+                          // タイプラベル
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                            decoration: BoxDecoration(
+                              color: recipe.itemType == 'food_product' ? AppColors.warning : AppColors.primary,
+                              borderRadius: BorderRadius.circular(4.r),
+                            ),
+                            child: Text(
+                              recipe.itemType == 'food_product' ? '食品' : 'レシピ',
+                              style: AppTextStyles.caption.copyWith(
+                                color: Colors.white,
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 6.w),
+                          Expanded(
+                            child: Text(
+                              title,
+                              style: AppTextStyles.headline3,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: 4.h),
                       Text(
@@ -1445,11 +1543,34 @@ class MealManagementPage extends HookConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  recipe.title,
-                  style: AppTextStyles.body2.copyWith(fontWeight: FontWeight.w600),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                Row(
+                  children: [
+                    // タイプラベル
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+                      decoration: BoxDecoration(
+                        color: recipe.itemType == 'food_product' ? AppColors.warning : AppColors.primary,
+                        borderRadius: BorderRadius.circular(3.r),
+                      ),
+                      child: Text(
+                        recipe.itemType == 'food_product' ? '食品' : 'レシピ',
+                        style: AppTextStyles.caption.copyWith(
+                          color: Colors.white,
+                          fontSize: 8.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 4.w),
+                    Expanded(
+                      child: Text(
+                        recipe.title,
+                        style: AppTextStyles.body2.copyWith(fontWeight: FontWeight.w600),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
                 if (recipe.siteName != null) ...[
                   SizedBox(height: 2.h),

@@ -40,7 +40,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
   
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -65,6 +65,18 @@ class AppDatabase extends _$AppDatabase {
         
         // JapaneseFoodCompositionTableを作成
         await m.createTable(japaneseFoodCompositionTable);
+      }
+      
+      if (from < 3) {
+        // バージョン2から3へのマイグレーション
+        // ExternalRecipeTableに食品商品用フィールドを追加
+        await m.addColumn(externalRecipeTable, externalRecipeTable.itemType);
+        await m.addColumn(externalRecipeTable, externalRecipeTable.productCode);
+        await m.addColumn(externalRecipeTable, externalRecipeTable.brand);
+        await m.addColumn(externalRecipeTable, externalRecipeTable.size);
+        await m.addColumn(externalRecipeTable, externalRecipeTable.price);
+        await m.addColumn(externalRecipeTable, externalRecipeTable.category);
+        await m.addColumn(externalRecipeTable, externalRecipeTable.nutritionSource);
       }
     },
   );

@@ -550,6 +550,16 @@ class $ExternalRecipeTableTable extends ExternalRecipeTable
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  static const VerificationMeta _itemTypeMeta =
+      const VerificationMeta('itemType');
+  @override
+  late final GeneratedColumn<String> itemType = GeneratedColumn<String>(
+      'item_type', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 20),
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('recipe'));
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
@@ -595,6 +605,39 @@ class $ExternalRecipeTableTable extends ExternalRecipeTable
   @override
   late final GeneratedColumn<String> memo = GeneratedColumn<String>(
       'memo', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _productCodeMeta =
+      const VerificationMeta('productCode');
+  @override
+  late final GeneratedColumn<String> productCode = GeneratedColumn<String>(
+      'product_code', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _brandMeta = const VerificationMeta('brand');
+  @override
+  late final GeneratedColumn<String> brand = GeneratedColumn<String>(
+      'brand', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _sizeMeta = const VerificationMeta('size');
+  @override
+  late final GeneratedColumn<String> size = GeneratedColumn<String>(
+      'size', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _priceMeta = const VerificationMeta('price');
+  @override
+  late final GeneratedColumn<double> price = GeneratedColumn<double>(
+      'price', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _categoryMeta =
+      const VerificationMeta('category');
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+      'category', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _nutritionSourceMeta =
+      const VerificationMeta('nutritionSource');
+  @override
+  late final GeneratedColumn<String> nutritionSource = GeneratedColumn<String>(
+      'nutrition_source', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _ingredientsJsonMeta =
       const VerificationMeta('ingredientsJson');
@@ -692,6 +735,7 @@ class $ExternalRecipeTableTable extends ExternalRecipeTable
   List<GeneratedColumn> get $columns => [
         id,
         url,
+        itemType,
         title,
         description,
         imageUrl,
@@ -699,6 +743,12 @@ class $ExternalRecipeTableTable extends ExternalRecipeTable
         isFavorite,
         tags,
         memo,
+        productCode,
+        brand,
+        size,
+        price,
+        category,
+        nutritionSource,
         ingredientsJson,
         ingredientsRawText,
         calories,
@@ -734,6 +784,10 @@ class $ExternalRecipeTableTable extends ExternalRecipeTable
     } else if (isInserting) {
       context.missing(_urlMeta);
     }
+    if (data.containsKey('item_type')) {
+      context.handle(_itemTypeMeta,
+          itemType.isAcceptableOrUnknown(data['item_type']!, _itemTypeMeta));
+    }
     if (data.containsKey('title')) {
       context.handle(
           _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
@@ -767,6 +821,34 @@ class $ExternalRecipeTableTable extends ExternalRecipeTable
     if (data.containsKey('memo')) {
       context.handle(
           _memoMeta, memo.isAcceptableOrUnknown(data['memo']!, _memoMeta));
+    }
+    if (data.containsKey('product_code')) {
+      context.handle(
+          _productCodeMeta,
+          productCode.isAcceptableOrUnknown(
+              data['product_code']!, _productCodeMeta));
+    }
+    if (data.containsKey('brand')) {
+      context.handle(
+          _brandMeta, brand.isAcceptableOrUnknown(data['brand']!, _brandMeta));
+    }
+    if (data.containsKey('size')) {
+      context.handle(
+          _sizeMeta, size.isAcceptableOrUnknown(data['size']!, _sizeMeta));
+    }
+    if (data.containsKey('price')) {
+      context.handle(
+          _priceMeta, price.isAcceptableOrUnknown(data['price']!, _priceMeta));
+    }
+    if (data.containsKey('category')) {
+      context.handle(_categoryMeta,
+          category.isAcceptableOrUnknown(data['category']!, _categoryMeta));
+    }
+    if (data.containsKey('nutrition_source')) {
+      context.handle(
+          _nutritionSourceMeta,
+          nutritionSource.isAcceptableOrUnknown(
+              data['nutrition_source']!, _nutritionSourceMeta));
     }
     if (data.containsKey('ingredients_json')) {
       context.handle(
@@ -849,6 +931,8 @@ class $ExternalRecipeTableTable extends ExternalRecipeTable
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       url: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}url'])!,
+      itemType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}item_type'])!,
       title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
       description: attachedDatabase.typeMapping
@@ -863,6 +947,18 @@ class $ExternalRecipeTableTable extends ExternalRecipeTable
           .read(DriftSqlType.string, data['${effectivePrefix}tags']),
       memo: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}memo']),
+      productCode: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}product_code']),
+      brand: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}brand']),
+      size: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}size']),
+      price: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}price']),
+      category: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}category']),
+      nutritionSource: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}nutrition_source']),
       ingredientsJson: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}ingredients_json']),
       ingredientsRawText: attachedDatabase.typeMapping.read(
@@ -909,6 +1005,9 @@ class ExternalRecipeTableData extends DataClass
   /// レシピURL
   final String url;
 
+  /// アイテムタイプ（'recipe' | 'food_product'）
+  final String itemType;
+
   /// タイトル（OGPから取得）
   final String title;
 
@@ -930,6 +1029,26 @@ class ExternalRecipeTableData extends DataClass
   /// メモ
   final String? memo;
 
+  /// === 食品商品専用フィールド ===
+  /// 商品コード（JANコード等）
+  final String? productCode;
+
+  /// ブランド名
+  final String? brand;
+
+  /// 商品サイズ・容量
+  final String? size;
+
+  /// 商品価格（円）
+  final double? price;
+
+  /// カテゴリ
+  final String? category;
+
+  /// 栄養情報の情報源
+  final String? nutritionSource;
+
+  /// === 共通フィールド ===
   /// 材料情報（JSON形式）
   final String? ingredientsJson;
 
@@ -974,6 +1093,7 @@ class ExternalRecipeTableData extends DataClass
   const ExternalRecipeTableData(
       {required this.id,
       required this.url,
+      required this.itemType,
       required this.title,
       this.description,
       this.imageUrl,
@@ -981,6 +1101,12 @@ class ExternalRecipeTableData extends DataClass
       required this.isFavorite,
       this.tags,
       this.memo,
+      this.productCode,
+      this.brand,
+      this.size,
+      this.price,
+      this.category,
+      this.nutritionSource,
       this.ingredientsJson,
       this.ingredientsRawText,
       this.calories,
@@ -1000,6 +1126,7 @@ class ExternalRecipeTableData extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['url'] = Variable<String>(url);
+    map['item_type'] = Variable<String>(itemType);
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
@@ -1016,6 +1143,24 @@ class ExternalRecipeTableData extends DataClass
     }
     if (!nullToAbsent || memo != null) {
       map['memo'] = Variable<String>(memo);
+    }
+    if (!nullToAbsent || productCode != null) {
+      map['product_code'] = Variable<String>(productCode);
+    }
+    if (!nullToAbsent || brand != null) {
+      map['brand'] = Variable<String>(brand);
+    }
+    if (!nullToAbsent || size != null) {
+      map['size'] = Variable<String>(size);
+    }
+    if (!nullToAbsent || price != null) {
+      map['price'] = Variable<double>(price);
+    }
+    if (!nullToAbsent || category != null) {
+      map['category'] = Variable<String>(category);
+    }
+    if (!nullToAbsent || nutritionSource != null) {
+      map['nutrition_source'] = Variable<String>(nutritionSource);
     }
     if (!nullToAbsent || ingredientsJson != null) {
       map['ingredients_json'] = Variable<String>(ingredientsJson);
@@ -1059,6 +1204,7 @@ class ExternalRecipeTableData extends DataClass
     return ExternalRecipeTableCompanion(
       id: Value(id),
       url: Value(url),
+      itemType: Value(itemType),
       title: Value(title),
       description: description == null && nullToAbsent
           ? const Value.absent()
@@ -1072,6 +1218,20 @@ class ExternalRecipeTableData extends DataClass
       isFavorite: Value(isFavorite),
       tags: tags == null && nullToAbsent ? const Value.absent() : Value(tags),
       memo: memo == null && nullToAbsent ? const Value.absent() : Value(memo),
+      productCode: productCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(productCode),
+      brand:
+          brand == null && nullToAbsent ? const Value.absent() : Value(brand),
+      size: size == null && nullToAbsent ? const Value.absent() : Value(size),
+      price:
+          price == null && nullToAbsent ? const Value.absent() : Value(price),
+      category: category == null && nullToAbsent
+          ? const Value.absent()
+          : Value(category),
+      nutritionSource: nutritionSource == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nutritionSource),
       ingredientsJson: ingredientsJson == null && nullToAbsent
           ? const Value.absent()
           : Value(ingredientsJson),
@@ -1110,6 +1270,7 @@ class ExternalRecipeTableData extends DataClass
     return ExternalRecipeTableData(
       id: serializer.fromJson<int>(json['id']),
       url: serializer.fromJson<String>(json['url']),
+      itemType: serializer.fromJson<String>(json['itemType']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
       imageUrl: serializer.fromJson<String?>(json['imageUrl']),
@@ -1117,6 +1278,12 @@ class ExternalRecipeTableData extends DataClass
       isFavorite: serializer.fromJson<bool>(json['isFavorite']),
       tags: serializer.fromJson<String?>(json['tags']),
       memo: serializer.fromJson<String?>(json['memo']),
+      productCode: serializer.fromJson<String?>(json['productCode']),
+      brand: serializer.fromJson<String?>(json['brand']),
+      size: serializer.fromJson<String?>(json['size']),
+      price: serializer.fromJson<double?>(json['price']),
+      category: serializer.fromJson<String?>(json['category']),
+      nutritionSource: serializer.fromJson<String?>(json['nutritionSource']),
       ingredientsJson: serializer.fromJson<String?>(json['ingredientsJson']),
       ingredientsRawText:
           serializer.fromJson<String?>(json['ingredientsRawText']),
@@ -1141,6 +1308,7 @@ class ExternalRecipeTableData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'url': serializer.toJson<String>(url),
+      'itemType': serializer.toJson<String>(itemType),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String?>(description),
       'imageUrl': serializer.toJson<String?>(imageUrl),
@@ -1148,6 +1316,12 @@ class ExternalRecipeTableData extends DataClass
       'isFavorite': serializer.toJson<bool>(isFavorite),
       'tags': serializer.toJson<String?>(tags),
       'memo': serializer.toJson<String?>(memo),
+      'productCode': serializer.toJson<String?>(productCode),
+      'brand': serializer.toJson<String?>(brand),
+      'size': serializer.toJson<String?>(size),
+      'price': serializer.toJson<double?>(price),
+      'category': serializer.toJson<String?>(category),
+      'nutritionSource': serializer.toJson<String?>(nutritionSource),
       'ingredientsJson': serializer.toJson<String?>(ingredientsJson),
       'ingredientsRawText': serializer.toJson<String?>(ingredientsRawText),
       'calories': serializer.toJson<double?>(calories),
@@ -1169,6 +1343,7 @@ class ExternalRecipeTableData extends DataClass
   ExternalRecipeTableData copyWith(
           {int? id,
           String? url,
+          String? itemType,
           String? title,
           Value<String?> description = const Value.absent(),
           Value<String?> imageUrl = const Value.absent(),
@@ -1176,6 +1351,12 @@ class ExternalRecipeTableData extends DataClass
           bool? isFavorite,
           Value<String?> tags = const Value.absent(),
           Value<String?> memo = const Value.absent(),
+          Value<String?> productCode = const Value.absent(),
+          Value<String?> brand = const Value.absent(),
+          Value<String?> size = const Value.absent(),
+          Value<double?> price = const Value.absent(),
+          Value<String?> category = const Value.absent(),
+          Value<String?> nutritionSource = const Value.absent(),
           Value<String?> ingredientsJson = const Value.absent(),
           Value<String?> ingredientsRawText = const Value.absent(),
           Value<double?> calories = const Value.absent(),
@@ -1193,6 +1374,7 @@ class ExternalRecipeTableData extends DataClass
       ExternalRecipeTableData(
         id: id ?? this.id,
         url: url ?? this.url,
+        itemType: itemType ?? this.itemType,
         title: title ?? this.title,
         description: description.present ? description.value : this.description,
         imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
@@ -1200,6 +1382,14 @@ class ExternalRecipeTableData extends DataClass
         isFavorite: isFavorite ?? this.isFavorite,
         tags: tags.present ? tags.value : this.tags,
         memo: memo.present ? memo.value : this.memo,
+        productCode: productCode.present ? productCode.value : this.productCode,
+        brand: brand.present ? brand.value : this.brand,
+        size: size.present ? size.value : this.size,
+        price: price.present ? price.value : this.price,
+        category: category.present ? category.value : this.category,
+        nutritionSource: nutritionSource.present
+            ? nutritionSource.value
+            : this.nutritionSource,
         ingredientsJson: ingredientsJson.present
             ? ingredientsJson.value
             : this.ingredientsJson,
@@ -1226,6 +1416,7 @@ class ExternalRecipeTableData extends DataClass
     return ExternalRecipeTableData(
       id: data.id.present ? data.id.value : this.id,
       url: data.url.present ? data.url.value : this.url,
+      itemType: data.itemType.present ? data.itemType.value : this.itemType,
       title: data.title.present ? data.title.value : this.title,
       description:
           data.description.present ? data.description.value : this.description,
@@ -1235,6 +1426,15 @@ class ExternalRecipeTableData extends DataClass
           data.isFavorite.present ? data.isFavorite.value : this.isFavorite,
       tags: data.tags.present ? data.tags.value : this.tags,
       memo: data.memo.present ? data.memo.value : this.memo,
+      productCode:
+          data.productCode.present ? data.productCode.value : this.productCode,
+      brand: data.brand.present ? data.brand.value : this.brand,
+      size: data.size.present ? data.size.value : this.size,
+      price: data.price.present ? data.price.value : this.price,
+      category: data.category.present ? data.category.value : this.category,
+      nutritionSource: data.nutritionSource.present
+          ? data.nutritionSource.value
+          : this.nutritionSource,
       ingredientsJson: data.ingredientsJson.present
           ? data.ingredientsJson.value
           : this.ingredientsJson,
@@ -1267,6 +1467,7 @@ class ExternalRecipeTableData extends DataClass
     return (StringBuffer('ExternalRecipeTableData(')
           ..write('id: $id, ')
           ..write('url: $url, ')
+          ..write('itemType: $itemType, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('imageUrl: $imageUrl, ')
@@ -1274,6 +1475,12 @@ class ExternalRecipeTableData extends DataClass
           ..write('isFavorite: $isFavorite, ')
           ..write('tags: $tags, ')
           ..write('memo: $memo, ')
+          ..write('productCode: $productCode, ')
+          ..write('brand: $brand, ')
+          ..write('size: $size, ')
+          ..write('price: $price, ')
+          ..write('category: $category, ')
+          ..write('nutritionSource: $nutritionSource, ')
           ..write('ingredientsJson: $ingredientsJson, ')
           ..write('ingredientsRawText: $ingredientsRawText, ')
           ..write('calories: $calories, ')
@@ -1296,6 +1503,7 @@ class ExternalRecipeTableData extends DataClass
   int get hashCode => Object.hashAll([
         id,
         url,
+        itemType,
         title,
         description,
         imageUrl,
@@ -1303,6 +1511,12 @@ class ExternalRecipeTableData extends DataClass
         isFavorite,
         tags,
         memo,
+        productCode,
+        brand,
+        size,
+        price,
+        category,
+        nutritionSource,
         ingredientsJson,
         ingredientsRawText,
         calories,
@@ -1324,6 +1538,7 @@ class ExternalRecipeTableData extends DataClass
       (other is ExternalRecipeTableData &&
           other.id == this.id &&
           other.url == this.url &&
+          other.itemType == this.itemType &&
           other.title == this.title &&
           other.description == this.description &&
           other.imageUrl == this.imageUrl &&
@@ -1331,6 +1546,12 @@ class ExternalRecipeTableData extends DataClass
           other.isFavorite == this.isFavorite &&
           other.tags == this.tags &&
           other.memo == this.memo &&
+          other.productCode == this.productCode &&
+          other.brand == this.brand &&
+          other.size == this.size &&
+          other.price == this.price &&
+          other.category == this.category &&
+          other.nutritionSource == this.nutritionSource &&
           other.ingredientsJson == this.ingredientsJson &&
           other.ingredientsRawText == this.ingredientsRawText &&
           other.calories == this.calories &&
@@ -1351,6 +1572,7 @@ class ExternalRecipeTableCompanion
     extends UpdateCompanion<ExternalRecipeTableData> {
   final Value<int> id;
   final Value<String> url;
+  final Value<String> itemType;
   final Value<String> title;
   final Value<String?> description;
   final Value<String?> imageUrl;
@@ -1358,6 +1580,12 @@ class ExternalRecipeTableCompanion
   final Value<bool> isFavorite;
   final Value<String?> tags;
   final Value<String?> memo;
+  final Value<String?> productCode;
+  final Value<String?> brand;
+  final Value<String?> size;
+  final Value<double?> price;
+  final Value<String?> category;
+  final Value<String?> nutritionSource;
   final Value<String?> ingredientsJson;
   final Value<String?> ingredientsRawText;
   final Value<double?> calories;
@@ -1375,6 +1603,7 @@ class ExternalRecipeTableCompanion
   const ExternalRecipeTableCompanion({
     this.id = const Value.absent(),
     this.url = const Value.absent(),
+    this.itemType = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
     this.imageUrl = const Value.absent(),
@@ -1382,6 +1611,12 @@ class ExternalRecipeTableCompanion
     this.isFavorite = const Value.absent(),
     this.tags = const Value.absent(),
     this.memo = const Value.absent(),
+    this.productCode = const Value.absent(),
+    this.brand = const Value.absent(),
+    this.size = const Value.absent(),
+    this.price = const Value.absent(),
+    this.category = const Value.absent(),
+    this.nutritionSource = const Value.absent(),
     this.ingredientsJson = const Value.absent(),
     this.ingredientsRawText = const Value.absent(),
     this.calories = const Value.absent(),
@@ -1400,6 +1635,7 @@ class ExternalRecipeTableCompanion
   ExternalRecipeTableCompanion.insert({
     this.id = const Value.absent(),
     required String url,
+    this.itemType = const Value.absent(),
     required String title,
     this.description = const Value.absent(),
     this.imageUrl = const Value.absent(),
@@ -1407,6 +1643,12 @@ class ExternalRecipeTableCompanion
     this.isFavorite = const Value.absent(),
     this.tags = const Value.absent(),
     this.memo = const Value.absent(),
+    this.productCode = const Value.absent(),
+    this.brand = const Value.absent(),
+    this.size = const Value.absent(),
+    this.price = const Value.absent(),
+    this.category = const Value.absent(),
+    this.nutritionSource = const Value.absent(),
     this.ingredientsJson = const Value.absent(),
     this.ingredientsRawText = const Value.absent(),
     this.calories = const Value.absent(),
@@ -1426,6 +1668,7 @@ class ExternalRecipeTableCompanion
   static Insertable<ExternalRecipeTableData> custom({
     Expression<int>? id,
     Expression<String>? url,
+    Expression<String>? itemType,
     Expression<String>? title,
     Expression<String>? description,
     Expression<String>? imageUrl,
@@ -1433,6 +1676,12 @@ class ExternalRecipeTableCompanion
     Expression<bool>? isFavorite,
     Expression<String>? tags,
     Expression<String>? memo,
+    Expression<String>? productCode,
+    Expression<String>? brand,
+    Expression<String>? size,
+    Expression<double>? price,
+    Expression<String>? category,
+    Expression<String>? nutritionSource,
     Expression<String>? ingredientsJson,
     Expression<String>? ingredientsRawText,
     Expression<double>? calories,
@@ -1451,6 +1700,7 @@ class ExternalRecipeTableCompanion
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (url != null) 'url': url,
+      if (itemType != null) 'item_type': itemType,
       if (title != null) 'title': title,
       if (description != null) 'description': description,
       if (imageUrl != null) 'image_url': imageUrl,
@@ -1458,6 +1708,12 @@ class ExternalRecipeTableCompanion
       if (isFavorite != null) 'is_favorite': isFavorite,
       if (tags != null) 'tags': tags,
       if (memo != null) 'memo': memo,
+      if (productCode != null) 'product_code': productCode,
+      if (brand != null) 'brand': brand,
+      if (size != null) 'size': size,
+      if (price != null) 'price': price,
+      if (category != null) 'category': category,
+      if (nutritionSource != null) 'nutrition_source': nutritionSource,
       if (ingredientsJson != null) 'ingredients_json': ingredientsJson,
       if (ingredientsRawText != null)
         'ingredients_raw_text': ingredientsRawText,
@@ -1480,6 +1736,7 @@ class ExternalRecipeTableCompanion
   ExternalRecipeTableCompanion copyWith(
       {Value<int>? id,
       Value<String>? url,
+      Value<String>? itemType,
       Value<String>? title,
       Value<String?>? description,
       Value<String?>? imageUrl,
@@ -1487,6 +1744,12 @@ class ExternalRecipeTableCompanion
       Value<bool>? isFavorite,
       Value<String?>? tags,
       Value<String?>? memo,
+      Value<String?>? productCode,
+      Value<String?>? brand,
+      Value<String?>? size,
+      Value<double?>? price,
+      Value<String?>? category,
+      Value<String?>? nutritionSource,
       Value<String?>? ingredientsJson,
       Value<String?>? ingredientsRawText,
       Value<double?>? calories,
@@ -1504,6 +1767,7 @@ class ExternalRecipeTableCompanion
     return ExternalRecipeTableCompanion(
       id: id ?? this.id,
       url: url ?? this.url,
+      itemType: itemType ?? this.itemType,
       title: title ?? this.title,
       description: description ?? this.description,
       imageUrl: imageUrl ?? this.imageUrl,
@@ -1511,6 +1775,12 @@ class ExternalRecipeTableCompanion
       isFavorite: isFavorite ?? this.isFavorite,
       tags: tags ?? this.tags,
       memo: memo ?? this.memo,
+      productCode: productCode ?? this.productCode,
+      brand: brand ?? this.brand,
+      size: size ?? this.size,
+      price: price ?? this.price,
+      category: category ?? this.category,
+      nutritionSource: nutritionSource ?? this.nutritionSource,
       ingredientsJson: ingredientsJson ?? this.ingredientsJson,
       ingredientsRawText: ingredientsRawText ?? this.ingredientsRawText,
       calories: calories ?? this.calories,
@@ -1538,6 +1808,9 @@ class ExternalRecipeTableCompanion
     if (url.present) {
       map['url'] = Variable<String>(url.value);
     }
+    if (itemType.present) {
+      map['item_type'] = Variable<String>(itemType.value);
+    }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
     }
@@ -1558,6 +1831,24 @@ class ExternalRecipeTableCompanion
     }
     if (memo.present) {
       map['memo'] = Variable<String>(memo.value);
+    }
+    if (productCode.present) {
+      map['product_code'] = Variable<String>(productCode.value);
+    }
+    if (brand.present) {
+      map['brand'] = Variable<String>(brand.value);
+    }
+    if (size.present) {
+      map['size'] = Variable<String>(size.value);
+    }
+    if (price.present) {
+      map['price'] = Variable<double>(price.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (nutritionSource.present) {
+      map['nutrition_source'] = Variable<String>(nutritionSource.value);
     }
     if (ingredientsJson.present) {
       map['ingredients_json'] = Variable<String>(ingredientsJson.value);
@@ -1610,6 +1901,7 @@ class ExternalRecipeTableCompanion
     return (StringBuffer('ExternalRecipeTableCompanion(')
           ..write('id: $id, ')
           ..write('url: $url, ')
+          ..write('itemType: $itemType, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('imageUrl: $imageUrl, ')
@@ -1617,6 +1909,12 @@ class ExternalRecipeTableCompanion
           ..write('isFavorite: $isFavorite, ')
           ..write('tags: $tags, ')
           ..write('memo: $memo, ')
+          ..write('productCode: $productCode, ')
+          ..write('brand: $brand, ')
+          ..write('size: $size, ')
+          ..write('price: $price, ')
+          ..write('category: $category, ')
+          ..write('nutritionSource: $nutritionSource, ')
           ..write('ingredientsJson: $ingredientsJson, ')
           ..write('ingredientsRawText: $ingredientsRawText, ')
           ..write('calories: $calories, ')
@@ -6085,6 +6383,7 @@ typedef $$ExternalRecipeTableTableCreateCompanionBuilder
     = ExternalRecipeTableCompanion Function({
   Value<int> id,
   required String url,
+  Value<String> itemType,
   required String title,
   Value<String?> description,
   Value<String?> imageUrl,
@@ -6092,6 +6391,12 @@ typedef $$ExternalRecipeTableTableCreateCompanionBuilder
   Value<bool> isFavorite,
   Value<String?> tags,
   Value<String?> memo,
+  Value<String?> productCode,
+  Value<String?> brand,
+  Value<String?> size,
+  Value<double?> price,
+  Value<String?> category,
+  Value<String?> nutritionSource,
   Value<String?> ingredientsJson,
   Value<String?> ingredientsRawText,
   Value<double?> calories,
@@ -6111,6 +6416,7 @@ typedef $$ExternalRecipeTableTableUpdateCompanionBuilder
     = ExternalRecipeTableCompanion Function({
   Value<int> id,
   Value<String> url,
+  Value<String> itemType,
   Value<String> title,
   Value<String?> description,
   Value<String?> imageUrl,
@@ -6118,6 +6424,12 @@ typedef $$ExternalRecipeTableTableUpdateCompanionBuilder
   Value<bool> isFavorite,
   Value<String?> tags,
   Value<String?> memo,
+  Value<String?> productCode,
+  Value<String?> brand,
+  Value<String?> size,
+  Value<double?> price,
+  Value<String?> category,
+  Value<String?> nutritionSource,
   Value<String?> ingredientsJson,
   Value<String?> ingredientsRawText,
   Value<double?> calories,
@@ -6171,6 +6483,9 @@ class $$ExternalRecipeTableTableFilterComposer
   ColumnFilters<String> get url => $composableBuilder(
       column: $table.url, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<String> get itemType => $composableBuilder(
+      column: $table.itemType, builder: (column) => ColumnFilters(column));
+
   ColumnFilters<String> get title => $composableBuilder(
       column: $table.title, builder: (column) => ColumnFilters(column));
 
@@ -6191,6 +6506,25 @@ class $$ExternalRecipeTableTableFilterComposer
 
   ColumnFilters<String> get memo => $composableBuilder(
       column: $table.memo, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get productCode => $composableBuilder(
+      column: $table.productCode, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get brand => $composableBuilder(
+      column: $table.brand, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get size => $composableBuilder(
+      column: $table.size, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get price => $composableBuilder(
+      column: $table.price, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get category => $composableBuilder(
+      column: $table.category, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get nutritionSource => $composableBuilder(
+      column: $table.nutritionSource,
+      builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get ingredientsJson => $composableBuilder(
       column: $table.ingredientsJson,
@@ -6275,6 +6609,9 @@ class $$ExternalRecipeTableTableOrderingComposer
   ColumnOrderings<String> get url => $composableBuilder(
       column: $table.url, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get itemType => $composableBuilder(
+      column: $table.itemType, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get title => $composableBuilder(
       column: $table.title, builder: (column) => ColumnOrderings(column));
 
@@ -6295,6 +6632,25 @@ class $$ExternalRecipeTableTableOrderingComposer
 
   ColumnOrderings<String> get memo => $composableBuilder(
       column: $table.memo, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get productCode => $composableBuilder(
+      column: $table.productCode, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get brand => $composableBuilder(
+      column: $table.brand, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get size => $composableBuilder(
+      column: $table.size, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get price => $composableBuilder(
+      column: $table.price, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get category => $composableBuilder(
+      column: $table.category, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get nutritionSource => $composableBuilder(
+      column: $table.nutritionSource,
+      builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get ingredientsJson => $composableBuilder(
       column: $table.ingredientsJson,
@@ -6359,6 +6715,9 @@ class $$ExternalRecipeTableTableAnnotationComposer
   GeneratedColumn<String> get url =>
       $composableBuilder(column: $table.url, builder: (column) => column);
 
+  GeneratedColumn<String> get itemType =>
+      $composableBuilder(column: $table.itemType, builder: (column) => column);
+
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -6379,6 +6738,24 @@ class $$ExternalRecipeTableTableAnnotationComposer
 
   GeneratedColumn<String> get memo =>
       $composableBuilder(column: $table.memo, builder: (column) => column);
+
+  GeneratedColumn<String> get productCode => $composableBuilder(
+      column: $table.productCode, builder: (column) => column);
+
+  GeneratedColumn<String> get brand =>
+      $composableBuilder(column: $table.brand, builder: (column) => column);
+
+  GeneratedColumn<String> get size =>
+      $composableBuilder(column: $table.size, builder: (column) => column);
+
+  GeneratedColumn<double> get price =>
+      $composableBuilder(column: $table.price, builder: (column) => column);
+
+  GeneratedColumn<String> get category =>
+      $composableBuilder(column: $table.category, builder: (column) => column);
+
+  GeneratedColumn<String> get nutritionSource => $composableBuilder(
+      column: $table.nutritionSource, builder: (column) => column);
 
   GeneratedColumn<String> get ingredientsJson => $composableBuilder(
       column: $table.ingredientsJson, builder: (column) => column);
@@ -6472,6 +6849,7 @@ class $$ExternalRecipeTableTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> url = const Value.absent(),
+            Value<String> itemType = const Value.absent(),
             Value<String> title = const Value.absent(),
             Value<String?> description = const Value.absent(),
             Value<String?> imageUrl = const Value.absent(),
@@ -6479,6 +6857,12 @@ class $$ExternalRecipeTableTableTableManager extends RootTableManager<
             Value<bool> isFavorite = const Value.absent(),
             Value<String?> tags = const Value.absent(),
             Value<String?> memo = const Value.absent(),
+            Value<String?> productCode = const Value.absent(),
+            Value<String?> brand = const Value.absent(),
+            Value<String?> size = const Value.absent(),
+            Value<double?> price = const Value.absent(),
+            Value<String?> category = const Value.absent(),
+            Value<String?> nutritionSource = const Value.absent(),
             Value<String?> ingredientsJson = const Value.absent(),
             Value<String?> ingredientsRawText = const Value.absent(),
             Value<double?> calories = const Value.absent(),
@@ -6497,6 +6881,7 @@ class $$ExternalRecipeTableTableTableManager extends RootTableManager<
               ExternalRecipeTableCompanion(
             id: id,
             url: url,
+            itemType: itemType,
             title: title,
             description: description,
             imageUrl: imageUrl,
@@ -6504,6 +6889,12 @@ class $$ExternalRecipeTableTableTableManager extends RootTableManager<
             isFavorite: isFavorite,
             tags: tags,
             memo: memo,
+            productCode: productCode,
+            brand: brand,
+            size: size,
+            price: price,
+            category: category,
+            nutritionSource: nutritionSource,
             ingredientsJson: ingredientsJson,
             ingredientsRawText: ingredientsRawText,
             calories: calories,
@@ -6522,6 +6913,7 @@ class $$ExternalRecipeTableTableTableManager extends RootTableManager<
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required String url,
+            Value<String> itemType = const Value.absent(),
             required String title,
             Value<String?> description = const Value.absent(),
             Value<String?> imageUrl = const Value.absent(),
@@ -6529,6 +6921,12 @@ class $$ExternalRecipeTableTableTableManager extends RootTableManager<
             Value<bool> isFavorite = const Value.absent(),
             Value<String?> tags = const Value.absent(),
             Value<String?> memo = const Value.absent(),
+            Value<String?> productCode = const Value.absent(),
+            Value<String?> brand = const Value.absent(),
+            Value<String?> size = const Value.absent(),
+            Value<double?> price = const Value.absent(),
+            Value<String?> category = const Value.absent(),
+            Value<String?> nutritionSource = const Value.absent(),
             Value<String?> ingredientsJson = const Value.absent(),
             Value<String?> ingredientsRawText = const Value.absent(),
             Value<double?> calories = const Value.absent(),
@@ -6547,6 +6945,7 @@ class $$ExternalRecipeTableTableTableManager extends RootTableManager<
               ExternalRecipeTableCompanion.insert(
             id: id,
             url: url,
+            itemType: itemType,
             title: title,
             description: description,
             imageUrl: imageUrl,
@@ -6554,6 +6953,12 @@ class $$ExternalRecipeTableTableTableManager extends RootTableManager<
             isFavorite: isFavorite,
             tags: tags,
             memo: memo,
+            productCode: productCode,
+            brand: brand,
+            size: size,
+            price: price,
+            category: category,
+            nutritionSource: nutritionSource,
             ingredientsJson: ingredientsJson,
             ingredientsRawText: ingredientsRawText,
             calories: calories,
