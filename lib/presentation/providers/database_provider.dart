@@ -54,13 +54,13 @@ final todayPersonalDataProvider = FutureProvider<PersonalDataTableData?>((ref) a
   }
 });
 
-// お気に入りレシピプロバイダー
+// お気に入りレシピ・食品プロバイダー（レシピと食品の両方を含む）
 final favoriteRecipesProvider = FutureProvider<List<ExternalRecipeTableData>>((ref) async {
   final database = ref.watch(databaseProvider);
   return await database.getFavoriteRecipes();
 });
 
-// 最近のレシピプロバイダー
+// 最近のレシピ・食品プロバイダー（レシピと食品の両方を含む）
 final recentRecipesProvider = FutureProvider<List<ExternalRecipeTableData>>((ref) async {
   final database = ref.watch(databaseProvider);
   return await database.getRecentRecipes(limit: 10);
