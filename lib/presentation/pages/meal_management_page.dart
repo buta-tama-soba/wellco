@@ -13,6 +13,7 @@ import '../providers/database_provider.dart';
 import 'recipe_url_register_page.dart';
 import 'recipe_viewer_page.dart';
 import 'recipe_edit_page.dart';
+import 'meal_add_page.dart';
 
 /// 食事管理画面の表示モード
 enum MealManagementMode {
@@ -900,9 +901,11 @@ class MealManagementPage extends HookConsumerWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
           onTap: () {
-            // TODO: 食事追加画面に遷移
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('食事追加機能は準備中です')),
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MealAddPage(),
+              ),
             );
           },
           child: Container(
