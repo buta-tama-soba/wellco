@@ -754,17 +754,200 @@ class MealManagementPage extends HookConsumerWidget {
         ),
         SizedBox(height: AppConstants.paddingS.h),
         
-        // 食事記録スロット
+        // 今日の食事記録一覧
         Expanded(
-          child: ListView(
-            children: [
-              _buildMealSlot('朝食'),
-              _buildMealSlot('昼食'),
-              _buildMealSlot('夕食'),
-            ],
-          ),
+          child: _buildTodayMealsList(),
         ),
       ],
+    );
+  }
+
+  /// 今日の食事記録一覧
+  Widget _buildTodayMealsList() {
+    return Consumer(
+      builder: (context, ref, child) {
+        final todayMealsAsync = ref.watch(todayMealsProvider);
+        
+        return todayMealsAsync.when(
+          data: (meals) {
+            return ListView(
+              children: [
+                // 既存の食事記録
+                ...meals.map((meal) => _buildMealRecordItem(meal)),
+                
+                // 食事追加ボタン
+                _buildAddMealButton(context),
+              ],
+            );
+          },
+          loading: () => const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CircularProgressIndicator(),
+            ),
+          ),
+          error: (error, stack) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 32,
+                  color: AppColors.error,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'エラー',
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.error,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// 食事記録アイテム
+  Widget _buildMealRecordItem(MealTableData meal) {
+    return Container(
+      margin: EdgeInsets.only(bottom: AppConstants.paddingS.h),
+      padding: EdgeInsets.all(AppConstants.paddingS.w),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+        border: Border.all(color: AppColors.accent.withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                meal.mealType,
+                style: AppTextStyles.body2.copyWith(fontWeight: FontWeight.w600),
+              ),
+              Text(
+                '${meal.recordedAt.hour.toString().padLeft(2, '0')}:${meal.recordedAt.minute.toString().padLeft(2, '0')}',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 4.h),
+          
+          // 栄養サマリー
+          Row(
+            children: [
+              Text(
+                '${meal.totalCalories.toInt()} kcal',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(width: AppConstants.paddingS.w),
+              Text(
+                'P: ${meal.totalProtein.toInt()}g',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.info,
+                ),
+              ),
+              SizedBox(width: AppConstants.paddingS.w),
+              Text(
+                'F: ${meal.totalFat.toInt()}g',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.warning,
+                ),
+              ),
+              SizedBox(width: AppConstants.paddingS.w),
+              Text(
+                'C: ${meal.totalCarbs.toInt()}g',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.success,
+                ),
+              ),
+            ],
+          ),
+          
+          // メモがある場合は表示
+          if (meal.memo != null && meal.memo!.isNotEmpty) ...[
+            SizedBox(height: 4.h),
+            Text(
+              meal.memo!,
+              style: AppTextStyles.caption.copyWith(
+                color: AppColors.textSecondary,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 食事追加ボタン
+  Widget _buildAddMealButton(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: AppConstants.paddingS.h),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+          onTap: () {
+            // TODO: 食事追加画面に遷移
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('食事追加機能は準備中です')),
+            );
+          },
+          child: Container(
+            padding: EdgeInsets.all(AppConstants.paddingM.w),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+              border: Border.all(
+                color: AppColors.accent.withOpacity(0.3),
+                style: BorderStyle.solid,
+              ),
+            ),
+            child: Column(
+              children: [
+                Container(
+                  width: 32.w,
+                  height: 32.w,
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16.r),
+                    border: Border.all(
+                      color: AppColors.accent.withOpacity(0.3),
+                      style: BorderStyle.solid,
+                      width: 2,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.add,
+                    color: AppColors.accent,
+                    size: 16.w,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  '食事を追加',
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.accent,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
