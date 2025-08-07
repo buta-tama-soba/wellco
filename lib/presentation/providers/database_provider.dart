@@ -66,14 +66,18 @@ final recentRecipesProvider = FutureProvider<List<ExternalRecipeTableData>>((ref
   return await database.getRecentRecipes(limit: 10);
 });
 
-// 体重履歴プロバイダー（一時的なダミーデータ）
+// 体重履歴プロバイダー（移動平均対応版）
 final weightHistoryProvider = FutureProvider<List<WeightData>>((ref) async {
   // 一時的なダミーデータを返す
   await Future.delayed(const Duration(milliseconds: 500));
   
   final now = DateTime.now();
-  return List.generate(30, (index) {
-    final date = now.subtract(Duration(days: 29 - index));
+  const displayDays = 30; // 表示期間
+  const movingAveragePeriod = 7; // 移動平均期間
+  const totalDays = displayDays + movingAveragePeriod - 1; // 移動平均計算に必要な総日数
+  
+  return List.generate(totalDays, (index) {
+    final date = now.subtract(Duration(days: totalDays - 1 - index));
     final baseWeight = 70.0;
     final variation = (index % 7 - 3) * 0.3; // 週次変動
     final trend = -index * 0.05; // 減少トレンド

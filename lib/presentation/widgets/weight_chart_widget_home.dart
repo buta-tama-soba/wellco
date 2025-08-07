@@ -76,12 +76,14 @@ class _WeightChartWidgetHomeState extends State<WeightChartWidgetHome>
 
   void _updateCachedData() {
     if (widget.weightData.isNotEmpty) {
-      final processedData = ChartUtils.downsampleData(widget.weightData, 30);
+      const displayDays = 30; // 表示期間
+      
+      // 表示期間のデータのみを取得（移動平均計算のため全データを保持）
       _cachedWeightSpots = ChartUtils.validateChartData(
-        ChartUtils.convertToFlSpots(processedData)
+        ChartUtils.convertToFlSpots(widget.weightData, displayDays: displayDays)
       );
       _cachedMovingAverageSpots = ChartUtils.validateChartData(
-        ChartUtils.calculateMovingAverage(processedData, 7)
+        ChartUtils.calculateMovingAverage(widget.weightData, 7, displayDays: displayDays)
       );
       _cachedBounds = ChartUtils.calculateSafeBounds(
         [..._cachedWeightSpots, ..._cachedMovingAverageSpots],
@@ -326,11 +328,17 @@ class _WeightChartWidgetHomeState extends State<WeightChartWidgetHome>
 
   Widget _buildXAxisLabel(double value, TitleMeta meta, bool isDark) {
     final index = value.toInt();
-    if (index < 0 || index >= widget.weightData.length) {
+    const displayDays = 30;
+    
+    // 表示期間のデータのみを使用
+    final displayStartIndex = widget.weightData.length - displayDays;
+    final actualIndex = displayStartIndex + index;
+    
+    if (actualIndex < 0 || actualIndex >= widget.weightData.length) {
       return const SizedBox.shrink();
     }
 
-    final date = widget.weightData[index].date;
+    final date = widget.weightData[actualIndex].date;
     return Padding(
       padding: EdgeInsets.only(top: 6.h),
       child: Text(
@@ -347,9 +355,14 @@ class _WeightChartWidgetHomeState extends State<WeightChartWidgetHome>
   List<LineTooltipItem> _buildTooltipItems(List<LineBarSpot> touchedSpots, bool isDark) {
     return touchedSpots.map((barSpot) {
       final index = barSpot.x.toInt();
+      const displayDays = 30;
       
-      if (index >= 0 && index < widget.weightData.length) {
-        final data = widget.weightData[index];
+      // 表示期間のデータのみを使用
+      final displayStartIndex = widget.weightData.length - displayDays;
+      final actualIndex = displayStartIndex + index;
+      
+      if (actualIndex >= 0 && actualIndex < widget.weightData.length) {
+        final data = widget.weightData[actualIndex];
         final isAverage = barSpot.barIndex == 1;
         
         return LineTooltipItem(
