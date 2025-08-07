@@ -13,6 +13,7 @@ import '../providers/database_provider.dart';
 import 'recipe_url_register_page.dart';
 import 'recipe_viewer_page.dart';
 import 'recipe_edit_page.dart';
+import 'meal_add_page.dart';
 
 /// 食事管理画面の表示モード
 enum MealManagementMode {
@@ -406,82 +407,128 @@ class MealManagementPage extends HookConsumerWidget {
   }
 
   Widget _buildNutritionSummary() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
-      padding: EdgeInsets.all(AppConstants.paddingM.w),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8.r,
-            offset: Offset(0, 2.h),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '今日の栄養摂取',
-                style: AppTextStyles.headline3,
-              ),
-              TextButton(
-                onPressed: () {
-                  // TODO: 詳細画面へ
-                },
-                child: Text(
-                  '詳細',
-                  style: AppTextStyles.body2.copyWith(
-                    color: AppColors.primary,
+    return Consumer(
+      builder: (context, ref, child) {
+        final nutritionAsync = ref.watch(todayNutritionProvider);
+        
+        return nutritionAsync.when(
+          data: (nutrition) {
+            const targetCalories = 2000.0;
+            final currentCalories = nutrition['calories'] ?? 0.0;
+            final currentProtein = nutrition['protein'] ?? 0.0;
+            final currentFat = nutrition['fat'] ?? 0.0;
+            final currentCarbs = nutrition['carbs'] ?? 0.0;
+            
+            final caloriesProgress = (currentCalories / targetCalories).clamp(0.0, 1.0);
+            final caloriesPercent = (caloriesProgress * 100).round();
+            
+            return Container(
+              margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
+              padding: EdgeInsets.all(AppConstants.paddingM.w),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8.r,
+                    offset: Offset(0, 2.h),
                   ),
-                ),
+                ],
               ),
-            ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '今日の栄養摂取',
+                        style: AppTextStyles.headline3,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // TODO: 詳細画面へ
+                        },
+                        child: Text(
+                          '詳細',
+                          style: AppTextStyles.body2.copyWith(
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: AppConstants.paddingS.h),
+                  
+                  // カロリープログレスバー
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'カロリー ${currentCalories.toInt()} / ${targetCalories.toInt()} kcal',
+                        style: AppTextStyles.body1,
+                      ),
+                      Text(
+                        '$caloriesPercent%',
+                        style: AppTextStyles.body2.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: AppConstants.paddingS.h),
+                  LinearProgressIndicator(
+                    value: caloriesProgress,
+                    backgroundColor: AppColors.primary.withOpacity(0.2),
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                    minHeight: 6.h,
+                    borderRadius: BorderRadius.circular(3.r),
+                  ),
+                  SizedBox(height: AppConstants.paddingS.h),
+                  
+                  // 3大栄養素
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildMiniNutrient('P', '${currentProtein.toInt()}g', AppColors.info),
+                      _buildMiniNutrient('F', '${currentFat.toInt()}g', AppColors.warning),
+                      _buildMiniNutrient('C', '${currentCarbs.toInt()}g', AppColors.success),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+          loading: () => Container(
+            margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
+            padding: EdgeInsets.all(AppConstants.paddingM.w),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+            ),
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
           ),
-          SizedBox(height: AppConstants.paddingS.h),
-          
-          // カロリープログレスバー
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'カロリー 0 / 2,000 kcal',
-                style: AppTextStyles.body1,
-              ),
-              Text(
-                '0%',
+          error: (error, stack) => Container(
+            margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
+            padding: EdgeInsets.all(AppConstants.paddingM.w),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+            ),
+            child: Center(
+              child: Text(
+                'エラー: 栄養情報を取得できません',
                 style: AppTextStyles.body2.copyWith(
-                  color: AppColors.textSecondary,
+                  color: AppColors.error,
                 ),
               ),
-            ],
+            ),
           ),
-          SizedBox(height: AppConstants.paddingS.h),
-          LinearProgressIndicator(
-            value: 0.0,
-            backgroundColor: AppColors.primary.withOpacity(0.2),
-            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-            minHeight: 6.h,
-            borderRadius: BorderRadius.circular(3.r),
-          ),
-          SizedBox(height: AppConstants.paddingS.h),
-          
-          // 3大栄養素
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildMiniNutrient('P', '0g', AppColors.info),
-              _buildMiniNutrient('F', '0g', AppColors.warning),
-              _buildMiniNutrient('C', '0g', AppColors.success),
-            ],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -527,23 +574,15 @@ class MealManagementPage extends HookConsumerWidget {
           // ),
           // SizedBox(width: AppConstants.paddingS.w),
           
-          // レシピ
-          Expanded(
-            child: _buildRecipeKanbanColumn(onRecipeListTap),
-          ),
-          SizedBox(width: AppConstants.paddingS.w),
+          // レシピ（一時的に非表示）
+          // Expanded(
+          //   child: _buildRecipeKanbanColumn(onRecipeListTap),
+          // ),
+          // SizedBox(width: AppConstants.paddingS.w),
           
           // 食事記録
           Expanded(
-            child: _buildKanbanColumn(
-              title: '食事記録',
-              color: AppColors.accent,
-              items: [
-                _buildMealSlot('朝食'),
-                _buildMealSlot('昼食'),
-                _buildMealSlot('夕食'),
-              ],
-            ),
+            child: _buildMealKanbanColumn(onRecipeListTap),
           ),
         ],
       ),
@@ -696,6 +735,321 @@ class MealManagementPage extends HookConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// 食事記録専用のカンバンカラム（保存済みレシピボタン付き）
+  Widget _buildMealKanbanColumn(VoidCallback onRecipeListTap) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ヘッダー（タイトル + 保存済みレシピボタン）
+        Row(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppConstants.paddingS.w,
+                vertical: 4.h,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.accent.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+              ),
+              child: Text(
+                '食事記録',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.accent,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const Spacer(),
+            GestureDetector(
+              onTap: onRecipeListTap,
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 8.w,
+                  vertical: 4.h,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.secondary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.restaurant_menu,
+                      size: 14.w,
+                      color: AppColors.secondary,
+                    ),
+                    SizedBox(width: 2.w),
+                    Text(
+                      'レシピ',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.secondary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 10.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: AppConstants.paddingS.h),
+        
+        // 今日の食事記録一覧
+        Expanded(
+          child: _buildTodayMealsList(),
+        ),
+      ],
+    );
+  }
+
+  /// 今日の食事記録一覧
+  Widget _buildTodayMealsList() {
+    return Consumer(
+      builder: (context, ref, child) {
+        final todayMealsAsync = ref.watch(todayMealsWithRecipesProvider);
+        
+        return todayMealsAsync.when(
+          data: (mealsWithRecipes) {
+            return ListView(
+              children: [
+                // 既存の食事記録
+                ...mealsWithRecipes.map((mealWithRecipe) => _buildMealRecordItem(context, ref, mealWithRecipe)),
+                
+                // 食事追加ボタン
+                _buildAddMealButton(context),
+              ],
+            );
+          },
+          loading: () => const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CircularProgressIndicator(),
+            ),
+          ),
+          error: (error, stack) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 32,
+                  color: AppColors.error,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'エラー',
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.error,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// 食事記録アイテム
+  Widget _buildMealRecordItem(BuildContext context, WidgetRef ref, MealWithRecipe mealWithRecipe) {
+    final meal = mealWithRecipe.meal;
+    final recipe = mealWithRecipe.recipe;
+    
+    return Container(
+      margin: EdgeInsets.only(bottom: AppConstants.paddingS.h),
+      padding: EdgeInsets.all(AppConstants.paddingS.w),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+        border: Border.all(color: AppColors.accent.withOpacity(0.2)),
+      ),
+      child: Row(
+        children: [
+          // レシピ画像（ある場合のみ表示）
+          if (recipe?.imageUrl != null) ...[
+            Container(
+              width: 50.w,
+              height: 50.w,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+                child: CachedNetworkImage(
+                  imageUrl: recipe!.imageUrl!,
+                  width: 50.w,
+                  height: 50.w,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: AppColors.primary.withOpacity(0.1),
+                    child: Icon(
+                      Icons.restaurant,
+                      color: AppColors.primary,
+                      size: 20.w,
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Icon(
+                    Icons.restaurant,
+                    color: AppColors.primary,
+                    size: 20.w,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: AppConstants.paddingM.w),
+          ],
+          
+          // 食事情報
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        recipe?.title ?? mealWithRecipe.items.first.foodName,
+                        style: AppTextStyles.body2.copyWith(fontWeight: FontWeight.w600),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Text(
+                      '${meal.recordedAt.hour.toString().padLeft(2, '0')}:${meal.recordedAt.minute.toString().padLeft(2, '0')}',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 4.h),
+                
+                // 栄養サマリー
+                Row(
+                  children: [
+                    Text(
+                      '${meal.totalCalories.toInt()} kcal',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(width: AppConstants.paddingS.w),
+                    Text(
+                      'P: ${meal.totalProtein.toInt()}g',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.info,
+                      ),
+                    ),
+                    SizedBox(width: AppConstants.paddingS.w),
+                    Text(
+                      'F: ${meal.totalFat.toInt()}g',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.warning,
+                      ),
+                    ),
+                    SizedBox(width: AppConstants.paddingS.w),
+                    Text(
+                      'C: ${meal.totalCarbs.toInt()}g',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.success,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          
+          // 削除ボタン
+          SizedBox(width: AppConstants.paddingS.w),
+          GestureDetector(
+            onTap: () => _showDeleteMealDialog(context, ref, meal.id, recipe?.title ?? mealWithRecipe.items.first.foodName),
+            child: Container(
+              padding: EdgeInsets.all(4.w),
+              decoration: BoxDecoration(
+                color: AppColors.error.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(4.r),
+              ),
+              child: Icon(
+                Icons.delete_outline,
+                color: AppColors.error,
+                size: 16.w,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 食事追加ボタン
+  Widget _buildAddMealButton(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: AppConstants.paddingS.h),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MealAddPage(),
+              ),
+            );
+          },
+          child: Container(
+            padding: EdgeInsets.all(AppConstants.paddingM.w),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+              border: Border.all(
+                color: AppColors.accent.withOpacity(0.3),
+                style: BorderStyle.solid,
+              ),
+            ),
+            child: Column(
+              children: [
+                Container(
+                  width: 32.w,
+                  height: 32.w,
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16.r),
+                    border: Border.all(
+                      color: AppColors.accent.withOpacity(0.3),
+                      style: BorderStyle.solid,
+                      width: 2,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.add,
+                    color: AppColors.accent,
+                    size: 16.w,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  '食事を追加',
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.accent,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -1221,5 +1575,73 @@ class MealManagementPage extends HookConsumerWidget {
         ),
       ),
     );
+  }
+
+  /// 食事削除の確認ダイアログを表示
+  void _showDeleteMealDialog(BuildContext context, WidgetRef ref, int mealId, String mealName) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+        ),
+        title: Text(
+          '食事記録を削除',
+          style: AppTextStyles.headline3,
+        ),
+        content: Text(
+          '「$mealName」を削除しますか？\nこの操作は取り消せません。',
+          style: AppTextStyles.body2,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'キャンセル',
+              style: AppTextStyles.body2.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _deleteMeal(context, ref, mealId);
+            },
+            child: Text(
+              '削除',
+              style: AppTextStyles.body2.copyWith(
+                color: AppColors.error,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 食事記録を削除
+  Future<void> _deleteMeal(BuildContext context, WidgetRef ref, int mealId) async {
+    try {
+      final mealDeletionNotifier = ref.read(mealDeletionProvider.notifier);
+      await mealDeletionNotifier.deleteMeal(mealId);
+      
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('食事記録を削除しました')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('削除に失敗しました: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
   }
 }

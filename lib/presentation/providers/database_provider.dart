@@ -23,6 +23,12 @@ final todayMealsProvider = FutureProvider<List<MealTableData>>((ref) async {
   return await database.getMealsByDate(DateTime.now());
 });
 
+// 今日の食事（レシピ情報付き）プロバイダー
+final todayMealsWithRecipesProvider = FutureProvider<List<MealWithRecipe>>((ref) async {
+  final database = ref.watch(databaseProvider);
+  return await database.getMealsWithRecipesByDate(DateTime.now());
+});
+
 // 選択された日付のパーソナルデータプロバイダー（HealthKit統合）
 final todayPersonalDataProvider = FutureProvider<PersonalDataTableData?>((ref) async {
   // HealthKitからデータを取得
@@ -309,6 +315,37 @@ class RecipeRegistrationNotifier extends StateNotifier<AsyncValue<void>> {
       // レシピリストを更新
       _ref.invalidate(favoriteRecipesProvider);
       _ref.invalidate(recentRecipesProvider);
+      
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+    }
+  }
+}
+
+// 食事削除プロバイダー
+final mealDeletionProvider = StateNotifierProvider<MealDeletionNotifier, AsyncValue<void>>((ref) {
+  return MealDeletionNotifier(ref.read(databaseProvider), ref);
+});
+
+/// 食事削除の状態管理
+class MealDeletionNotifier extends StateNotifier<AsyncValue<void>> {
+  final AppDatabase _database;
+  final StateNotifierProviderRef<MealDeletionNotifier, AsyncValue<void>> _ref;
+
+  MealDeletionNotifier(this._database, this._ref) : super(const AsyncValue.data(null));
+
+  /// 食事記録を削除
+  Future<void> deleteMeal(int mealId) async {
+    state = const AsyncValue.loading();
+    
+    try {
+      await _database.deleteMeal(mealId);
+      state = const AsyncValue.data(null);
+      
+      // 食事リストを更新
+      _ref.invalidate(todayMealsProvider);
+      _ref.invalidate(todayMealsWithRecipesProvider);
+      _ref.invalidate(todayNutritionProvider);
       
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
