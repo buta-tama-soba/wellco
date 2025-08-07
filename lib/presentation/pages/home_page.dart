@@ -10,7 +10,7 @@ import '../providers/database_provider.dart';
 import '../widgets/nutrition_summary_card.dart';
 import '../widgets/weight_chart_card.dart';
 import '../widgets/steps_progress_card.dart';
-// import '../widgets/quick_actions_card.dart'; // 一時的に非表示
+import '../widgets/quick_actions_card.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -116,9 +116,9 @@ class HomePage extends HookConsumerWidget {
                 ),
                 SizedBox(height: AppConstants.paddingM.h),
 
-                // クイックアクション（一時的に非表示）
-                // const QuickActionsCard(),
-                // SizedBox(height: AppConstants.paddingL.h),
+                // クイックアクション
+                const QuickActionsCard(),
+                SizedBox(height: AppConstants.paddingL.h),
               ],
             ),
           ),
