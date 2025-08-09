@@ -120,6 +120,12 @@ class SettingsPage extends HookConsumerWidget {
             '設定',
             style: AppTextStyles.headline2,
           ),
+          const Spacer(),
+          // 他の画面のIconButtonと同じ高さを確保するための透明なダミーアイコン
+          SizedBox(
+            width: 48.w, // IconButtonのデフォルトサイズ
+            height: 48.h,
+          ),
         ],
       ),
     );

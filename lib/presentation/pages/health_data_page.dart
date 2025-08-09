@@ -29,7 +29,6 @@ class HealthDataPage extends HookConsumerWidget {
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.all(AppConstants.paddingM.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -74,14 +73,16 @@ class HealthDataPage extends HookConsumerWidget {
     final selectedDate = ref.watch(selectedDateProvider);
     final isToday = _isToday(selectedDate);
     
-    return Column(
-      children: [
-        Row(
-          children: [
-            Text(
-              '身体・活動',
-              style: AppTextStyles.headline2,
-            ),
+    return Container(
+      padding: EdgeInsets.all(AppConstants.paddingM.w),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                '身体・活動',
+                style: AppTextStyles.headline2,
+              ),
             const Spacer(),
             IconButton(
               onPressed: () {
@@ -104,10 +105,11 @@ class HealthDataPage extends HookConsumerWidget {
             ),
           ],
         ),
-        // 日付選択バーは非表示（機能は残す）
-        // SizedBox(height: AppConstants.paddingM.h),
-        // _buildDateSelector(context, ref, selectedDate, isToday),
-      ],
+          // 日付選択バーは非表示（機能は残す）
+          // SizedBox(height: AppConstants.paddingM.h),
+          // _buildDateSelector(context, ref, selectedDate, isToday),
+        ],
+      ),
     );
   }
 
