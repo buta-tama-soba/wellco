@@ -439,27 +439,6 @@ class MealManagementPage extends HookConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '今日の栄養摂取',
-                        style: AppTextStyles.headline3,
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          // TODO: 詳細画面へ
-                        },
-                        child: Text(
-                          '詳細',
-                          style: AppTextStyles.body2.copyWith(
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: AppConstants.paddingS.h),
                   
                   // カロリープログレスバー
                   Row(

@@ -62,9 +62,6 @@ class HealthDataPage extends HookConsumerWidget {
                 ),
                 SizedBox(height: AppConstants.paddingM.h),
 
-                // 手動入力ボタン
-                _buildManualInputButton(context),
-                SizedBox(height: AppConstants.paddingL.h),
               ],
             ),
           ),
@@ -346,11 +343,6 @@ class HealthDataPage extends HookConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '体重・体脂肪率',
-            style: AppTextStyles.headline3,
-          ),
-          SizedBox(height: AppConstants.paddingM.h),
           
           Row(
             children: [
@@ -405,46 +397,54 @@ class HealthDataPage extends HookConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '直近24時間の活動',
-            style: AppTextStyles.headline3,
+          // アクティビティメトリクス（2列2行）
+          Row(
+            children: [
+              Expanded(
+                child: _buildActivityMetric(
+                  icon: Icons.directions_walk_rounded,
+                  label: '歩数',
+                  value: data?.steps?.toString() ?? '--',
+                  unit: '歩',
+                  color: AppColors.primary,
+                ),
+              ),
+              SizedBox(width: AppConstants.paddingM.w),
+              Expanded(
+                child: _buildActivityMetric(
+                  icon: Icons.local_fire_department_rounded,
+                  label: '消費カロリー',
+                  value: data?.activeEnergy?.toInt().toString() ?? '--',
+                  unit: 'kcal',
+                  color: AppColors.secondary,
+                ),
+              ),
+            ],
           ),
           SizedBox(height: AppConstants.paddingM.h),
           
-          // アクティビティメトリクス
-          _buildActivityMetric(
-            icon: Icons.directions_walk_rounded,
-            label: '歩数',
-            value: data?.steps?.toString() ?? '--',
-            unit: '歩',
-            color: AppColors.primary,
-          ),
-          SizedBox(height: AppConstants.paddingM.h),
-          
-          _buildActivityMetric(
-            icon: Icons.local_fire_department_rounded,
-            label: '消費カロリー',
-            value: data?.activeEnergy?.toInt().toString() ?? '--',
-            unit: 'kcal',
-            color: AppColors.secondary,
-          ),
-          SizedBox(height: AppConstants.paddingM.h),
-          
-          _buildActivityMetric(
-            icon: Icons.fitness_center_rounded,
-            label: '運動時間',
-            value: data?.exerciseTime?.toString() ?? '--',
-            unit: '分',
-            color: AppColors.accent,
-          ),
-          SizedBox(height: AppConstants.paddingM.h),
-          
-          _buildActivityMetric(
-            icon: Icons.bedtime_rounded,
-            label: '睡眠時間',
-            value: data?.sleepHours?.toStringAsFixed(1) ?? '--',
-            unit: '時間',
-            color: AppColors.info,
+          Row(
+            children: [
+              Expanded(
+                child: _buildActivityMetric(
+                  icon: Icons.fitness_center_rounded,
+                  label: '運動時間',
+                  value: data?.exerciseTime?.toString() ?? '--',
+                  unit: '分',
+                  color: AppColors.accent,
+                ),
+              ),
+              SizedBox(width: AppConstants.paddingM.w),
+              Expanded(
+                child: _buildActivityMetric(
+                  icon: Icons.bedtime_rounded,
+                  label: '睡眠時間',
+                  value: data?.sleepHours?.toStringAsFixed(1) ?? '--',
+                  unit: '時間',
+                  color: AppColors.info,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -572,30 +572,4 @@ class HealthDataPage extends HookConsumerWidget {
     );
   }
 
-  Widget _buildManualInputButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('手動入力機能は準備中です')),
-          );
-        },
-        icon: Icon(
-          Icons.edit_rounded,
-          size: 20.w,
-        ),
-        label: const Text('手動で記録'),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.surface,
-          foregroundColor: AppColors.primary,
-          elevation: 0,
-          side: BorderSide(
-            color: AppColors.primary.withOpacity(0.3),
-          ),
-          padding: EdgeInsets.symmetric(vertical: 16.h),
-        ),
-      ),
-    );
-  }
 }
