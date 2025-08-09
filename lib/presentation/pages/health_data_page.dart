@@ -215,7 +215,11 @@ class HealthDataPage extends HookConsumerWidget {
   Widget _buildPermissionCard(BuildContext context, WidgetRef ref) {
     return Container(
       padding: EdgeInsets.all(AppConstants.paddingM.w),
-      margin: EdgeInsets.only(bottom: AppConstants.paddingM.h),
+      margin: EdgeInsets.only(
+        bottom: AppConstants.paddingM.h,
+        left: AppConstants.paddingM.w,
+        right: AppConstants.paddingM.w,
+      ),
       decoration: BoxDecoration(
         color: AppColors.warning.withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
@@ -286,7 +290,11 @@ class HealthDataPage extends HookConsumerWidget {
   Widget _buildLoadingCard() {
     return Container(
       height: 120.h,
-      margin: EdgeInsets.only(bottom: AppConstants.paddingM.h),
+      margin: EdgeInsets.only(
+        bottom: AppConstants.paddingM.h,
+        left: AppConstants.paddingM.w,
+        right: AppConstants.paddingM.w,
+      ),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
@@ -303,7 +311,11 @@ class HealthDataPage extends HookConsumerWidget {
   Widget _buildErrorCard(String message) {
     return Container(
       padding: EdgeInsets.all(AppConstants.paddingM.w),
-      margin: EdgeInsets.only(bottom: AppConstants.paddingM.h),
+      margin: EdgeInsets.only(
+        bottom: AppConstants.paddingM.h,
+        left: AppConstants.paddingM.w,
+        right: AppConstants.paddingM.w,
+      ),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
@@ -329,6 +341,7 @@ class HealthDataPage extends HookConsumerWidget {
 
   Widget _buildWeightCard(PersonalDataTableData? data, WidgetRef ref) {
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
       padding: EdgeInsets.all(AppConstants.paddingM.w),
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -383,6 +396,7 @@ class HealthDataPage extends HookConsumerWidget {
 
   Widget _buildActivityCard(PersonalDataTableData? data) {
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
       padding: EdgeInsets.all(AppConstants.paddingM.w),
       decoration: BoxDecoration(
         color: AppColors.surface,
