@@ -413,14 +413,10 @@ class MealManagementPage extends HookConsumerWidget {
         
         return nutritionAsync.when(
           data: (nutrition) {
-            const targetCalories = 2000.0;
             final currentCalories = nutrition['calories'] ?? 0.0;
             final currentProtein = nutrition['protein'] ?? 0.0;
             final currentFat = nutrition['fat'] ?? 0.0;
             final currentCarbs = nutrition['carbs'] ?? 0.0;
-            
-            final caloriesProgress = (currentCalories / targetCalories).clamp(0.0, 1.0);
-            final caloriesPercent = (caloriesProgress * 100).round();
             
             return Container(
               margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
@@ -439,61 +435,48 @@ class MealManagementPage extends HookConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // カロリー（メイン表示）
+                  _buildMainNutrient(
+                    label: 'カロリー',
+                    current: currentCalories,
+                    target: AppConstants.defaultCaloriesGoal.toDouble(),
+                    unit: 'kcal',
+                    color: AppColors.primary,
+                  ),
+                  SizedBox(height: AppConstants.paddingM.h),
+
+                  // 3大栄養素（グリッド表示）
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '今日の栄養摂取',
-                        style: AppTextStyles.headline3,
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          // TODO: 詳細画面へ
-                        },
-                        child: Text(
-                          '詳細',
-                          style: AppTextStyles.body2.copyWith(
-                            color: AppColors.primary,
-                          ),
+                      Expanded(
+                        child: _buildMiniNutrientCard(
+                          label: 'タンパク質',
+                          current: currentProtein,
+                          target: AppConstants.defaultProteinGoal.toDouble(),
+                          unit: 'g',
+                          color: AppColors.info,
                         ),
                       ),
-                    ],
-                  ),
-                  SizedBox(height: AppConstants.paddingS.h),
-                  
-                  // カロリープログレスバー
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'カロリー ${currentCalories.toInt()} / ${targetCalories.toInt()} kcal',
-                        style: AppTextStyles.body1,
-                      ),
-                      Text(
-                        '$caloriesPercent%',
-                        style: AppTextStyles.body2.copyWith(
-                          color: AppColors.textSecondary,
+                      SizedBox(width: AppConstants.paddingS.w),
+                      Expanded(
+                        child: _buildMiniNutrientCard(
+                          label: '脂質',
+                          current: currentFat,
+                          target: AppConstants.defaultFatGoal.toDouble(),
+                          unit: 'g',
+                          color: AppColors.warning,
                         ),
                       ),
-                    ],
-                  ),
-                  SizedBox(height: AppConstants.paddingS.h),
-                  LinearProgressIndicator(
-                    value: caloriesProgress,
-                    backgroundColor: AppColors.primary.withOpacity(0.2),
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-                    minHeight: 6.h,
-                    borderRadius: BorderRadius.circular(3.r),
-                  ),
-                  SizedBox(height: AppConstants.paddingS.h),
-                  
-                  // 3大栄養素
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildMiniNutrient('P', '${currentProtein.toInt()}g', AppColors.info),
-                      _buildMiniNutrient('F', '${currentFat.toInt()}g', AppColors.warning),
-                      _buildMiniNutrient('C', '${currentCarbs.toInt()}g', AppColors.success),
+                      SizedBox(width: AppConstants.paddingS.w),
+                      Expanded(
+                        child: _buildMiniNutrientCard(
+                          label: '炭水化物',
+                          current: currentCarbs,
+                          target: AppConstants.defaultCarbsGoal.toDouble(),
+                          unit: 'g',
+                          color: AppColors.success,
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -507,8 +490,11 @@ class MealManagementPage extends HookConsumerWidget {
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
             ),
-            child: const Center(
-              child: CircularProgressIndicator(),
+            child: Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primary,
+                strokeWidth: 2.w,
+              ),
             ),
           ),
           error: (error, stack) => Container(
@@ -517,19 +503,127 @@ class MealManagementPage extends HookConsumerWidget {
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+              border: Border.all(color: AppColors.error.withOpacity(0.3)),
             ),
-            child: Center(
-              child: Text(
-                'エラー: 栄養情報を取得できません',
-                style: AppTextStyles.body2.copyWith(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.error_outline_rounded,
                   color: AppColors.error,
+                  size: 32.w,
                 ),
-              ),
+                SizedBox(height: AppConstants.paddingS.h),
+                Text(
+                  '栄養データの取得に失敗しました',
+                  style: AppTextStyles.body2.copyWith(color: AppColors.error),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ),
         );
       },
     );
+  }
+
+  Widget _buildMainNutrient({
+    required String label,
+    required double current,
+    required double target,
+    required String unit,
+    required Color color,
+  }) {
+    final percentage = target > 0 ? (current / target).clamp(0.0, 1.0) : 0.0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: AppTextStyles.body1.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              '${(percentage * 100).round()}%',
+              style: AppTextStyles.body2.copyWith(
+                color: _getPercentageColor(percentage),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: AppConstants.paddingS.h),
+        Text(
+          '${current.toInt()} / ${target.toInt()} $unit',
+          style: AppTextStyles.numberMedium.copyWith(color: color),
+        ),
+        SizedBox(height: AppConstants.paddingS.h),
+        LinearProgressIndicator(
+          value: percentage,
+          backgroundColor: color.withOpacity(0.2),
+          valueColor: AlwaysStoppedAnimation<Color>(color),
+          minHeight: 6.h,
+          borderRadius: BorderRadius.circular(3.r),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMiniNutrientCard({
+    required String label,
+    required double current,
+    required double target,
+    required String unit,
+    required Color color,
+  }) {
+    final percentage = target > 0 ? (current / target).clamp(0.0, 1.0) : 0.0;
+
+    return Container(
+      padding: EdgeInsets.all(AppConstants.paddingS.w),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: AppTextStyles.caption.copyWith(
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(height: 2.h),
+          Text(
+            '${current.toInt()}g',
+            style: AppTextStyles.numberSmall.copyWith(color: color),
+          ),
+          SizedBox(height: 4.h),
+          LinearProgressIndicator(
+            value: percentage,
+            backgroundColor: Colors.white.withOpacity(0.5),
+            valueColor: AlwaysStoppedAnimation<Color>(color),
+            minHeight: 3.h,
+            borderRadius: BorderRadius.circular(1.5.r),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getPercentageColor(double percentage) {
+    if (percentage >= 0.8 && percentage <= 1.2) {
+      return AppColors.success;
+    } else if (percentage >= 0.6 && percentage <= 1.4) {
+      return AppColors.warning;
+    } else {
+      return AppColors.error;
+    }
   }
 
   Widget _buildMiniNutrient(String label, String value, Color color) {
