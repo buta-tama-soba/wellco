@@ -37,21 +37,6 @@ class StepsProgressCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.directions_walk_rounded,
-                color: AppColors.primary,
-                size: 24.w,
-              ),
-              SizedBox(width: AppConstants.paddingS.w),
-              Text(
-                '今日の歩数',
-                style: AppTextStyles.headline3,
-              ),
-            ],
-          ),
-          SizedBox(height: AppConstants.paddingM.h),
           
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

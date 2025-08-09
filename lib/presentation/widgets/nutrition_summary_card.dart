@@ -36,11 +36,6 @@ class NutritionSummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '今日の栄養バランス',
-            style: AppTextStyles.headline3,
-          ),
-          SizedBox(height: AppConstants.paddingM.h),
           
           // カロリー（メイン表示）
           _buildMainNutrient(
