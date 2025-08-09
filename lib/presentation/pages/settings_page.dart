@@ -7,6 +7,7 @@ import '../../core/themes/app_colors.dart';
 import '../../core/themes/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
 import '../providers/theme_provider.dart';
+import '../providers/goals_provider.dart';
 
 class SettingsPage extends HookConsumerWidget {
   const SettingsPage({super.key});
@@ -16,18 +17,13 @@ class SettingsPage extends HookConsumerWidget {
     final themeMode = ref.watch(themeProvider);
     final isDarkMode = themeMode == ThemeMode.dark;
     
-    // 目標値の状態管理
-    final weightGoal = useState<double?>(null);
-    final caloriesGoal = useState<double?>(null);
-    final proteinGoal = useState<double?>(null);
-    final fatGoal = useState<double?>(null);
-    final carbsGoal = useState<double?>(null);
-    
-    final _weightGoal = weightGoal.value;
-    final _caloriesGoal = caloriesGoal.value;
-    final _proteinGoal = proteinGoal.value;
-    final _fatGoal = fatGoal.value;
-    final _carbsGoal = carbsGoal.value;
+    // 目標値をプロバイダーから取得
+    final goalsNotifier = ref.watch(goalsProvider);
+    final weightGoal = goalsNotifier.weightGoal;
+    final caloriesGoal = goalsNotifier.caloriesGoal;
+    final proteinGoal = goalsNotifier.proteinGoal;
+    final fatGoal = goalsNotifier.fatGoal;
+    final carbsGoal = goalsNotifier.carbsGoal;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -51,14 +47,14 @@ class SettingsPage extends HookConsumerWidget {
                   _buildSettingItem(
                     icon: Icons.flag_rounded,
                     title: '体重目標',
-                    subtitle: '${_weightGoal?.toStringAsFixed(1) ?? AppConstants.defaultWeightGoal} kg',
-                    onTap: () => _showWeightGoalDialog(context, weightGoal),
+                    subtitle: '${weightGoal.toStringAsFixed(1)} kg',
+                    onTap: () => _showWeightGoalDialog(context, ref),
                   ),
                   _buildSettingItem(
                     icon: Icons.restaurant_rounded,
                     title: '1日の栄養目標',
-                    subtitle: '${_caloriesGoal?.toInt() ?? AppConstants.defaultCaloriesGoal} kcal, タンパク質 ${_proteinGoal?.toInt() ?? AppConstants.defaultProteinGoal}g',
-                    onTap: () => _showNutritionGoalDialog(context, caloriesGoal, proteinGoal, fatGoal, carbsGoal),
+                    subtitle: '${caloriesGoal.toInt()} kcal, タンパク質 ${proteinGoal.toInt()}g',
+                    onTap: () => _showNutritionGoalDialog(context, ref),
                   ),
                 ],
               ),
@@ -289,9 +285,10 @@ class SettingsPage extends HookConsumerWidget {
     );
   }
 
-  void _showWeightGoalDialog(BuildContext context, ValueNotifier<double?> weightGoal) {
+  void _showWeightGoalDialog(BuildContext context, WidgetRef ref) {
+    final goalsNotifier = ref.read(goalsProvider);
     final weightController = TextEditingController(
-      text: (weightGoal.value ?? AppConstants.defaultWeightGoal).toString(),
+      text: goalsNotifier.weightGoal.toString(),
     );
     
     showDialog(
@@ -330,7 +327,7 @@ class SettingsPage extends HookConsumerWidget {
             onPressed: () {
               final weight = double.tryParse(weightController.text);
               if (weight != null) {
-                weightGoal.value = weight;
+                goalsNotifier.updateWeightGoal(weight);
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -347,24 +344,19 @@ class SettingsPage extends HookConsumerWidget {
     );
   }
 
-  void _showNutritionGoalDialog(
-    BuildContext context,
-    ValueNotifier<double?> caloriesGoal,
-    ValueNotifier<double?> proteinGoal,
-    ValueNotifier<double?> fatGoal,
-    ValueNotifier<double?> carbsGoal,
-  ) {
+  void _showNutritionGoalDialog(BuildContext context, WidgetRef ref) {
+    final goalsNotifier = ref.read(goalsProvider);
     final caloriesController = TextEditingController(
-      text: (caloriesGoal.value ?? AppConstants.defaultCaloriesGoal).toString(),
+      text: goalsNotifier.caloriesGoal.toString(),
     );
     final proteinController = TextEditingController(
-      text: (proteinGoal.value ?? AppConstants.defaultProteinGoal).toString(),
+      text: goalsNotifier.proteinGoal.toString(),
     );
     final fatController = TextEditingController(
-      text: (fatGoal.value ?? AppConstants.defaultFatGoal).toString(),
+      text: goalsNotifier.fatGoal.toString(),
     );
     final carbsController = TextEditingController(
-      text: (carbsGoal.value ?? AppConstants.defaultCarbsGoal).toString(),
+      text: goalsNotifier.carbsGoal.toString(),
     );
     
     showDialog(
@@ -466,10 +458,12 @@ class SettingsPage extends HookConsumerWidget {
               final carbs = double.tryParse(carbsController.text);
               
               if (calories != null && protein != null && fat != null && carbs != null) {
-                caloriesGoal.value = calories;
-                proteinGoal.value = protein;
-                fatGoal.value = fat;
-                carbsGoal.value = carbs;
+                goalsNotifier.updateNutritionGoals(
+                  calories: calories,
+                  protein: protein,
+                  fat: fat,
+                  carbs: carbs,
+                );
                 
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(

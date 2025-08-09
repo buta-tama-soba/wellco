@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../core/themes/app_colors.dart';
 import '../../core/themes/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
+import '../providers/goals_provider.dart';
 
-class NutritionSummaryCard extends StatelessWidget {
+class NutritionSummaryCard extends ConsumerWidget {
   const NutritionSummaryCard({
     super.key,
     required this.nutrition,
@@ -14,7 +16,8 @@ class NutritionSummaryCard extends StatelessWidget {
   final Map<String, double> nutrition;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final goalsNotifier = ref.watch(goalsProvider);
     final calories = nutrition['calories'] ?? 0.0;
     final protein = nutrition['protein'] ?? 0.0;
     final fat = nutrition['fat'] ?? 0.0;
@@ -41,7 +44,7 @@ class NutritionSummaryCard extends StatelessWidget {
           _buildMainNutrient(
             label: 'カロリー',
             current: calories,
-            target: AppConstants.defaultCaloriesGoal.toDouble(),
+            target: goalsNotifier.caloriesGoal,
             unit: 'kcal',
             color: AppColors.primary,
           ),
@@ -54,7 +57,7 @@ class NutritionSummaryCard extends StatelessWidget {
                 child: _buildMiniNutrient(
                   label: 'タンパク質',
                   current: protein,
-                  target: AppConstants.defaultProteinGoal.toDouble(),
+                  target: goalsNotifier.proteinGoal,
                   unit: 'g',
                   color: AppColors.info,
                 ),
@@ -64,7 +67,7 @@ class NutritionSummaryCard extends StatelessWidget {
                 child: _buildMiniNutrient(
                   label: '脂質',
                   current: fat,
-                  target: AppConstants.defaultFatGoal.toDouble(),
+                  target: goalsNotifier.fatGoal,
                   unit: 'g',
                   color: AppColors.warning,
                 ),
@@ -74,7 +77,7 @@ class NutritionSummaryCard extends StatelessWidget {
                 child: _buildMiniNutrient(
                   label: '炭水化物',
                   current: carbs,
-                  target: AppConstants.defaultCarbsGoal.toDouble(),
+                  target: goalsNotifier.carbsGoal,
                   unit: 'g',
                   color: AppColors.success,
                 ),
