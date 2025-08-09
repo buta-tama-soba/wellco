@@ -550,7 +550,6 @@ class HealthDataPage extends HookConsumerWidget {
     final weightHistoryAsync = ref.watch(weightHistoryProvider);
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: -AppConstants.paddingM.w), // 親のパディングを打ち消し
       child: weightHistoryAsync.when(
         data: (weightData) => WeightChartWidgetHealth(
           weightData: weightData,
