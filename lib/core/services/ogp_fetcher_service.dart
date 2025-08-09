@@ -72,17 +72,36 @@ class OgpFetcherService {
       try {
         // Content-Typeヘッダーからcharsetを取得
         final contentType = response.headers['content-type'];
+        String? charset;
+        
         if (contentType != null && contentType.contains('charset=')) {
-          // Content-Typeで指定されたcharsetを使用
-          htmlContent = response.body;
+          // Content-Typeからcharsetを抽出
+          final match = RegExp(r'charset=([^;\s]+)').firstMatch(contentType);
+          if (match != null) {
+            charset = match.group(1)?.toLowerCase();
+          }
+        }
+        
+        // charsetに応じてデコード
+        final bytes = response.bodyBytes;
+        if (charset == 'shift_jis' || charset == 'shift-jis' || charset == 'sjis') {
+          // Shift-JISの場合（日本のサイトでよくある）
+          try {
+            htmlContent = const Utf8Codec(allowMalformed: true).decode(bytes);
+          } catch (e) {
+            // Shift-JISデコードに失敗した場合、UTF-8で試行
+            htmlContent = utf8.decode(bytes, allowMalformed: true);
+          }
+        } else if (charset == 'euc-jp' || charset == 'euc_jp') {
+          // EUC-JPの場合
+          htmlContent = utf8.decode(bytes, allowMalformed: true);
         } else {
-          // charsetが指定されていない場合、UTF-8として扱う
-          final bytes = response.bodyBytes;
+          // UTF-8またはその他（デフォルト）
           htmlContent = utf8.decode(bytes, allowMalformed: true);
         }
       } catch (e) {
-        // エンコーディングエラーの場合、元のbodyを使用
-        htmlContent = response.body;
+        // エンコーディングエラーの場合、UTF-8として扱う
+        htmlContent = utf8.decode(response.bodyBytes, allowMalformed: true);
       }
 
       // HTMLをパース
@@ -409,6 +428,25 @@ class OgpFetcherService {
       }
     }
     
+    // 画像URLの補完（OGPがない場合、ページ内の画像を探す）
+    String? imageUrl = ogpData.imageUrl;
+    if (imageUrl == null || imageUrl.isEmpty) {
+      // ページ内の画像を探す（商品画像っぽいものを優先）
+      final images = document.querySelectorAll('img[src], img[data-src]');
+      for (final img in images) {
+        final src = img.attributes['src'] ?? img.attributes['data-src'];
+        // ロゴやアイコンを除外し、商品画像っぽいものを取得
+        if (src != null && 
+            !src.contains('logo') && 
+            !src.contains('icon') && 
+            !src.contains('banner') &&
+            (src.contains('.jpg') || src.contains('.png') || src.contains('.webp'))) {
+          imageUrl = _makeAbsoluteUrl(src, ogpData.url ?? '');
+          break;
+        }
+      }
+    }
+    
     // サイト名の補完（ドメイン名から推測）
     String? siteName = ogpData.siteName;
     if (siteName == null || siteName.isEmpty) {
@@ -421,7 +459,7 @@ class OgpFetcherService {
     return OgpData(
       title: title,
       description: description,
-      imageUrl: ogpData.imageUrl,
+      imageUrl: imageUrl,
       siteName: siteName,
       url: ogpData.url,
       type: ogpData.type,
