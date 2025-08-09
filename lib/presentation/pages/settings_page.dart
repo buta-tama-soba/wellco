@@ -15,6 +15,19 @@ class SettingsPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
     final isDarkMode = themeMode == ThemeMode.dark;
+    
+    // 目標値の状態管理
+    final weightGoal = useState<double?>(null);
+    final caloriesGoal = useState<double?>(null);
+    final proteinGoal = useState<double?>(null);
+    final fatGoal = useState<double?>(null);
+    final carbsGoal = useState<double?>(null);
+    
+    final _weightGoal = weightGoal.value;
+    final _caloriesGoal = caloriesGoal.value;
+    final _proteinGoal = proteinGoal.value;
+    final _fatGoal = fatGoal.value;
+    final _carbsGoal = carbsGoal.value;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -38,14 +51,14 @@ class SettingsPage extends HookConsumerWidget {
                   _buildSettingItem(
                     icon: Icons.flag_rounded,
                     title: '体重目標',
-                    subtitle: '${AppConstants.defaultWeightGoal} kg',
-                    onTap: () => _showWeightGoalDialog(context),
+                    subtitle: '${_weightGoal?.toStringAsFixed(1) ?? AppConstants.defaultWeightGoal} kg',
+                    onTap: () => _showWeightGoalDialog(context, weightGoal),
                   ),
                   _buildSettingItem(
                     icon: Icons.restaurant_rounded,
                     title: '1日の栄養目標',
-                    subtitle: '${AppConstants.defaultCaloriesGoal} kcal, P${AppConstants.defaultProteinGoal}g',
-                    onTap: () => _showNutritionGoalDialog(context),
+                    subtitle: '${_caloriesGoal?.toInt() ?? AppConstants.defaultCaloriesGoal} kcal, タンパク質 ${_proteinGoal?.toInt() ?? AppConstants.defaultProteinGoal}g',
+                    onTap: () => _showNutritionGoalDialog(context, caloriesGoal, proteinGoal, fatGoal, carbsGoal),
                   ),
                 ],
               ),
@@ -276,9 +289,9 @@ class SettingsPage extends HookConsumerWidget {
     );
   }
 
-  void _showWeightGoalDialog(BuildContext context) {
+  void _showWeightGoalDialog(BuildContext context, ValueNotifier<double?> weightGoal) {
     final weightController = TextEditingController(
-      text: AppConstants.defaultWeightGoal.toString(),
+      text: (weightGoal.value ?? AppConstants.defaultWeightGoal).toString(),
     );
     
     showDialog(
@@ -289,31 +302,19 @@ class SettingsPage extends HookConsumerWidget {
           borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
         ),
         title: Text(
-          '体重目標の設定',
+          '目標体重',
           style: AppTextStyles.headline3,
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              '目標とする体重を入力してください',
-              style: AppTextStyles.body2.copyWith(
-                color: AppColors.textSecondary,
-              ),
+        content: TextFormField(
+          controller: weightController,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            labelText: '体重 (kg)',
+            suffixText: 'kg',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
             ),
-            SizedBox(height: AppConstants.paddingM.h),
-            TextFormField(
-              controller: weightController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: '体重 (kg)',
-                suffixText: 'kg',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
         actions: [
           TextButton(
@@ -327,14 +328,17 @@ class SettingsPage extends HookConsumerWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              // TODO: 体重目標を保存する処理
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('体重目標を${weightController.text}kgに設定しました'),
-                  backgroundColor: AppColors.success,
-                ),
-              );
+              final weight = double.tryParse(weightController.text);
+              if (weight != null) {
+                weightGoal.value = weight;
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('体重目標を${weightController.text}kgに設定しました'),
+                    backgroundColor: AppColors.success,
+                  ),
+                );
+              }
             },
             child: const Text('保存'),
           ),
@@ -343,18 +347,24 @@ class SettingsPage extends HookConsumerWidget {
     );
   }
 
-  void _showNutritionGoalDialog(BuildContext context) {
+  void _showNutritionGoalDialog(
+    BuildContext context,
+    ValueNotifier<double?> caloriesGoal,
+    ValueNotifier<double?> proteinGoal,
+    ValueNotifier<double?> fatGoal,
+    ValueNotifier<double?> carbsGoal,
+  ) {
     final caloriesController = TextEditingController(
-      text: AppConstants.defaultCaloriesGoal.toString(),
+      text: (caloriesGoal.value ?? AppConstants.defaultCaloriesGoal).toString(),
     );
     final proteinController = TextEditingController(
-      text: AppConstants.defaultProteinGoal.toString(),
+      text: (proteinGoal.value ?? AppConstants.defaultProteinGoal).toString(),
     );
     final fatController = TextEditingController(
-      text: AppConstants.defaultFatGoal.toString(),
+      text: (fatGoal.value ?? AppConstants.defaultFatGoal).toString(),
     );
     final carbsController = TextEditingController(
-      text: AppConstants.defaultCarbsGoal.toString(),
+      text: (carbsGoal.value ?? AppConstants.defaultCarbsGoal).toString(),
     );
     
     showDialog(
@@ -365,34 +375,29 @@ class SettingsPage extends HookConsumerWidget {
           borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
         ),
         title: Text(
-          '栄養目標の設定',
+          '栄養目標',
           style: AppTextStyles.headline3,
         ),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                '1日の栄養目標値を設定してください',
-                style: AppTextStyles.body2.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              SizedBox(height: AppConstants.paddingM.h),
-              TextFormField(
-                controller: caloriesController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'カロリー',
-                  suffixText: 'kcal',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
-                  ),
-                ),
-              ),
-              SizedBox(height: AppConstants.paddingM.h),
               Row(
                 children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: caloriesController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'カロリー',
+                        suffixText: 'kcal',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: AppConstants.paddingS.w),
                   Expanded(
                     child: TextFormField(
                       controller: proteinController,
@@ -406,7 +411,11 @@ class SettingsPage extends HookConsumerWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: AppConstants.paddingS.w),
+                ],
+              ),
+              SizedBox(height: AppConstants.paddingM.h),
+              Row(
+                children: [
                   Expanded(
                     child: TextFormField(
                       controller: fatController,
@@ -420,19 +429,21 @@ class SettingsPage extends HookConsumerWidget {
                       ),
                     ),
                   ),
-                ],
-              ),
-              SizedBox(height: AppConstants.paddingM.h),
-              TextFormField(
-                controller: carbsController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: '炭水化物',
-                  suffixText: 'g',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
+                  SizedBox(width: AppConstants.paddingS.w),
+                  Expanded(
+                    child: TextFormField(
+                      controller: carbsController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: '炭水化物',
+                        suffixText: 'g',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
@@ -449,14 +460,25 @@ class SettingsPage extends HookConsumerWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              // TODO: 栄養目標を保存する処理
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('栄養目標を設定しました'),
-                  backgroundColor: AppColors.success,
-                ),
-              );
+              final calories = double.tryParse(caloriesController.text);
+              final protein = double.tryParse(proteinController.text);
+              final fat = double.tryParse(fatController.text);
+              final carbs = double.tryParse(carbsController.text);
+              
+              if (calories != null && protein != null && fat != null && carbs != null) {
+                caloriesGoal.value = calories;
+                proteinGoal.value = protein;
+                fatGoal.value = fat;
+                carbsGoal.value = carbs;
+                
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('栄養目標を設定しました'),
+                    backgroundColor: AppColors.success,
+                  ),
+                );
+              }
             },
             child: const Text('保存'),
           ),
