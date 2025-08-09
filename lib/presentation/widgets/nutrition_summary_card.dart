@@ -24,6 +24,7 @@ class NutritionSummaryCard extends ConsumerWidget {
     final carbs = nutrition['carbs'] ?? 0.0;
 
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
       padding: EdgeInsets.all(AppConstants.paddingM.w),
       decoration: BoxDecoration(
         color: AppColors.surface,

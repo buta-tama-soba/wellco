@@ -31,13 +31,11 @@ class HomePage extends HookConsumerWidget {
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.all(AppConstants.paddingM.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ヘッダー
                 _buildHeader(context, ref),
-                SizedBox(height: AppConstants.paddingL.h),
 
                 // 今日の栄養バランス
                 todayNutrition.when(
@@ -129,48 +127,24 @@ class HomePage extends HookConsumerWidget {
 
   Widget _buildHeader(BuildContext context, WidgetRef ref) {
     final now = DateTime.now();
-    final greeting = _getTimeBasedGreeting(ref);
     final dateText = '${now.month}月${now.day}日';
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          greeting,
-          style: AppTextStyles.headline2.copyWith(
-            color: AppColors.textSecondary,
+    return Container(
+      padding: EdgeInsets.all(AppConstants.paddingM.w),
+      child: Row(
+        children: [
+          Text(
+            dateText,
+            style: AppTextStyles.headline2,
           ),
-        ),
-        SizedBox(height: 4.h),
-        Row(
-          children: [
-            Text(
-              dateText,
-              style: AppTextStyles.headline1.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const Spacer(),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 12.w,
-                vertical: 6.h,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16.r),
-              ),
-              child: Text(
-                'MVP版',
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
+          const Spacer(),
+          // 他の画面のIconButtonと同じ高さを確保するための透明なダミーアイコン
+          SizedBox(
+            width: 48.w, // IconButtonのデフォルトサイズ
+            height: 48.h,
+          ),
+        ],
+      ),
     );
   }
 
