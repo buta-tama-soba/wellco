@@ -22,6 +22,7 @@ class StepsProgressCard extends StatelessWidget {
     final percentage = goal > 0 ? (steps / goal).clamp(0.0, 1.0) : 0.0;
 
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
       padding: EdgeInsets.all(AppConstants.paddingM.w),
       decoration: BoxDecoration(
         color: AppColors.surface,

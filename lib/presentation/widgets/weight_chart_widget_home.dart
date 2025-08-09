@@ -99,6 +99,7 @@ class _WeightChartWidgetHomeState extends State<WeightChartWidgetHome>
     final isDark = theme.brightness == Brightness.dark;
     
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[900] : Colors.white,
         borderRadius: BorderRadius.circular(20.r),
