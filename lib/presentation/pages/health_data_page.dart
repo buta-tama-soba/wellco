@@ -29,14 +29,12 @@ class HealthDataPage extends HookConsumerWidget {
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.all(AppConstants.paddingM.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ヘッダー
                 _buildHeader(context, ref),
-                SizedBox(height: AppConstants.paddingL.h),
-
+                
                 // 権限確認カード
                 healthPermission.when(
                   data: (hasPermission) => hasPermission
@@ -74,14 +72,16 @@ class HealthDataPage extends HookConsumerWidget {
     final selectedDate = ref.watch(selectedDateProvider);
     final isToday = _isToday(selectedDate);
     
-    return Column(
-      children: [
-        Row(
-          children: [
-            Text(
-              '身体・活動',
-              style: AppTextStyles.headline2,
-            ),
+    return Container(
+      padding: EdgeInsets.all(AppConstants.paddingM.w),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                '身体・活動',
+                style: AppTextStyles.headline2,
+              ),
             const Spacer(),
             IconButton(
               onPressed: () {
@@ -104,10 +104,11 @@ class HealthDataPage extends HookConsumerWidget {
             ),
           ],
         ),
-        // 日付選択バーは非表示（機能は残す）
-        // SizedBox(height: AppConstants.paddingM.h),
-        // _buildDateSelector(context, ref, selectedDate, isToday),
-      ],
+          // 日付選択バーは非表示（機能は残す）
+          // SizedBox(height: AppConstants.paddingM.h),
+          // _buildDateSelector(context, ref, selectedDate, isToday),
+        ],
+      ),
     );
   }
 
@@ -214,7 +215,11 @@ class HealthDataPage extends HookConsumerWidget {
   Widget _buildPermissionCard(BuildContext context, WidgetRef ref) {
     return Container(
       padding: EdgeInsets.all(AppConstants.paddingM.w),
-      margin: EdgeInsets.only(bottom: AppConstants.paddingM.h),
+      margin: EdgeInsets.only(
+        bottom: AppConstants.paddingM.h,
+        left: AppConstants.paddingM.w,
+        right: AppConstants.paddingM.w,
+      ),
       decoration: BoxDecoration(
         color: AppColors.warning.withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
@@ -285,7 +290,11 @@ class HealthDataPage extends HookConsumerWidget {
   Widget _buildLoadingCard() {
     return Container(
       height: 120.h,
-      margin: EdgeInsets.only(bottom: AppConstants.paddingM.h),
+      margin: EdgeInsets.only(
+        bottom: AppConstants.paddingM.h,
+        left: AppConstants.paddingM.w,
+        right: AppConstants.paddingM.w,
+      ),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
@@ -302,7 +311,11 @@ class HealthDataPage extends HookConsumerWidget {
   Widget _buildErrorCard(String message) {
     return Container(
       padding: EdgeInsets.all(AppConstants.paddingM.w),
-      margin: EdgeInsets.only(bottom: AppConstants.paddingM.h),
+      margin: EdgeInsets.only(
+        bottom: AppConstants.paddingM.h,
+        left: AppConstants.paddingM.w,
+        right: AppConstants.paddingM.w,
+      ),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
@@ -328,6 +341,7 @@ class HealthDataPage extends HookConsumerWidget {
 
   Widget _buildWeightCard(PersonalDataTableData? data, WidgetRef ref) {
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
       padding: EdgeInsets.all(AppConstants.paddingM.w),
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -382,6 +396,7 @@ class HealthDataPage extends HookConsumerWidget {
 
   Widget _buildActivityCard(PersonalDataTableData? data) {
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
       padding: EdgeInsets.all(AppConstants.paddingM.w),
       decoration: BoxDecoration(
         color: AppColors.surface,

@@ -29,82 +29,80 @@ class SettingsPage extends HookConsumerWidget {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(AppConstants.paddingM.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ヘッダー
-              Text(
-                '設定',
-                style: AppTextStyles.headline2,
-              ),
-              SizedBox(height: AppConstants.paddingL.h),
-
-              // 目標設定セクション
-              _buildSection(
-                title: '目標設定',
-                children: [
-                  _buildSettingItem(
-                    icon: Icons.flag_rounded,
-                    title: '体重目標',
-                    subtitle: '${weightGoal.toStringAsFixed(1)} kg',
-                    onTap: () => _showWeightGoalDialog(context, ref),
-                  ),
-                  _buildSettingItem(
-                    icon: Icons.restaurant_rounded,
-                    title: '1日の栄養目標',
-                    subtitle: '${caloriesGoal.toInt()} kcal, タンパク質 ${proteinGoal.toInt()}g',
-                    onTap: () => _showNutritionGoalDialog(context, ref),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: AppConstants.paddingL.h),
-
-              // アプリ設定セクション
-              _buildSection(
-                title: 'アプリ設定',
-                children: [
-                  _buildSettingItem(
-                    icon: Icons.health_and_safety_rounded,
-                    title: 'HealthKit連携',
-                    subtitle: '健康データの同期設定',
-                    onTap: () => _showComingSoonSnackBar(context),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: AppConstants.paddingL.h),
-
-              // その他セクション
-              _buildSection(
-                title: 'その他',
-                children: [
-                  _buildSettingItem(
-                    icon: Icons.help_outline_rounded,
-                    title: 'ヘルプ',
-                    subtitle: '使い方とFAQ',
-                    onTap: () => _showComingSoonSnackBar(context),
-                  ),
-                  _buildSettingItem(
-                    icon: Icons.privacy_tip_rounded,
-                    title: 'プライバシーポリシー',
-                    subtitle: 'データの取り扱いについて',
-                    onTap: () => _showComingSoonSnackBar(context),
-                  ),
-                  _buildSettingItem(
-                    icon: Icons.info_outline_rounded,
-                    title: 'アプリについて',
-                    subtitle: 'バージョン ${AppConstants.appVersion}',
-                    onTap: () => _showAboutDialog(context),
-                  ),
-                ],
+              _buildHeader(context),
+              
+              // 設定項目（一覧表示）
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 8.r,
+                      offset: Offset(0, 2.h),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    _buildSettingItem(
+                      icon: Icons.flag_rounded,
+                      title: '体重目標',
+                      subtitle: '${weightGoal.toStringAsFixed(1)} kg',
+                      onTap: () => _showWeightGoalDialog(context, ref),
+                    ),
+                    _buildDivider(),
+                    _buildSettingItem(
+                      icon: Icons.restaurant_rounded,
+                      title: '1日の栄養目標',
+                      subtitle: '${caloriesGoal.toInt()} kcal, タンパク質 ${proteinGoal.toInt()}g',
+                      onTap: () => _showNutritionGoalDialog(context, ref),
+                    ),
+                    _buildDivider(),
+                    _buildSettingItem(
+                      icon: Icons.health_and_safety_rounded,
+                      title: 'HealthKit連携',
+                      subtitle: '健康データの同期設定',
+                      onTap: () => _showComingSoonSnackBar(context),
+                    ),
+                    _buildDivider(),
+                    _buildSettingItem(
+                      icon: Icons.help_outline_rounded,
+                      title: 'ヘルプ',
+                      subtitle: '使い方とFAQ',
+                      onTap: () => _showComingSoonSnackBar(context),
+                    ),
+                    _buildDivider(),
+                    _buildSettingItem(
+                      icon: Icons.privacy_tip_rounded,
+                      title: 'プライバシーポリシー',
+                      subtitle: 'データの取り扱いについて',
+                      onTap: () => _showComingSoonSnackBar(context),
+                    ),
+                    _buildDivider(),
+                    _buildSettingItem(
+                      icon: Icons.info_outline_rounded,
+                      title: 'アプリについて',
+                      subtitle: 'バージョン ${AppConstants.appVersion}',
+                      onTap: () => _showAboutDialog(context),
+                    ),
+                  ],
+                ),
               ),
 
               SizedBox(height: AppConstants.paddingXL.h),
 
               // MVP版の説明
-              _buildMVPInfo(),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
+                child: _buildMVPInfo(),
+              ),
             ],
           ),
         ),
@@ -112,37 +110,31 @@ class SettingsPage extends HookConsumerWidget {
     );
   }
 
-  Widget _buildSection({
-    required String title,
-    required List<Widget> children,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: AppTextStyles.headline3.copyWith(
-            color: AppColors.textSecondary,
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(AppConstants.paddingM.w),
+      child: Row(
+        children: [
+          Text(
+            '設定',
+            style: AppTextStyles.headline2,
           ),
-        ),
-        SizedBox(height: AppConstants.paddingM.h),
-        Container(
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 8.r,
-                offset: Offset(0, 2.h),
-              ),
-            ],
+          const Spacer(),
+          // 他の画面のIconButtonと同じ高さを確保するための透明なダミーアイコン
+          SizedBox(
+            width: 48.w, // IconButtonのデフォルトサイズ
+            height: 48.h,
           ),
-          child: Column(
-            children: children,
-          ),
-        ),
-      ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
+      height: 1.h,
+      color: AppColors.textSecondary.withOpacity(0.1),
     );
   }
 
@@ -185,7 +177,7 @@ class SettingsPage extends HookConsumerWidget {
       onTap: onTap,
       contentPadding: EdgeInsets.symmetric(
         horizontal: AppConstants.paddingM.w,
-        vertical: AppConstants.paddingS.h,
+        vertical: AppConstants.paddingXS.h,
       ),
     );
   }
@@ -229,7 +221,7 @@ class SettingsPage extends HookConsumerWidget {
       ),
       contentPadding: EdgeInsets.symmetric(
         horizontal: AppConstants.paddingM.w,
-        vertical: AppConstants.paddingS.h,
+        vertical: AppConstants.paddingXS.h,
       ),
     );
   }
