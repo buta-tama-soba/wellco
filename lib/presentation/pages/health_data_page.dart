@@ -34,8 +34,7 @@ class HealthDataPage extends HookConsumerWidget {
               children: [
                 // ヘッダー
                 _buildHeader(context, ref),
-                SizedBox(height: AppConstants.paddingL.h),
-
+                
                 // 権限確認カード
                 healthPermission.when(
                   data: (hasPermission) => hasPermission

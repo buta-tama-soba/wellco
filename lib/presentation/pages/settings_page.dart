@@ -34,8 +34,7 @@ class SettingsPage extends HookConsumerWidget {
             children: [
               // ヘッダー
               _buildHeader(context),
-              SizedBox(height: AppConstants.paddingL.h),
-
+              
               // 設定項目（一覧表示）
               Container(
                 margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
