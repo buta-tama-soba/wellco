@@ -549,23 +549,26 @@ class HealthDataPage extends HookConsumerWidget {
   Widget _buildWeightChartSection(WidgetRef ref) {
     final weightHistoryAsync = ref.watch(weightHistoryProvider);
 
-    return weightHistoryAsync.when(
-      data: (weightData) => WeightChartWidgetHealth(
-        weightData: weightData,
-        onRefresh: () {
-          ref.invalidate(weightHistoryProvider);
-        },
-      ),
-      loading: () => WeightChartWidgetHealth(
-        weightData: const [],
-        isLoading: true,
-      ),
-      error: (error, stack) => WeightChartWidgetHealth(
-        weightData: const [],
-        errorMessage: error.toString(),
-        onRefresh: () {
-          ref.invalidate(weightHistoryProvider);
-        },
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: -AppConstants.paddingM.w), // 親のパディングを打ち消し
+      child: weightHistoryAsync.when(
+        data: (weightData) => WeightChartWidgetHealth(
+          weightData: weightData,
+          onRefresh: () {
+            ref.invalidate(weightHistoryProvider);
+          },
+        ),
+        loading: () => WeightChartWidgetHealth(
+          weightData: const [],
+          isLoading: true,
+        ),
+        error: (error, stack) => WeightChartWidgetHealth(
+          weightData: const [],
+          errorMessage: error.toString(),
+          onRefresh: () {
+            ref.invalidate(weightHistoryProvider);
+          },
+        ),
       ),
     );
   }

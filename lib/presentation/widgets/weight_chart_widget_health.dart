@@ -76,12 +76,14 @@ class _WeightChartWidgetHealthState extends State<WeightChartWidgetHealth>
 
   void _updateCachedData() {
     if (widget.weightData.isNotEmpty) {
-      final processedData = ChartUtils.downsampleData(widget.weightData, 30);
+      const displayDays = 30; // 表示期間
+      
+      // 表示期間のデータのみを取得（移動平均計算のため全データを保持）
       _cachedWeightSpots = ChartUtils.validateChartData(
-        ChartUtils.convertToFlSpots(processedData)
+        ChartUtils.convertToFlSpots(widget.weightData, displayDays: displayDays)
       );
       _cachedMovingAverageSpots = ChartUtils.validateChartData(
-        ChartUtils.calculateMovingAverage(processedData, 7)
+        ChartUtils.calculateMovingAverage(widget.weightData, 7, displayDays: displayDays)
       );
       _cachedBounds = ChartUtils.calculateSafeBounds(
         [..._cachedWeightSpots, ..._cachedMovingAverageSpots],
@@ -105,14 +107,14 @@ class _WeightChartWidgetHealthState extends State<WeightChartWidgetHealth>
 
   Widget _buildChart(BuildContext context, bool isDark) {
     return SizedBox(
-      height: 240.h,
-      child: widget.isLoading
-        ? _buildLoadingState(isDark)
-        : widget.errorMessage != null
-          ? _buildErrorState(widget.errorMessage!, isDark)
-          : widget.weightData.isEmpty
-            ? _buildEmptyState(isDark)
-            : _buildChartContent(isDark),
+      height: 180.h,
+        child: widget.isLoading
+          ? _buildLoadingState(isDark)
+          : widget.errorMessage != null
+            ? _buildErrorState(widget.errorMessage!, isDark)
+            : widget.weightData.isEmpty
+              ? _buildEmptyState(isDark)
+              : _buildChartContent(isDark),
     );
   }
 
@@ -120,12 +122,9 @@ class _WeightChartWidgetHealthState extends State<WeightChartWidgetHealth>
     return AnimatedBuilder(
       animation: _chartAnimation,
       builder: (context, child) {
-        return Padding(
-          padding: EdgeInsets.only(left: 0.w, right: 16.w, top: 8.h, bottom: 0.h),
-          child: LineChart(
-            _buildLineChartData(isDark),
-            duration: const Duration(milliseconds: 0),
-          ),
+        return LineChart(
+          _buildLineChartData(isDark),
+          duration: const Duration(milliseconds: 0),
         );
       },
     );
@@ -156,7 +155,7 @@ class _WeightChartWidgetHealthState extends State<WeightChartWidgetHealth>
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            reservedSize: 40.w,
+            reservedSize: 35.w,
             getTitlesWidget: (value, meta) => _buildYAxisLabel(value, meta, isDark),
             interval: 2,
           ),
@@ -294,7 +293,7 @@ class _WeightChartWidgetHealthState extends State<WeightChartWidgetHealth>
 
   Widget _buildYAxisLabel(double value, TitleMeta meta, bool isDark) {
     return Padding(
-      padding: EdgeInsets.only(right: 8.w),
+      padding: EdgeInsets.only(right: 4.w),
       child: Text(
         value.toStringAsFixed(0),
         style: TextStyle(
@@ -309,13 +308,19 @@ class _WeightChartWidgetHealthState extends State<WeightChartWidgetHealth>
 
   Widget _buildXAxisLabel(double value, TitleMeta meta, bool isDark) {
     final index = value.toInt();
-    if (index < 0 || index >= widget.weightData.length) {
+    const displayDays = 30;
+    
+    // 表示期間のデータのみを使用
+    final displayStartIndex = widget.weightData.length - displayDays;
+    final actualIndex = displayStartIndex + index;
+    
+    if (actualIndex < 0 || actualIndex >= widget.weightData.length) {
       return const SizedBox.shrink();
     }
 
-    final date = widget.weightData[index].date;
+    final date = widget.weightData[actualIndex].date;
     return Padding(
-      padding: EdgeInsets.only(top: 8.h),
+      padding: EdgeInsets.only(top: 6.h),
       child: Text(
         '${date.month}/${date.day}',
         style: TextStyle(
@@ -330,9 +335,14 @@ class _WeightChartWidgetHealthState extends State<WeightChartWidgetHealth>
   List<LineTooltipItem> _buildTooltipItems(List<LineBarSpot> touchedSpots, bool isDark) {
     return touchedSpots.map((barSpot) {
       final index = barSpot.x.toInt();
+      const displayDays = 30;
       
-      if (index >= 0 && index < widget.weightData.length) {
-        final data = widget.weightData[index];
+      // 表示期間のデータのみを使用
+      final displayStartIndex = widget.weightData.length - displayDays;
+      final actualIndex = displayStartIndex + index;
+      
+      if (actualIndex >= 0 && actualIndex < widget.weightData.length) {
+        final data = widget.weightData[actualIndex];
         final isAverage = barSpot.barIndex == 1;
         
         return LineTooltipItem(

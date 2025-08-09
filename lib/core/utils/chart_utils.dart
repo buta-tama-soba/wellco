@@ -3,11 +3,12 @@ import '../services/health_service.dart';
 
 /// チャート関連のユーティリティクラス
 class ChartUtils {
-  /// 7日移動平均を計算
+  /// 移動平均を計算（表示期間のみ返すオプション付き）
   static List<FlSpot> calculateMovingAverage(
     List<WeightData> data, 
-    int period,
-  ) {
+    int period, {
+    int? displayDays, // 表示期間を指定（nullの場合は全期間）
+  }) {
     if (data.length < period) return [];
     
     List<FlSpot> movingAverageSpots = [];
@@ -19,14 +20,34 @@ class ChartUtils {
       }
       double average = sum / period;
       
-      movingAverageSpots.add(FlSpot(i.toDouble(), average));
+      // 表示期間が指定されている場合は、表示期間のインデックスに調整
+      if (displayDays != null) {
+        final displayStartIndex = data.length - displayDays;
+        if (i >= displayStartIndex) {
+          final displayIndex = i - displayStartIndex;
+          movingAverageSpots.add(FlSpot(displayIndex.toDouble(), average));
+        }
+      } else {
+        movingAverageSpots.add(FlSpot(i.toDouble(), average));
+      }
     }
     
     return movingAverageSpots;
   }
   
-  /// WeightDataをFlSpotに変換
-  static List<FlSpot> convertToFlSpots(List<WeightData> data) {
+  /// WeightDataをFlSpotに変換（表示期間のみ返すオプション付き）
+  static List<FlSpot> convertToFlSpots(
+    List<WeightData> data, {
+    int? displayDays, // 表示期間を指定（nullの場合は全期間）
+  }) {
+    if (displayDays != null && data.length > displayDays) {
+      // 表示期間のデータのみを取得（最新のdisplayDays分）
+      final displayData = data.skip(data.length - displayDays).toList();
+      return displayData.asMap().entries.map((entry) {
+        return FlSpot(entry.key.toDouble(), entry.value.weight);
+      }).toList();
+    }
+    
     return data.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.weight);
     }).toList();
