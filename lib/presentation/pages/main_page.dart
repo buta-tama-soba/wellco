@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../core/themes/app_colors.dart';
 import '../../core/themes/app_text_styles.dart';
+import '../providers/goals_provider.dart';
 import '../pages/home_page.dart';
 import '../pages/meal_management_page.dart';
 import '../pages/health_data_page.dart';
@@ -16,6 +17,14 @@ class MainPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = useState(0);
+    
+    // アプリ起動時に目標値を読み込み
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(goalsProvider.notifier).loadGoals();
+      });
+      return null;
+    }, []);
 
     final pages = [
       const HomePage(),

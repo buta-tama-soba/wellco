@@ -324,10 +324,10 @@ class SettingsPage extends HookConsumerWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               final weight = double.tryParse(weightController.text);
               if (weight != null) {
-                goalsNotifier.updateWeightGoal(weight);
+                await goalsNotifier.updateWeightGoal(weight);
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -451,14 +451,14 @@ class SettingsPage extends HookConsumerWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               final calories = double.tryParse(caloriesController.text);
               final protein = double.tryParse(proteinController.text);
               final fat = double.tryParse(fatController.text);
               final carbs = double.tryParse(carbsController.text);
               
               if (calories != null && protein != null && fat != null && carbs != null) {
-                goalsNotifier.updateNutritionGoals(
+                await goalsNotifier.updateNutritionGoals(
                   calories: calories,
                   protein: protein,
                   fat: fat,
