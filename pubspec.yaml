@@ -165,6 +165,9 @@ flutter_launcher_icons:
   adaptive_icon_foreground: "assets/icon/app_icon.png"
   remove_alpha_ios: true
   background_color_ios: "#E8E0FF"
+  # 背景色を確実に適用
+  android_gravity: "center"
+  ios_marketing_scale: 1
 
 # flutter_native_splash configuration
 flutter_native_splash:
