@@ -36,11 +36,6 @@ class NutritionSummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '今日の栄養バランス',
-            style: AppTextStyles.headline3,
-          ),
-          SizedBox(height: AppConstants.paddingM.h),
           
           // カロリー（メイン表示）
           _buildMainNutrient(
@@ -107,10 +102,8 @@ class NutritionSummaryCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              label,
-              style: AppTextStyles.body1.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              '${current.toInt()} / ${target.toInt()} $unit',
+              style: AppTextStyles.numberMedium.copyWith(color: color),
             ),
             Text(
               '${percentage.toPercentage()}%',
@@ -120,11 +113,6 @@ class NutritionSummaryCard extends StatelessWidget {
               ),
             ),
           ],
-        ),
-        SizedBox(height: AppConstants.paddingS.h),
-        Text(
-          '${current.toInt()} / ${target.toInt()} $unit',
-          style: AppTextStyles.numberMedium.copyWith(color: color),
         ),
         SizedBox(height: AppConstants.paddingS.h),
         LinearProgressIndicator(
