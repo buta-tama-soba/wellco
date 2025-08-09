@@ -29,19 +29,16 @@ class SettingsPage extends HookConsumerWidget {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(AppConstants.paddingM.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ヘッダー
-              Text(
-                '設定',
-                style: AppTextStyles.headline2,
-              ),
+              _buildHeader(context),
               SizedBox(height: AppConstants.paddingL.h),
 
               // 設定項目（一覧表示）
               Container(
+                margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
@@ -103,10 +100,27 @@ class SettingsPage extends HookConsumerWidget {
               SizedBox(height: AppConstants.paddingXL.h),
 
               // MVP版の説明
-              _buildMVPInfo(),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: AppConstants.paddingM.w),
+                child: _buildMVPInfo(),
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(AppConstants.paddingM.w),
+      child: Row(
+        children: [
+          Text(
+            '設定',
+            style: AppTextStyles.headline2,
+          ),
+        ],
       ),
     );
   }
