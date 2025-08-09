@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html_parser;
+import 'dart:convert';
 
 import '../../core/themes/app_colors.dart';
 import '../../core/themes/app_text_styles.dart';
@@ -550,7 +551,41 @@ class _RecipeUrlRegisterPageState extends ConsumerState<RecipeUrlRegisterPage> {
       } else {
         // 食品の場合：商品情報を抽出
         try {
-          final htmlParser = html_parser.parse(await http.get(Uri.parse(_urlController.text)).then((response) => response.body));
+          final response = await http.get(
+            Uri.parse(_urlController.text),
+            headers: {
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+              'Accept-Charset': 'UTF-8',
+              'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
+            },
+          );
+          
+          // エンコーディング処理（OgpFetcherServiceと同じロジック）
+          String htmlContent;
+          final contentType = response.headers['content-type'];
+          String? charset;
+          
+          if (contentType != null && contentType.contains('charset=')) {
+            final match = RegExp(r'charset=([^;\\s]+)').firstMatch(contentType);
+            if (match != null) {
+              charset = match.group(1)?.toLowerCase();
+            }
+          }
+          
+          final bytes = response.bodyBytes;
+          if (charset == 'shift_jis' || charset == 'shift-jis' || charset == 'sjis') {
+            try {
+              htmlContent = const Utf8Codec(allowMalformed: true).decode(bytes);
+            } catch (e) {
+              htmlContent = utf8.decode(bytes, allowMalformed: true);
+            }
+          } else if (charset == 'euc-jp' || charset == 'euc_jp') {
+            htmlContent = utf8.decode(bytes, allowMalformed: true);
+          } else {
+            htmlContent = utf8.decode(bytes, allowMalformed: true);
+          }
+          
+          final htmlParser = html_parser.parse(htmlContent);
           foodProductInfo = _foodProductExtractor.extractFoodProductFromHtml(htmlParser, _urlController.text);
         } catch (e) {
           print('食品情報抽出エラー: $e');
