@@ -10,6 +10,7 @@ import '../../core/themes/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
 import '../../data/datasources/app_database.dart';
 import '../providers/database_provider.dart';
+import '../providers/goals_provider.dart';
 import 'recipe_url_register_page.dart';
 import 'recipe_viewer_page.dart';
 import 'recipe_edit_page.dart';
@@ -439,7 +440,7 @@ class MealManagementPage extends HookConsumerWidget {
                   _buildMainNutrient(
                     label: 'カロリー',
                     current: currentCalories,
-                    target: AppConstants.defaultCaloriesGoal.toDouble(),
+                    target: ref.watch(goalsProvider).caloriesGoal,
                     unit: 'kcal',
                     color: AppColors.primary,
                   ),
@@ -452,7 +453,7 @@ class MealManagementPage extends HookConsumerWidget {
                         child: _buildMiniNutrientCard(
                           label: 'タンパク質',
                           current: currentProtein,
-                          target: AppConstants.defaultProteinGoal.toDouble(),
+                          target: ref.watch(goalsProvider).proteinGoal,
                           unit: 'g',
                           color: AppColors.info,
                         ),
@@ -462,7 +463,7 @@ class MealManagementPage extends HookConsumerWidget {
                         child: _buildMiniNutrientCard(
                           label: '脂質',
                           current: currentFat,
-                          target: AppConstants.defaultFatGoal.toDouble(),
+                          target: ref.watch(goalsProvider).fatGoal,
                           unit: 'g',
                           color: AppColors.warning,
                         ),
@@ -472,7 +473,7 @@ class MealManagementPage extends HookConsumerWidget {
                         child: _buildMiniNutrientCard(
                           label: '炭水化物',
                           current: currentCarbs,
-                          target: AppConstants.defaultCarbsGoal.toDouble(),
+                          target: ref.watch(goalsProvider).carbsGoal,
                           unit: 'g',
                           color: AppColors.success,
                         ),
